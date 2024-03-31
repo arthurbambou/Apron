@@ -15,5 +15,8 @@
     "nostation.AchievementsScreenMixin"
   ],
   "plugin": "io.github.betterthanupdates.apron.ApronMixinPlugin",
-  "parent": "apron.parent.mixins.json"
+  "parent": "apron.parent.mixins.json",
+  "mixins": [
+    "nostation.PortalBlockMixin"
+  ]
 }

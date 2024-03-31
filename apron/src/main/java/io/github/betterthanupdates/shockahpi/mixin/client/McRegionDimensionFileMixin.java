@@ -29,7 +29,7 @@ public abstract class McRegionDimensionFileMixin extends DimensionFile {
 		File localFile1 = this.getParentFolder();
 		DimensionBase localDimensionBase = DimensionBase.getDimByProvider(paramxa.getClass());
 
-		if (localDimensionBase.number != 0) {
+		if (localDimensionBase != null && localDimensionBase.number != 0) {
 			File localFile2 = new File(localFile1, "DIM" + localDimensionBase.number);
 			localFile2.mkdirs();
 			cir.setReturnValue(new WorldChunkLoader(localFile2));
