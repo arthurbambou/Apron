@@ -1,4 +1,4 @@
-package io.github.betterthanupdates.shockahpi.mixin.client;
+package io.github.betterthanupdates.shockahpi.mixin.client.nostation;
 
 import net.minecraft.world.dimension.Dimension;
 import org.spongepowered.asm.mixin.Mixin;

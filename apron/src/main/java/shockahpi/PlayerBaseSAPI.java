@@ -1,5 +1,6 @@
 package shockahpi;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.Entity;
 import playerapi.PlayerBase;
@@ -20,6 +21,8 @@ public class PlayerBaseSAPI extends PlayerBase {
 	}
 
 	public boolean onLivingUpdate() {
+		if (FabricLoader.getInstance().isModLoaded("station-dimensions-v0")) return false;
+
 		Minecraft mc = this.player.client;
 		if (!mc.statFileWriter.isAchievementUnlocked(Achievements.OPEN_INVENTORY)) {
 			mc.achievement.setAchievement(Achievements.OPEN_INVENTORY);
@@ -29,13 +32,13 @@ public class PlayerBaseSAPI extends PlayerBase {
 		if (this.portal != 0) {
 			DimensionBase dimensionbase = DimensionBase.getDimByNumber(this.portal);
 			AbstractClientPlayerEntity var10000;
-			if (this.player.field_512) {
+			if (dimensionbase != null && this.player.field_512) {
 				if (!this.player.world.isClient && this.player.vehicle != null) {
-					this.player.startRiding((Entity)null);
+					this.player.startRiding((Entity) null);
 				}
 
 				if (mc.currentScreen != null) {
-					mc.openScreen((Screen)null);
+					mc.openScreen((Screen) null);
 				}
 
 				if (this.player.field_504 == 0.0F) {
@@ -84,6 +87,8 @@ public class PlayerBaseSAPI extends PlayerBase {
 	}
 
 	public boolean respawn() {
+		if (FabricLoader.getInstance().isModLoaded("station-dimensions-v0")) return false;
+
 		DimensionBase.respawn(false, 0);
 		return true;
 	}

@@ -26,7 +26,6 @@ public class MixinCompatPlugin extends ApronMixinPlugin {
 		COMPAT.put(".overrideapi.old.", "overrideapi.info");
 		COMPAT.put(".portalgun.", "net.minecraft.mod_PortalGun");
 		COMPAT.put(".reimap.", "net.minecraft.mod_ReiMinimap");
-		COMPAT.put(".twilightforest.", "net.minecraft.mod_TwilightForest");
 		COMPAT.put(".somnia.", "net.minecraft.mod_Somnia");
 		COMPAT.put(".betterblocks.", "net.minecraft.mod_BetterBlocks");
 		COMPAT.put(".incrediblefungus.", "net.minecraft.mod_Fungus");

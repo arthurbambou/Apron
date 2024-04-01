@@ -13,6 +13,7 @@
     "BlockMixin",
     "ItemMixin",
     "ItemStackMixin",
+    "PortalBlockMixin",
     "SchemaAccessor",
     "TranslationStorageAccessor",
     "client.ArsenicItemRendererMixin",
@@ -32,6 +33,7 @@
   "client": [
     "client.BlockRendererMixin",
     "client.DiggingParticleEntityMixin",
+    "client.DimensionMixin",
     "client.MinecraftClientMixin"
   ]
 }

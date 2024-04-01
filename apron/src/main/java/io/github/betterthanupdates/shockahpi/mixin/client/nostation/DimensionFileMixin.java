@@ -1,4 +1,4 @@
-package io.github.betterthanupdates.shockahpi.mixin.client;
+package io.github.betterthanupdates.shockahpi.mixin.client.nostation;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;

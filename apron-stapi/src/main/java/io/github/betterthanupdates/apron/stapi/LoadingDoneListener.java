@@ -1,5 +1,6 @@
 package io.github.betterthanupdates.apron.stapi;
 
+import io.github.betterthanupdates.apron.LifecycleUtils;
 import io.github.betterthanupdates.apron.stapi.hmi.HMICompat;
 import modloader.ModLoader;
 import net.fabricmc.api.EnvType;
@@ -8,6 +9,8 @@ import net.minecraft.stat.achievement.Achievements;
 
 import net.modificationstation.stationapi.api.client.gui.screen.achievement.AchievementPage;
 import net.modificationstation.stationapi.api.registry.BlockRegistry;
+import net.modificationstation.stationapi.api.registry.DimensionContainer;
+import net.modificationstation.stationapi.api.registry.DimensionRegistry;
 import net.modificationstation.stationapi.api.registry.ItemRegistry;
 import net.modificationstation.stationapi.api.registry.Registry;
 import net.modificationstation.stationapi.api.util.Identifier;
@@ -90,6 +93,9 @@ public class LoadingDoneListener implements Runnable {
 				totalObjectsNumber.getAndIncrement();
 			});
 		});
+
+		LifecycleUtils.SHOCKAHPI_DIMENSIONS.forEach((modId, list) -> totalObjectsNumber.getAndAdd(list.size()));
+
 		// Then Register
 		if (lastTotal != totalObjectsNumber.get()) {
 			if (lastTotal != 0) ApronStAPICompat.LOGGER.warn("Some objects were registered later, trying to attribute identifier to them.");
@@ -135,14 +141,24 @@ public class LoadingDoneListener implements Runnable {
 
 			LATE_UPDATES.forEach(LateUpdate::update);
 
-//			DimensionBase.list.forEach(dimensionBase -> {
-//				if (dimensionBase.number == 0 || dimensionBase.number == -1) return;
-//
-//				String name = dimensionBase.getClass().getSimpleName();
-//
-//				Registry.register(DimensionRegistry.INSTANCE,
-//						ModID.of("mods").id(name), new DimensionContainer<>(dimensionBase::getWorldProvider));
-//			});
+			LifecycleUtils.SHOCKAHPI_DIMENSIONS.forEach((modStringId, list) -> {
+				Namespace namespace;
+
+				if (modStringId == null) namespace = Namespace.MINECRAFT;
+				else namespace = Namespace.of(modStringId);
+
+				list.forEach(dimensionBase -> {
+                    if (dimensionBase.number != 0 && dimensionBase.number != -1) {
+                        Identifier dimId = namespace.id(String.valueOf(dimensionBase.number));
+
+                        if (!DimensionRegistry.INSTANCE.containsId(dimId)) {
+                            ApronStAPICompat.LOGGER.info("Registering Dimension with num " + dimensionBase.number + " and id " + dimId + " : " +  dimensionBase.getClass().getName());
+                            Registry.register(DimensionRegistry.INSTANCE, dimensionBase.number, dimId,
+                                    new DimensionContainer<>(dimensionBase::getWorldProvider));
+                        }
+                    }
+                });
+			});
 
 			SAPI.getPages().forEach(page -> {
 				String name = page.title;

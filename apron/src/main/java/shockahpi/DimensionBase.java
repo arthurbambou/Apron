@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import io.github.betterthanupdates.apron.LifecycleUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MovementManager;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
@@ -201,6 +202,12 @@ public class DimensionBase {
 		this.worldProvider = worldProvider;
 		this.teleporter = teleporter;
 		list.add(this);
+
+		if (!LifecycleUtils.SHOCKAHPI_DIMENSIONS.containsKey(LifecycleUtils.CURRENT_MOD)) {
+			LifecycleUtils.SHOCKAHPI_DIMENSIONS.put(LifecycleUtils.CURRENT_MOD, new ArrayList<>());
+		}
+
+		LifecycleUtils.SHOCKAHPI_DIMENSIONS.get(LifecycleUtils.CURRENT_MOD).add(this);
 	}
 
 	public Loc getDistanceScale(Loc loc, boolean goingIn) {

@@ -14,7 +14,6 @@ import shockahpi.PlayerBaseSAPI;
 
 @Mixin(PortalBlock.class)
 public abstract class PortalBlockMixin implements ShockAhPIPortalBlock {
-
 	@Inject(method = "onEntityCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;method_1388()V", shift = At.Shift.BEFORE))
 	public void onEntityCollision(World world, int i, int j, int k, Entity entity, CallbackInfo ci) {
 		if (entity instanceof AbstractClientPlayerEntity) {
