@@ -4,6 +4,7 @@ import io.github.betterthanupdates.shockahpi.block.ShockAhPIPortalBlock;
 import net.minecraft.block.PortalBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.NetherTeleporter;
+import net.modificationstation.stationapi.api.block.CustomPortal;
 import net.modificationstation.stationapi.api.registry.DimensionRegistry;
 import net.modificationstation.stationapi.api.util.Identifier;
 import net.modificationstation.stationapi.api.util.math.MathHelper;
@@ -20,7 +21,10 @@ import java.util.Optional;
 public abstract class PortalBlockMixin implements ShockAhPIPortalBlock, TeleportationManager {
 	@Override
 	public void switchDimension(PlayerEntity player) {
-		if (this.getDimNumber() == -1) {
+		if (this instanceof CustomPortal) {
+			CustomPortal p = ((CustomPortal) this);
+			DimensionHelper.switchDimension(player, p.getDimension(player), p.getDimensionScale(player), p.getTravelAgent(player));
+		} else if (this.getDimNumber() == -1) {
 			NetherPortalImpl.switchDimension(player);
 		} else {
 			DimensionBase dimensionBase = DimensionBase.getDimByNumber(this.getDimNumber());
