@@ -15,11 +15,6 @@ import io.github.betterthanupdates.apron.ReflectionUtils;
 
 @Mixin(Utils.class)
 public class UtilsMixin {
-	@Inject(method = "getMethod", at = @At("HEAD"), cancellable = true, remap = false)
-	private static void fixMethod(Class<?> target, String[] names, Class<?>[] types, CallbackInfoReturnable<Method> ci) {
-		ci.setReturnValue(ReflectionUtils.getMethod(target, names, types));
-	}
-
 	@Inject(method = "getField", at = @At("HEAD"), cancellable = true, remap = false)
 	private static void fixField(Class<?> target, String[] names, CallbackInfoReturnable<Field> ci) {
 		ci.setReturnValue(ReflectionUtils.getField(target, names));

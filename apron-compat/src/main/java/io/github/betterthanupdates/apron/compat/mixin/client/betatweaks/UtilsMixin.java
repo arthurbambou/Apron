@@ -24,12 +24,6 @@ public class UtilsMixin {
 		ci.setReturnValue(ReflectionUtils.getField(target, names));
 	}
 
-	@Inject(method = "getMethod",
-			cancellable = true, at = @At("HEAD"), remap = false)
-	private static void fixMethod(Class<?> target, Class<?>[] types, String[] names, CallbackInfoReturnable<Method> ci) {
-		ci.setReturnValue(ReflectionUtils.getMethod(target, names, types));
-	}
-
 	@Shadow(remap = false)
 	public static boolean classExists(String name) {
 		return false;
@@ -52,19 +46,5 @@ public class UtilsMixin {
 			var3.printStackTrace();
 			return null;
 		}
-	}
-
-	@ModifyArg(method = "checkModInstalled(Ljava/lang/String;Ljava/lang/String;)Z",
-			remap = false, at = @At(value = "INVOKE", target = "Lbetatweaks/Utils;classExists(Ljava/lang/String;)Z", remap = false))
-	private static String fixCheckModInstalled(String name) {
-		if (name.equals("ModLoaderMp")) {
-			name = "modloadermp." + name;
-		} else if (name.equals("ModSettings")) {
-			name = "guiapi." + name;
-		} else {
-			name = "net.minecraft." + name;
-		}
-
-		return name;
 	}
 }

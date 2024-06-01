@@ -12,6 +12,6 @@ import overrideapi.OverrideAPI;
 public class OverrideAPIMixin {
 	@Redirect(method = "<init>", remap = false, at = @At(value = "INVOKE", target = "Ljava/lang/Class;getClassLoader()Ljava/lang/ClassLoader;", remap = false))
 	private ClassLoader fixClassLoader(Class instance) {
-		return new URLClassLoader(new URL[]{}, null);
+		return new URLClassLoader(new URL[]{}, this.getClass().getClassLoader());
 	}
 }

@@ -11,8 +11,6 @@ public class ReflectionUtils {
 		for (String name : names) {
 			MappingUtils.ClassMember member = MappingUtils.mapField(target, name);
 
-			if (member.desc == null) continue;
-
 			try {
 				return target.getDeclaredField(member.name);
 			} catch (NoSuchFieldException e) {}
@@ -42,8 +40,6 @@ public class ReflectionUtils {
 	public static Method getMethod(Class<?> target, String[] names, Class<?>[] types) {
 		for (String name : names) {
 			MappingUtils.ClassMember member = MappingUtils.mapMethod(target, name, types);
-
-			if (member.desc == null) continue;
 
 			try {
 				Method method = target.getDeclaredMethod(member.name, types);

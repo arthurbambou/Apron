@@ -63,7 +63,8 @@ public final class ApronModRemapper implements ModRemapper {
 	@Override
 	public void registerMappings(MappingBuilder mappingBuilder) {
 		mappingBuilder.addMapping("ModLoader", "modloader/ModLoader")
-				.field("usedItemSprites", "USED_ITEM_SPRITES", "[Z");
+				.field("usedItemSprites", "USED_ITEM_SPRITES", "[Z")
+				.field("usedTerrainSprites", "USED_TERRAIN_SPRITES", "[Z");
 
 		mappingBuilder.addMapping("ToolBase", "shockahpi/ToolBase")
 				.field("Pickaxe", "PICKAXE", "LToolBase;")
@@ -81,6 +82,86 @@ public final class ApronModRemapper implements ModRemapper {
 
 	@Override
 	public void registerPostVisitors(VisitorInfos visitorInfos) {
+		// Reflection Remappers
+		visitorInfos.registerInstantiation(
+				"org/objectweb/asm/tree/FieldInsnNode",
+				"io/github/betterthanupdates/apron/remapped/BetterFieldInsnNode"
+		);
+		visitorInfos.registerInstantiation(
+				"org/objectweb/asm/tree/MethodInsnNode",
+				"io/github/betterthanupdates/apron/remapped/BetterMethodInsnNode"
+		);
+		visitorInfos.registerInstantiation(
+				"org/objectweb/asm/ClassWriter",
+				"io/github/betterthanupdates/apron/remapped/BetterClassWriter"
+		);
+		visitorInfos.registerMethodInvocation(
+				"java/lang/Class",
+				"getDeclaredMethod",
+				"(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;",
+				new VisitorInfos.FullClassMember(
+						"io/github/betterthanupdates/apron/remapped/RemapAwareClass",
+						"getDeclaredMethod",
+						"(Ljava/lang/Class;Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;",
+						true
+				)
+		);
+		visitorInfos.registerMethodInvocation(
+				"java/lang/Class",
+				"getDeclaredField",
+				"(Ljava/lang/String;)Ljava/lang/reflect/Field;",
+				new VisitorInfos.FullClassMember(
+						"io/github/betterthanupdates/apron/remapped/RemapAwareClass",
+						"getDeclaredField",
+						"(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/reflect/Field;",
+						true
+				)
+		);
+		visitorInfos.registerMethodInvocation(
+				"java/lang/Class",
+				"getMethod",
+				"(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;",
+				new VisitorInfos.FullClassMember(
+						"io/github/betterthanupdates/apron/remapped/RemapAwareClass",
+						"getMethod",
+						"(Ljava/lang/Class;Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;",
+						true
+				)
+		);
+		visitorInfos.registerMethodInvocation(
+				"java/lang/Class",
+				"getField",
+				"(Ljava/lang/String;)Ljava/lang/reflect/Field;",
+				new VisitorInfos.FullClassMember(
+						"io/github/betterthanupdates/apron/remapped/RemapAwareClass",
+						"getField",
+						"(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/reflect/Field;",
+						true
+				)
+		);
+		visitorInfos.registerMethodInvocation(
+				"java/lang/Class",
+				"forName",
+				"(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;",
+				new VisitorInfos.FullClassMember(
+						"io/github/betterthanupdates/apron/remapped/RemapAwareClass",
+						"forName",
+						"(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;",
+						true
+				)
+		);
+		visitorInfos.registerMethodInvocation(
+				"java/lang/Class",
+				"forName",
+				"(Ljava/lang/String;)Ljava/lang/Class;",
+				new VisitorInfos.FullClassMember(
+						"io/github/betterthanupdates/apron/remapped/RemapAwareClass",
+						"forName",
+						"(Ljava/lang/String;)Ljava/lang/Class;",
+						true
+				)
+		);
+
 		visitorInfos.registerMethodInvocation(
 				"net/minecraft/class_13",
 				"setRedstoneColors",

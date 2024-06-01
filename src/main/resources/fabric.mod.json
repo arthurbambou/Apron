@@ -42,7 +42,6 @@
     "apron:common": {
       "BaseMod": "modloader/BaseMod",
       "MLProp": "modloader/MLProp",
-      "ModLoader": "modloader/ModLoader",
       "BaseModMp": "modloadermp/BaseModMp",
       "ISpawnable": "modloadermp/ISpawnable",
       "ModLoaderMp": "modloadermp/ModLoaderMp",
