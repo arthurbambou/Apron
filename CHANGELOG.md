@@ -1,4 +1,13 @@
 # Changelogs
+## 2.1.0
+- Update to MRAPI 1.22.1
+- Fix all deprecation warnings in the codebase
+- Fix reflection issues for most mods
+- [StAPI] Update compat to 2.0-alpha.2.1
+- [StAPI] Fix Dimensions portals not working
+- [StAPI] Partial compatibility with ShockAhPI Dimensions
+- [BHCreative] Show meta variants in generated tabs
+
 ## 2.0.1
 - Fix crash on startup when using loader 0.15+
 - Fix textures in non StAPI environment
