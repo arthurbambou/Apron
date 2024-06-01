@@ -1,13 +1,13 @@
 package io.github.betterthanupdates.apron.stapi.compat;
 
-import fr.catcore.modremapperapi.api.ModRemapper;
-import fr.catcore.modremapperapi.remapping.RemapUtil;
-import fr.catcore.modremapperapi.remapping.VisitorInfos;
+import io.github.fabriccompatibiltylayers.modremappingapi.api.v1.MappingBuilder;
+import io.github.fabriccompatibiltylayers.modremappingapi.api.v1.ModRemapper;
+import io.github.fabriccompatibiltylayers.modremappingapi.api.v1.RemapLibrary;
+import io.github.fabriccompatibiltylayers.modremappingapi.api.v1.VisitorInfos;
+import net.fabricmc.api.EnvType;
 import org.spongepowered.asm.mixin.Mixins;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ApronStAPICompatRemapper implements ModRemapper {
 	@Override
@@ -16,17 +16,23 @@ public class ApronStAPICompatRemapper implements ModRemapper {
 	}
 
 	@Override
-	public Map<String, List<String>> getExclusions() {
-		return new HashMap<>();
-	}
-
-	@Override
-	public void getMappingList(RemapUtil.MappingList mappingList) {
+	public void addRemapLibraries(List<RemapLibrary> list, EnvType envType) {
 
 	}
 
 	@Override
-	public void registerVisitors(VisitorInfos infos) {
+	public void registerMappings(MappingBuilder mappingBuilder) {
+
+	}
+
+	@Override
+	public void registerPreVisitors(VisitorInfos visitorInfos) {
+
+	}
+
+	@Override
+	public void registerPostVisitors(VisitorInfos visitorInfos) {
+
 	}
 
 	@Override

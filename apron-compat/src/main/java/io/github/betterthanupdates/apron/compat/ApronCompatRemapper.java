@@ -1,13 +1,13 @@
 package io.github.betterthanupdates.apron.compat;
 
-import fr.catcore.modremapperapi.api.ModRemapper;
-import fr.catcore.modremapperapi.remapping.RemapUtil;
-import fr.catcore.modremapperapi.remapping.VisitorInfos;
+import io.github.fabriccompatibiltylayers.modremappingapi.api.v1.MappingBuilder;
+import io.github.fabriccompatibiltylayers.modremappingapi.api.v1.ModRemapper;
+import io.github.fabriccompatibiltylayers.modremappingapi.api.v1.RemapLibrary;
+import io.github.fabriccompatibiltylayers.modremappingapi.api.v1.VisitorInfos;
+import net.fabricmc.api.EnvType;
 import org.spongepowered.asm.mixin.Mixins;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ApronCompatRemapper implements ModRemapper {
 	@Override
@@ -16,28 +16,34 @@ public class ApronCompatRemapper implements ModRemapper {
 	}
 
 	@Override
-	public Map<String, List<String>> getExclusions() {
-		return new HashMap<>();
-	}
-
-	@Override
-	public void getMappingList(RemapUtil.MappingList mappingList) {
+	public void addRemapLibraries(List<RemapLibrary> list, EnvType envType) {
 
 	}
 
 	@Override
-	public void registerVisitors(VisitorInfos infos) {
+	public void registerMappings(MappingBuilder mappingBuilder) {
+
+	}
+
+	@Override
+	public void registerPreVisitors(VisitorInfos visitorInfos) {
+
+	}
+
+	@Override
+	public void registerPostVisitors(VisitorInfos visitorInfos) {
 		// InfSprites
-		String[][] toolFixes = new String[][] {
+		String[][] classFixes = new String[][] {
 				new String[]{"net/mine_diver/infsprites/render/Tessellators", "io/github/betterthanupdates/apron/compat/InfSpriteTessellators"}
 		};
 
-		for (String[] entry : toolFixes) {
-			infos.registerSuperType(new VisitorInfos.Type(entry[0]), new VisitorInfos.Type(entry[1]));
-			infos.registerTypeAnnotation(new VisitorInfos.Type(entry[0]), new VisitorInfos.Type(entry[1]));
-			infos.registerMethodTypeIns(new VisitorInfos.Type(entry[0]), new VisitorInfos.Type(entry[1]));
-			infos.registerMethodFieldIns(new VisitorInfos.MethodNamed(entry[0], ""), new VisitorInfos.MethodNamed(entry[1], ""));
-			infos.registerMethodMethodIns(new VisitorInfos.MethodNamed(entry[0], ""), new VisitorInfos.MethodNamed(entry[1], ""));
+		for (String[] entry : classFixes) {
+			visitorInfos.registerSuperType(entry[0], entry[1]);
+			visitorInfos.registerTypeAnnotation(entry[0], entry[1]);
+			visitorInfos.registerMethodTypeIns(entry[0], entry[1]);
+
+			visitorInfos.registerFieldRef(entry[0], "", "", new VisitorInfos.FullClassMember(entry[1], "", null));
+			visitorInfos.registerMethodInvocation(entry[0], "", "", new VisitorInfos.FullClassMember(entry[1], "", null));
 		}
 	}
 

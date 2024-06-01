@@ -1,15 +1,15 @@
 package io.github.betterthanupdates.apron;
 
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import fr.catcore.modremapperapi.api.ModRemapper;
-import fr.catcore.modremapperapi.api.RemapLibrary;
-import fr.catcore.modremapperapi.remapping.RemapUtil;
-import fr.catcore.modremapperapi.remapping.VisitorInfos;
+import io.github.fabriccompatibiltylayers.modremappingapi.api.v1.MappingBuilder;
+import io.github.fabriccompatibiltylayers.modremappingapi.api.v1.ModRemapper;
+import io.github.fabriccompatibiltylayers.modremappingapi.api.v1.RemapLibrary;
+import io.github.fabriccompatibiltylayers.modremappingapi.api.v1.VisitorInfos;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -23,19 +23,20 @@ import org.jetbrains.annotations.Nullable;
 public final class ApronModRemapper implements ModRemapper {
 	public static final ModContainer MOD_CONTAINER = FabricLoader.getInstance().getModContainer("apron").orElseThrow(RuntimeException::new);
 	public static final Logger LOGGER = Logger.get("ApronRemapper");
-	@Override
-	public String[] getJarFolders() {
-		return new String[0];
-	}
 
 	private Path getLibPath(String name) {
 		return MOD_CONTAINER.findPath("./libs/" + name + ".zip")
 				.orElseGet(() -> getLibDevPath(name));
 
-    }
+	}
 
 	private Path getLibDevPath(String name) {
 		return MOD_CONTAINER.findPath("./../../../original/" + getEnvironment().name().toLowerCase() + "/" + name + ".zip").orElseThrow(RuntimeException::new);
+	}
+
+	@Override
+	public String[] getJarFolders() {
+		return new String[0];
 	}
 
 	@Override
@@ -60,70 +61,97 @@ public final class ApronModRemapper implements ModRemapper {
 	}
 
 	@Override
-	public Map<String, List<String>> getExclusions() {
-		return new HashMap<>();
+	public void registerMappings(MappingBuilder mappingBuilder) {
+		mappingBuilder.addMapping("ToolBase", "shockahpi/ToolBase")
+				.field("Pickaxe", "PICKAXE", "LToolBase;")
+				.field("Shovel", "SHOVEL", "LToolBase;")
+				.field("Axe", "AXE", "LToolBase;");
+
+		addMappingsFromMetadata(mappingBuilder, null);
+		addMappingsFromMetadata(mappingBuilder, getEnvironment());
 	}
 
 	@Override
-	public void getMappingList(RemapUtil.MappingList list) {
-		// TODO: Add this to custom mod metadata
-		if (getEnvironment() == EnvType.CLIENT) {
-			list.add("ToolBase", "shockahpi/ToolBase")
-					.field("Pickaxe", "PICKAXE", "Lshockahpi/ToolBase;")
-					.field("Shovel", "SHOVEL", "Lshockahpi/ToolBase;")
-					.field("Axe", "AXE", "Lshockahpi/ToolBase;");
-		}
+	public void registerPreVisitors(VisitorInfos visitorInfos) {
 
-		addMappingsFromMetadata(list, null);
-		addMappingsFromMetadata(list, getEnvironment());
 	}
 
 	@Override
-	public void registerVisitors(VisitorInfos infos) {
-		infos.registerMethodMethodIns(
-				new VisitorInfos.MethodNamed("net/minecraft/class_13", "setRedstoneColors"),
-				new VisitorInfos.MethodNamed("io/github/betterthanupdates/forge/ForgeClientReflection", "BlockRenderer$setRedstoneColors")
+	public void registerPostVisitors(VisitorInfos visitorInfos) {
+		visitorInfos.registerMethodInvocation(
+				"net/minecraft/class_13",
+				"setRedstoneColors",
+				"",
+				new VisitorInfos.FullClassMember(
+						"io/github/betterthanupdates/forge/ForgeClientReflection",
+						"BlockRenderer$setRedstoneColors",
+						null
+				)
 		);
 
-		infos.registerMethodFieldIns(
-				new VisitorInfos.MethodNamed("net/minecraft/class_67", "renderingWorldRenderer"),
-				new VisitorInfos.MethodNamed("io/github/betterthanupdates/forge/ForgeClientReflection", "Tessellator$renderingWorldRenderer")
+		visitorInfos.registerFieldRef(
+				"net/minecraft/class_67",
+				"renderingWorldRenderer",
+				"",
+				new VisitorInfos.FullClassMember(
+						"io/github/betterthanupdates/forge/ForgeClientReflection",
+						"Tessellator$renderingWorldRenderer",
+						null
+				)
 		);
-		infos.registerMethodFieldIns(
-				new VisitorInfos.MethodNamed("net/minecraft/class_67", "firstInstance"),
-				new VisitorInfos.MethodNamed("io/github/betterthanupdates/forge/ForgeClientReflection", "Tessellator$firstInstance")
+		visitorInfos.registerFieldRef(
+				"net/minecraft/class_67",
+				"firstInstance",
+				"",
+				new VisitorInfos.FullClassMember(
+						"io/github/betterthanupdates/forge/ForgeClientReflection",
+						"Tessellator$firstInstance",
+						null
+				)
 		);
-		infos.registerMethodFieldIns(
-				new VisitorInfos.MethodNamed("net/minecraft/class_13", "cfgGrassFix"),
-				new VisitorInfos.MethodNamed("io/github/betterthanupdates/forge/ForgeClientReflection", "BlockRenderer$cfgGrassFix")
+		visitorInfos.registerFieldRef(
+				"net/minecraft/class_13",
+				"cfgGrassFix",
+				"",
+				new VisitorInfos.FullClassMember(
+						"io/github/betterthanupdates/forge/ForgeClientReflection",
+						"BlockRenderer$cfgGrassFix",
+						null
+				)
 		);
-		infos.registerMethodFieldIns(
-				new VisitorInfos.MethodNamed("net/minecraft/class_13", "redstoneColors"),
-				new VisitorInfos.MethodNamed("io/github/betterthanupdates/forge/ForgeClientReflection", "BlockRenderer$redstoneColors")
+		visitorInfos.registerFieldRef(
+				"net/minecraft/class_13",
+				"redstoneColors",
+				"",
+				new VisitorInfos.FullClassMember(
+						"io/github/betterthanupdates/forge/ForgeClientReflection",
+						"BlockRenderer$redstoneColors",
+						null
+				)
 		);
-	}
-
-	/**
-	 * Adds mappings directly from Apron's fabric.mod.json file.
-	 *
-	 * @param list        the mappings list for Mod Remapping API
-	 * @param environment the current Minecraft environment, provided by Fabric Loader
-	 */
-	private void addMappingsFromMetadata(RemapUtil.MappingList list, @Nullable EnvType environment) {
-		final ModMetadata metadata = MOD_CONTAINER.getMetadata();
-		final String custom = "apron:" + (environment == null ? "common" : environment.name().toLowerCase());
-
-		for (Map.Entry<String, CustomValue> mapping : metadata.getCustomValue(custom).getAsObject()) {
-			final String obfuscated = mapping.getKey();
-			final String intermediary = mapping.getValue().getAsString();
-			list.add(obfuscated, intermediary);
-			LOGGER.debug("%s remapped to %s for compatibility.", obfuscated, intermediary);
-		}
 	}
 
 	@Override
 	public Optional<String> getDefaultPackage() {
 		return Optional.of("net/minecraft/");
+	}
+
+	/**
+	 * Adds mappings directly from Apron's fabric.mod.json file.
+	 *
+	 * @param mappingBuilder        the mappings list for Mod Remapping API
+	 * @param environment the current Minecraft environment, provided by Fabric Loader
+	 */
+	private void addMappingsFromMetadata(MappingBuilder mappingBuilder, @Nullable EnvType environment) {
+		final ModMetadata metadata = MOD_CONTAINER.getMetadata();
+		final String custom = "apron:" + (environment == null ? "common" : environment.name().toLowerCase(Locale.ENGLISH));
+
+		for (Map.Entry<String, CustomValue> mapping : metadata.getCustomValue(custom).getAsObject()) {
+			final String obfuscated = mapping.getKey();
+			final String intermediary = mapping.getValue().getAsString();
+			mappingBuilder.addMapping(obfuscated, intermediary);
+			LOGGER.debug("%s remapped to %s for compatibility.", obfuscated, intermediary);
+		}
 	}
 
 	public static EnvType getEnvironment() {

@@ -157,6 +157,10 @@ allprojects {
 		repositories {
 		}
 	}
+
+	tasks.withType(JavaCompile) {
+		options.deprecation = true
+	}
 }
 
 subprojects {
