@@ -62,6 +62,9 @@ public final class ApronModRemapper implements ModRemapper {
 
 	@Override
 	public void registerMappings(MappingBuilder mappingBuilder) {
+		mappingBuilder.addMapping("ModLoader", "modloader/ModLoader")
+				.field("usedItemSprites", "USED_ITEM_SPRITES", "[Z");
+
 		mappingBuilder.addMapping("ToolBase", "shockahpi/ToolBase")
 				.field("Pickaxe", "PICKAXE", "LToolBase;")
 				.field("Shovel", "SHOVEL", "LToolBase;")

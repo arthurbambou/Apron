@@ -132,6 +132,7 @@ allprojects {
 //		modRuntimeOnly(group: "remapped.server", name: "minecraftforge-server", version: "1.0.7-20110907")
 		// Todo
 		implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
+		implementation("com.github.thecatcore.CursedMixinExtensions:fabric:1.0.0")
 	}
 
 	tasks.withType(ProcessResources).configureEach {

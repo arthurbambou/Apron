@@ -38,6 +38,7 @@ import javax.imageio.ImageIO;
 
 import fr.catcore.modremapperapi.remapping.RemapUtil;
 import io.github.betterthanupdates.apron.LifecycleUtils;
+import io.github.betterthanupdates.apron.ReflectionUtils;
 import io.github.betterthanupdates.stapi.StAPIBlock;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -648,15 +649,12 @@ public class ModLoader {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T, E> T getPrivateValue(Class<? super E> instanceClass, E instance, String fieldName) throws IllegalArgumentException, SecurityException, NoSuchFieldException {
-		if (instanceClass == ModLoader.class) {
-			if (Objects.equals(fieldName, "usedItemSprites")) fieldName = "USED_ITEM_SPRITES";
-		}
-
 		try {
-			fieldName = RemapUtil.getRemappedFieldName(instanceClass, fieldName);
-			Field f = instanceClass.getDeclaredField(fieldName);
-			f.setAccessible(true);
-			return (T) f.get(instance);
+			T value = (T) ReflectionUtils.getField(instanceClass, instance, fieldName);
+
+			if (value == null) throw new IllegalAccessException("Failed to get value of field " + fieldName + " of class " + instanceClass.getName() + " instance " + instance);
+
+			return value;
 		} catch (IllegalAccessException e) {
 			MOD_LOGGER.throwing("ModLoader", "getPrivateValue", e);
 			ThrowException("An impossible error has occured!", e);
@@ -1667,8 +1665,7 @@ public class ModLoader {
 	 */
 	public static <T, E> void setPrivateValue(Class<? super T> instanceClass, T instance, String fieldName, E value) throws IllegalArgumentException, SecurityException, NoSuchFieldException {
 		try {
-			fieldName = RemapUtil.getRemappedFieldName(instanceClass, fieldName);
-			Field f = instanceClass.getDeclaredField(fieldName);
+			Field f = ReflectionUtils.getField(instanceClass, new String[]{fieldName});
 
 			//			if (field_modifiers == null) {
 			//				field_modifiers = Field.class.getDeclaredField("modifiers");
@@ -1683,7 +1680,7 @@ public class ModLoader {
 
 			f.setAccessible(true);
 			f.set(instance, value);
-		} catch (IllegalAccessException e) {
+		} catch (NullPointerException | IllegalAccessException e) {
 			MOD_LOGGER.throwing("ModLoader", "setPrivateValue", e);
 			ThrowException("An impossible error has occured!", e);
 		}

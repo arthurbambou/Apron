@@ -2,7 +2,7 @@ package io.github.betterthanupdates.apron.compat.mixin.client.aether;
 
 import java.util.List;
 
-import fr.catcore.modremapperapi.api.mixin.Public;
+import fr.catcore.cursedmixinextensions.annotations.Public;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

@@ -1,6 +1,6 @@
 package io.github.betterthanupdates.apron;
 
-import fr.catcore.modremapperapi.utils.MixinUtils;
+import fr.catcore.cursedmixinextensions.CursedMixinExtensions;
 import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -49,6 +49,6 @@ public class ApronMixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-		MixinUtils.applyASMMagic(targetClassName, targetClass, mixinClassName, mixinInfo);
+		CursedMixinExtensions.postApply(targetClass);
 	}
 }

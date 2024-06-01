@@ -1,15 +1,9 @@
 package io.github.betterthanupdates.apron.compat;
 
-import fr.catcore.modremapperapi.utils.MixinUtils;
 import io.github.betterthanupdates.apron.ApronMixinPlugin;
-import org.objectweb.asm.tree.ClassNode;
-import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
-import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class MixinCompatPlugin extends ApronMixinPlugin {
 	private static final Map<String, String> COMPAT = new HashMap<>();

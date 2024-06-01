@@ -1,10 +1,10 @@
 package io.github.betterthanupdates.shockahpi.mixin.client;
 
-import fr.catcore.modremapperapi.api.mixin.ChangeSuperClass;
-import fr.catcore.modremapperapi.api.mixin.Public;
-import fr.catcore.modremapperapi.api.mixin.ReplaceConstructor;
-import fr.catcore.modremapperapi.api.mixin.SuperConstructor;
-import fr.catcore.modremapperapi.api.mixin.SuperMethod;
+import fr.catcore.cursedmixinextensions.annotations.ChangeSuperClass;
+import fr.catcore.cursedmixinextensions.annotations.Public;
+import fr.catcore.cursedmixinextensions.annotations.ReplaceConstructor;
+import fr.catcore.cursedmixinextensions.annotations.ShadowSuper;
+import fr.catcore.cursedmixinextensions.annotations.ShadowSuperConstructor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
@@ -46,8 +46,9 @@ public abstract class ToolItemMixin extends Item {
 		super(i);
 	}
 
-	@SuperConstructor
+	@ShadowSuperConstructor
 	public abstract void Tool$ctr(boolean usingSAPI, ToolBase toolBase, int itemID, int uses, float baseDamage, float basePower, float toolSpeed);
+
 	@ReplaceConstructor
 	public void ctr(int itemID, int damage, ToolMaterial material, Block[] blocks) {
 		this.Tool$ctr(false, null, itemID, material.getDurability(), (float)(damage + material.getAttackDamage()), getToolPower(material), material.getMiningSpeed());
@@ -90,7 +91,7 @@ public abstract class ToolItemMixin extends Item {
 		}
 	}
 
-	@SuperMethod("canHarvest")
+	@ShadowSuper("canHarvest")
 	public abstract boolean Tool$canHarvest(Block block);
 
 	public boolean canHarvest(Block block) {
@@ -183,7 +184,7 @@ public abstract class ToolItemMixin extends Item {
 		return this.field_2714 != Integer.MIN_VALUE && (double)i == Math.floor((double)((Tool)(Object)this).baseDamage) ? this.field_2714 : i;
 	}
 
-	@SuperMethod("getToolSpeed")
+	@ShadowSuper("getToolSpeed")
 	public abstract float Tool$getToolSpeed();
 
 	protected float getToolSpeed() {

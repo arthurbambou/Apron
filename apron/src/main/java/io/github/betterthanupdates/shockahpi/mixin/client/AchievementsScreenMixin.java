@@ -2,7 +2,7 @@ package io.github.betterthanupdates.shockahpi.mixin.client;
 
 import java.lang.reflect.Array;
 
-import fr.catcore.modremapperapi.api.mixin.Public;
+import fr.catcore.cursedmixinextensions.annotations.Public;
 import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.client.gui.screen.menu.AchievementsScreen;

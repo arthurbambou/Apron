@@ -1,12 +1,11 @@
 package io.github.betterthanupdates.forge.mixin.block;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import fr.catcore.modremapperapi.api.mixin.Public;
+import fr.catcore.cursedmixinextensions.annotations.Public;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.Block;

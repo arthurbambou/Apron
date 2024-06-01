@@ -1,47 +1,28 @@
 package io.github.betterthanupdates.apron;
 
-import static fr.catcore.modremapperapi.utils.MappingsUtils.getNativeNamespace;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Objects;
 
-import fr.catcore.modremapperapi.ModRemappingAPI;
-import fr.catcore.modremapperapi.impl.lib.mappingio.tree.MappingTree;
-import fr.catcore.modremapperapi.remapping.RemapUtil;
-import fr.catcore.modremapperapi.utils.MappingsUtils;
-
+import io.github.fabriccompatibiltylayers.modremappingapi.api.MappingUtils;
 import net.minecraft.client.render.Tessellator;
 
 public class ReflectionUtils {
 	public static Field getField(Class<?> target, String[] names) {
-		for (Field field : target.getDeclaredFields()) {
-			for (String name : names) {
-				name = RemapUtil.getRemappedFieldName(target, name);
+		for (String name : names) {
+			MappingUtils.ClassMember member = MappingUtils.mapField(target, name);
 
-				if (field.getName().equals(name)) {
-					field.setAccessible(true);
-					return field;
-				}
-			}
+			if (member.desc == null) continue;
+
+			try {
+				return target.getDeclaredField(member.name);
+			} catch (NoSuchFieldException e) {}
 		}
 
 		return null;
 	}
 
 	public static String getRemappedFieldName(String owner, String fieldName) {
-		int target = MappingsUtils.getMinecraftMappings().getNamespaceId(MappingsUtils.getTargetNamespace());
-		MappingTree.ClassMapping classMapping = MappingsUtils.getMinecraftMappings().getClass(owner.replace(".", "/"), target);
-		if (classMapping != null) {
-			for(MappingTree.FieldMapping fieldDef : classMapping.getFields()) {
-				String fieldSubName = fieldDef.getName(getNativeNamespace());
-				if ((!ModRemappingAPI.BABRIC || fieldSubName != null) && Objects.equals(fieldSubName, fieldName)) {
-					return fieldDef.getName(MappingsUtils.getTargetNamespace());
-				}
-			}
-		}
-
-		return fieldName;
+		return MappingUtils.mapFieldFromRemappedClass(owner, fieldName, null).name;
 	}
 
 	public static Object getField(Class<?> clazz, Object obj, String name) {
@@ -60,10 +41,12 @@ public class ReflectionUtils {
 
 	public static Method getMethod(Class<?> target, String[] names, Class<?>[] types) {
 		for (String name : names) {
-			name = RemapUtil.getRemappedMethodName(target, name, types);
+			MappingUtils.ClassMember member = MappingUtils.mapMethod(target, name, types);
+
+			if (member.desc == null) continue;
 
 			try {
-				Method method = target.getDeclaredMethod(name, types);
+				Method method = target.getDeclaredMethod(member.name, types);
 				method.setAccessible(true);
 				return method;
 			} catch (NoSuchMethodException ignored) {
@@ -74,26 +57,12 @@ public class ReflectionUtils {
 	}
 
 	public static String getRemappedMethodName(String owner, String methodName, String desc) {
-		int target = MappingsUtils.getMinecraftMappings().getNamespaceId(MappingsUtils.getTargetNamespace());
-		MappingTree.ClassMapping classMapping = MappingsUtils.getMinecraftMappings().getClass(owner.replace(".", "/"), target);
-		if (classMapping != null) {
-			for(MappingTree.MethodMapping methodDef : classMapping.getMethods()) {
-				String methodSubName = methodDef.getName(getNativeNamespace());
-				if ((!ModRemappingAPI.BABRIC || methodSubName != null) && Objects.equals(methodSubName, methodName)) {
-					String methodDescriptor = methodDef.getDesc(MappingsUtils.getTargetNamespace());
-					if (methodDescriptor.startsWith(desc)) {
-						return methodDef.getName(MappingsUtils.getTargetNamespace());
-					}
-				}
-			}
-		}
-
-		return methodName;
+		return MappingUtils.mapMethodFromRemappedClass(owner, methodName, desc).name;
 	}
 
 	public static boolean isModLoaded(String name) {
 		try {
-			Class.forName("net.minecraft." + name, false, ReflectionUtils.class.getClassLoader());
+			Class.forName(MappingUtils.mapClass(name).replace("/", "."), false, ReflectionUtils.class.getClassLoader());
 			return true;
 		} catch (Exception e) {
 
