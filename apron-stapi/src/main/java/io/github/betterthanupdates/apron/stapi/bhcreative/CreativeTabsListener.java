@@ -1,11 +1,15 @@
 package io.github.betterthanupdates.apron.stapi.bhcreative;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.github.betterthanupdates.apron.stapi.ApronStAPICompat;
 import io.github.betterthanupdates.apron.stapi.ModContents;
 import modloader.ModLoader;
 import net.mine_diver.unsafeevents.listener.EventListener;
+import net.minecraft.client.resource.language.TranslationStorage;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -15,6 +19,9 @@ import paulevs.bhcreative.api.SimpleTab;
 import paulevs.bhcreative.registry.TabRegistryEvent;
 
 public class CreativeTabsListener {
+	private static final List<String> translationKeys = new ArrayList<>();
+	private static final Map<Item, Integer> METAS = new HashMap<>();
+
 	@EventListener
 	public void onTabInit(TabRegistryEvent event) {
 		ApronStAPICompat.getModContents().forEach(entry -> {
@@ -35,10 +42,39 @@ public class CreativeTabsListener {
 
 				event.register(tab);
 
-				modContents.ITEMS.originalToInstance.forEach((integer, item) -> tab.addItem(new ItemStack(item)));
+				modContents.ITEMS.originalToInstance.forEach((integer, item) -> {
+					addItemToTab(tab, item);
+				});
 
 				ModLoader.AddLocalization("tab." + tabId + ".name", modID.toString().replace("mod_", ""));
 			}
 		});
+	}
+
+	private void addItemToTab(SimpleTab tab, Item item) {
+		if (!METAS.containsKey(item)) {
+			int meta;
+
+			for (meta = 0;; meta++) {
+				ItemStack stack = new ItemStack(item, 1, meta);
+
+				String translationKey = stack.getTranslationKey();
+
+				if (translationKeys.contains(translationKey)
+						|| TranslationStorage.getInstance().translateNameOrEmpty(translationKey).isEmpty()
+						|| (meta > 0 && !item.usesMeta())
+				) break;
+
+				tab.addItem(stack);
+				translationKeys.add(translationKey);
+			}
+
+			METAS.put(item, meta);
+		} else {
+			for (int i = 0; i < METAS.get(item); i++) {
+				ItemStack stack = new ItemStack(item, 1, i);
+				tab.addItem(stack);
+			}
+		}
 	}
 }
