@@ -191,7 +191,7 @@ public class LoadingDoneListener implements Runnable {
 					if (!found) {
 						AchievementPage stPage = new AchievementPage(Namespace.of("apron").id(idTitle));
 
-						ModLoader.AddLocalization("stationapi:achievementPage.apron:" + idTitle, page.title);
+						ModLoader.AddLocalization("gui.stationapi.achievementPage.apron." + idTitle, page.title);
 
 						for (Achievement achievement : page.getAchievements())
 							stPage.addAchievements(achievement);

@@ -46,7 +46,7 @@ public class CreativeTabsListener {
 					addItemToTab(tab, item);
 				});
 
-				ModLoader.AddLocalization("tab." + tabId + ".name", modID.toString().replace("mod_", ""));
+				ModLoader.AddLocalization("tab." + modID + ".tab.name", modID.toString().replace("mod_", ""));
 			}
 		});
 	}
