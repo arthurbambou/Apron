@@ -1,5 +1,7 @@
 package io.github.betterthanupdates.apron.stapi.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.betterthanupdates.forge.block.ForgeBlock;
 import io.github.betterthanupdates.stapi.StAPIBlock;
 import io.github.betterthanupdates.apron.stapi.ApronStAPICompat;
@@ -73,9 +75,13 @@ public abstract class BlockMixin implements StAPIBlock, StationFlatteningBlock, 
 		return -1;
 	}
 
-	@Redirect(method = "beforeDestroyedByExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;getDropId(ILjava/util/Random;)I"))
-	private int fixBlockDrop(Block instance, int i, Random random) {
-		int originalId = instance.getDropId(i, random);
+	@WrapOperation(method = "beforeDestroyedByExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;getDropId(ILjava/util/Random;)I"))
+	private int fixBlockDrop(Block instance, int i, Random random, Operation<Integer> original) {
+		int originalId = this.id;
+
+		try {
+			originalId = original.call(instance, i, random);
+		} catch (NullPointerException ignored) {}
 
 		if (originalId > 0) {
 			Optional<Identifier> dropBlockId = BlockRegistry.INSTANCE.getId(originalId);
