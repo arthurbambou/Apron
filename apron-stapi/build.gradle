@@ -24,4 +24,5 @@ dependencies {
 	modImplementation ("com.github.paulevsGitch:BHCreative:${project.bhcreative_version}") {
 		transitive false
 	}
+	modImplementation("maven.modrinth:always-more-items:1.2.0")
 }
