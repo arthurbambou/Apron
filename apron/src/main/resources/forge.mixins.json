@@ -33,7 +33,7 @@
     "client.PlayerRendererMixin",
     "client.TessellatorMixin",
     "client.TextureManagerMixin",
-    "client.VanillaTessellatorMixin",
+    "client.nostation.VanillaTessellatorMixin",
     "client.nostation.HeldItemRendererMixin",
     "client.nostation.ItemRendererMixin",
     "client.nostation.MultiplayerClientInteractionManagerMixin",
