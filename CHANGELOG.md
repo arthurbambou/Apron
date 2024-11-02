@@ -1,4 +1,12 @@
 # Changelogs
+## 2.2.0
+- Update dependencies
+- [StAPI] Fix crash on block drop
+- [StAPI] Fix crash from block stats out of bound
+- [StAPI] Disable forge multi-tessellator patch to fix rendering crashes
+- Fix crash with Better Nether Beta (BNB)
+- Fix crash with Always More Items (AMI)
+
 ## 2.1.0
 - Update to MRAPI 1.22.1
 - Fix all deprecation warnings in the codebase
