@@ -30,7 +30,7 @@
     "mod-remapping-api": ">=1.22.1",
     "legacy-fabric-logger-api-v1": "*",
     "com_github_llamalad7_mixinextras": ">=0.2.1",
-    "stationapi": ">=2.0-alpha.2.1",
+    "stationapi": ">=2.0-alpha.2.4",
     "java": ">=17"
   }
 }
