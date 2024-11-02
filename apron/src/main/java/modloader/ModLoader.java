@@ -863,7 +863,8 @@ public class ModLoader {
 	@SuppressWarnings("unchecked")
 	private static void initStats() {
 		for (int id = 0; id < Block.BY_ID.length; ++id) {
-			if (!Stats.idMap.containsKey(16777216 + id) && Block.BY_ID[id] != null && Block.BY_ID[id].isStatEnabled()) {
+			if (!Stats.idMap.containsKey(16777216 + id) && Block.BY_ID[id] != null && Block.BY_ID[id].isStatEnabled()
+					&& id < Stats.mineBlock.length) {
 				String str = TranslationStorage.getInstance().translate("stat.mineBlock", Block.BY_ID[id].getTranslatedName());
 				Stats.mineBlock[id] = new StatEntity(16777216 + id, str, id).register();
 				Stats.blocksMinedList.add(Stats.mineBlock[id]);

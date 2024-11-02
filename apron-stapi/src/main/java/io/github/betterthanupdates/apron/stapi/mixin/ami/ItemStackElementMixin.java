@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ItemStackElement.class)
 public class ItemStackElementMixin {
-	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/modificationstation/stationapi/api/util/Namespace;getName()Ljava/lang/String;"))
+	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/modificationstation/stationapi/api/util/Namespace;getName()Ljava/lang/String;", remap = false))
 	private String apron$fixModName(Namespace instance) {
 		if (instance.toString().startsWith("mod_")) {
 			return instance.toString().replace("mod_", "");
