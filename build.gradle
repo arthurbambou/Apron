@@ -133,6 +133,7 @@ allprojects {
 		// Todo
 		implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
 		implementation("com.github.thecatcore.CursedMixinExtensions:fabric:1.0.0")
+		implementation("com.github.thecatcore:WFVAIO:1.1.0")
 	}
 
 	tasks.withType(ProcessResources).configureEach {

@@ -37,6 +37,10 @@ public abstract class BlockMixin implements StAPIBlock, StationFlatteningBlock, 
 	@Shadow
 	@Final
 	public int id;
+
+	@Shadow
+	public abstract float getHardness();
+
 	@Unique
 	private static int currentId = -1;
 
@@ -109,13 +113,17 @@ public abstract class BlockMixin implements StAPIBlock, StationFlatteningBlock, 
 
 	@Override
 	public float calcBlockBreakingDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos) {
-		float apronHardness = this.blockStrength((World) world, player, pos.x, pos.y, pos.z);
+		float hardness = this.blockStrength((World) world, player, pos.x, pos.y, pos.z);
 
-		float hardness = this.getHardness(state, world, pos);
-		if (hardness < 0.0F) {
-			return Math.max(0.0F, apronHardness);
-		} else {
-			return !player.canHarvest(state) ? Math.max(1.0F / hardness / 100.0F, apronHardness) : Math.max(player.getBlockBreakingSpeed(state) / hardness / 30.0F, apronHardness);
+		float stAPIhardness = this.getHardness(state, world, pos);
+		float vanillaHarness = this.getHardness();
+
+		if (stAPIhardness != vanillaHarness) {
+			hardness = Math.max(hardness, stAPIhardness);
 		}
+
+		if (hardness < 0.0f) return 0.0f;
+		if (!player.canHarvest(world, pos, state)) return 1.0f / hardness / 100.0f;
+		return player.getBlockBreakingSpeed(world, pos, state) / hardness / 30.0f;
 	}
 }
