@@ -1,22 +1,12 @@
 //file:noinspection GradlePackageVersionRange
 plugins {
 	id "java-library"
-	id "eclipse"
-	id "idea"
+	id "fabric-loom" version "1.9-SNAPSHOT" apply false
+	id "babric-loom-extension" version "1.9-SNAPSHOT" apply false
 	id "maven-publish"
-	id "babric-loom" version "1.4-SNAPSHOT" apply false
 }
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
 
 def ENV = System.getenv()
-
-version = rootProject.mod_version
-
-def getSubprojectVersion(project) {
-	return rootProject.version
-}
 
 def moduleDependencies(project, List<String> depNames) {
 	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'namedElements') }
@@ -29,28 +19,13 @@ def moduleDependencies(project, List<String> depNames) {
 }
 
 allprojects {
-	group = rootProject.maven_group
-
 	apply plugin: "maven-publish"
 	apply plugin: "java-library"
-	//apply plugin: "checkstyle"
-	apply plugin: "babric-loom"
+	apply plugin: "fabric-loom"
+	apply plugin: "babric-loom-extension"
 
-	tasks.withType(JavaCompile).configureEach {
-		it.options.release = 8
-	}
-
-	java {
-		// Must be added before the split source sets are setup.
-		withSourcesJar()
-	}
-
-	loom {
-		gluedMinecraftJar()
-		customMinecraftManifest.set("https://babric.github.io/manifest-polyfill/${minecraft_version}.json")
-		intermediaryUrl.set("https://maven.glass-launcher.net/babric/babric/intermediary/%1\$s/intermediary-%1\$s-v2.jar")
-		enableTransitiveAccessWideners = true
-	}
+	version = project.mod_version
+	group = project.maven_group
 
 	repositories {
 		mavenCentral()
@@ -104,16 +79,14 @@ allprojects {
 		}
 	}
 
-	allprojects.each { p ->
-		loom.mods.register(p.name) {
-			sourceSet p.sourceSets.main
-		}
+	loom {
+		enableTransitiveAccessWideners = true
 	}
 
 	dependencies {
 		minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
 		mappings "net.legacyfabric:beta-yarn:${rootProject.minecraft_version}+build.${rootProject.mappings}:v2"
-		modApi "babric:fabric-loader:${rootProject.loader_version}"
+		modApi "net.fabricmc:fabric-loader:${rootProject.loader_version}"
 
 		modApi("net.legacyfabric.legacy-fabric-api:legacy-fabric-logger-api-v1:${rootProject.lfapi_version}")
 
@@ -131,12 +104,12 @@ allprojects {
 //		modRuntimeOnly(group: "remapped.client", name: "reforgedsapi-client")
 //		modRuntimeOnly(group: "remapped.server", name: "minecraftforge-server", version: "1.0.7-20110907")
 		// Todo
-		implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
+//		implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
 		implementation("com.github.thecatcore.CursedMixinExtensions:fabric:1.0.0")
 		implementation("com.github.thecatcore:WFVAIO:1.1.0")
 	}
 
-	tasks.withType(ProcessResources).configureEach {
+	processResources {
 		inputs.property "version", project.version
 
 		filesMatching("fabric.mod.json") {
@@ -144,20 +117,16 @@ allprojects {
 		}
 	}
 
-	tasks.withType(AbstractArchiveTask) {
-		preserveFileTimestamps = false
-		reproducibleFileOrder = true
+	tasks.withType(JavaCompile).configureEach {
+		it.options.encoding = "UTF-8"
+		it.options.release = 8
+		sourceCompatibility = JavaVersion.VERSION_1_8
+		targetCompatibility = JavaVersion.VERSION_1_8
 	}
 
-	publishing {
-		publications {
-			mavenJava(MavenPublication) {
-				from components.java
-			}
-		}
-
-		repositories {
-		}
+	java {
+		// Must be added before the split source sets are setup.
+		withSourcesJar()
 	}
 
 	tasks.withType(JavaCompile) {
@@ -165,18 +134,8 @@ allprojects {
 	}
 }
 
-subprojects {
-	dependencies {
-		if (project.name != "apron") {
-			api(project.dependencies.project(path: ":apron", configuration: 'namedElements'))
-		}
-	}
-
-	javadoc.enabled = false
-}
-
-subprojects.each {
-	remapJar.dependsOn("${it.path}:remapJar")
+base {
+	archivesName = project.archives_base_name
 }
 
 dependencies {
@@ -206,9 +165,19 @@ dependencies {
 //	}
 }
 
+subprojects {
+	dependencies {
+		if (project.name != "apron") {
+			api(project.dependencies.project(path: ":apron", configuration: 'namedElements'))
+		}
+	}
+
+	javadoc.enabled = false
+}
+
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}" }
+		rename { "${it}_${base.archivesName.get()}" }
 	}
 	from("FORGE_LICENSE")
 	from("PAULSCODE_LICENSE")
@@ -223,5 +192,20 @@ remapJar {
 			// Include the jar from the sub project.
 			nestedJars.from project("${it.path}").tasks.getByName("remapJar")
 		}
+	}
+}
+
+// configure the maven publication
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+
+	// select the repositories you want to publish to
+	repositories {
+		// uncomment to publish to the local maven
+		// mavenLocal()
 	}
 }

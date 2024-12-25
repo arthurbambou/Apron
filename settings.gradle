@@ -8,12 +8,7 @@ pluginManagement {
 			name 'Babric'
 			url 'https://maven.glass-launcher.net/babric'
 		}
-		mavenCentral()
 		gradlePluginPortal()
-		maven {
-			name 'JitPack'
-			url 'https://jitpack.io'
-		}
 	}
 }
 

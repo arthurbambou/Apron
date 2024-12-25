@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import io.github.betterthanupdates.apron.impl.IntegerPair;
 import itemspriteapi.IItemTexture;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.tinyremapper.extension.mixin.common.data.Pair;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
@@ -34,17 +34,17 @@ import io.github.betterthanupdates.forge.ForgeClientReflection;
 @Legacy
 public class ForgeHooksClient {
 	static LinkedList<IHighlightHandler> highlightHandlers = new LinkedList<>();
-	static HashMap<Pair<Integer, Integer>, Tessellator> tessellators = new HashMap<>();
+	static HashMap<IntegerPair, Tessellator> tessellators = new HashMap<>();
 	static HashMap<String, Integer> textures = new HashMap<>();
 	static boolean inWorld = false;
 	/**
 	 * Set of tex/sub pairs.
 	 */
-	static HashSet<Pair<Integer, Integer>> renderTextureTest = new HashSet<>();
+	static HashSet<IntegerPair> renderTextureTest = new HashSet<>();
 	/**
 	 * List of tex/sub pairs.
 	 */
-	static ArrayList<Pair<Integer, Integer>> renderTextureList = new ArrayList<>();
+	static ArrayList<IntegerPair> renderTextureList = new ArrayList<>();
 	static int renderPass = -1;
 
 	public ForgeHooksClient() {
@@ -70,7 +70,7 @@ public class ForgeHooksClient {
 	}
 
 	protected static void bindTessellator(int textureId, int sub) {
-		Pair<Integer, Integer> key = Pair.of(textureId, sub);
+		IntegerPair key = new IntegerPair(textureId, sub);
 		Tessellator tessellator;
 
 		if (!tessellators.containsKey(key)) {
@@ -133,7 +133,7 @@ public class ForgeHooksClient {
 		renderPass = -1;
 		inWorld = false;
 
-		for (Pair<Integer, Integer> l : renderTextureList) {
+		for (IntegerPair l : renderTextureList) {
 			GL11.glBindTexture(3553, l.first());
 			Tessellator tessellator = tessellators.get(l);
 			tessellator.tessellate();

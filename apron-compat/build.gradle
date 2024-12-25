@@ -1,5 +1,3 @@
-version = getSubprojectVersion(this)
-
 loom {
 	accessWidenerPath = file("src/main/resources/apron-compat.accesswidener")
 }

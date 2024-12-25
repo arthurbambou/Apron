@@ -1,6 +1,6 @@
 package io.github.betterthanupdates.modloader.mixin;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import modloader.ModLoader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

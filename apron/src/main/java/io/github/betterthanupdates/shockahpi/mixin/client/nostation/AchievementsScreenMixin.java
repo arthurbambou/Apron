@@ -3,7 +3,7 @@ package io.github.betterthanupdates.shockahpi.mixin.client.nostation;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
