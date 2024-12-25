@@ -7,17 +7,16 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.RailBlock;
-import net.minecraft.client.render.block.BlockRenderer;
-
+import net.minecraft.client.render.block.BlockRenderManager;
 import io.github.betterthanupdates.apron.stapi.ApronStAPICompat;
 
-@Mixin(BlockRenderer.class)
+@Mixin(BlockRenderManager.class)
 public class BlockRendererMixin {
 	@ModifyVariable(
 			method = {"renderBottomFace", "renderTopFace", "renderEastFace", "renderWestFace", "renderNorthFace", "renderSouthFace"},
 			at = @At(
 					value = "FIELD",
-					target = "Lnet/minecraft/client/render/block/BlockRenderer;textureOverride:I",
+					target = "Lnet/minecraft/client/render/block/BlockRenderManager;textureOverride:I",
 					opcode = 180,
 					ordinal = 1,
 					shift = At.Shift.BY,
@@ -30,10 +29,10 @@ public class BlockRendererMixin {
 	}
 
 	@ModifyVariable(
-			method = {"renderTorchTilted", "method_56", "method_47", "renderFire", "renderLadder"},
+			method = {"renderTiltedTorch", "renderCrop(Lnet/minecraft/block/Block;IDDD)V", "renderCross(Lnet/minecraft/block/Block;IDDD)V", "renderFire", "renderLadder"},
 			at = @At(
 					value = "FIELD",
-					target = "Lnet/minecraft/client/render/block/BlockRenderer;textureOverride:I",
+					target = "Lnet/minecraft/client/render/block/BlockRenderManager;textureOverride:I",
 					opcode = 180,
 					ordinal = 1,
 					shift = At.Shift.BY,
@@ -46,10 +45,10 @@ public class BlockRendererMixin {
 	}
 
 	@ModifyVariable(
-			method = {"method_56", "method_47"},
+			method = {"renderCrop(Lnet/minecraft/block/Block;IDDD)V", "renderCross(Lnet/minecraft/block/Block;IDDD)V"},
 			at = @At(
 					value = "FIELD",
-					target = "Lnet/minecraft/client/render/block/BlockRenderer;textureOverride:I",
+					target = "Lnet/minecraft/client/render/block/BlockRenderManager;textureOverride:I",
 					opcode = 180,
 					ordinal = 1,
 					shift = At.Shift.BY,
@@ -65,7 +64,7 @@ public class BlockRendererMixin {
 			method = {"renderFire", "renderLadder"},
 			at = @At(
 					value = "FIELD",
-					target = "Lnet/minecraft/client/render/block/BlockRenderer;textureOverride:I",
+					target = "Lnet/minecraft/client/render/block/BlockRenderManager;textureOverride:I",
 					opcode = 180,
 					ordinal = 1,
 					shift = At.Shift.BY,
@@ -78,10 +77,10 @@ public class BlockRendererMixin {
 	}
 
 	@ModifyVariable(
-			method = {"renderRails"},
+			method = {"renderRail"},
 			at = @At(
 					value = "FIELD",
-					target = "Lnet/minecraft/client/render/block/BlockRenderer;textureOverride:I",
+					target = "Lnet/minecraft/client/render/block/BlockRenderManager;textureOverride:I",
 					opcode = 180,
 					ordinal = 1,
 					shift = At.Shift.BY,
@@ -97,7 +96,7 @@ public class BlockRendererMixin {
 			method = {"renderRedstoneDust"},
 			at = @At(
 					value = "FIELD",
-					target = "Lnet/minecraft/client/render/block/BlockRenderer;textureOverride:I",
+					target = "Lnet/minecraft/client/render/block/BlockRenderManager;textureOverride:I",
 					opcode = 180,
 					ordinal = 1,
 					shift = At.Shift.BY,

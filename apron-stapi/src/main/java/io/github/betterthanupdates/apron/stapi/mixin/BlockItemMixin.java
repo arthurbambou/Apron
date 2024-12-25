@@ -20,13 +20,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class BlockItemMixin extends Item {
 
 	@Shadow
-	private int blockId;
+	private int itemId;
 
 	public BlockItemMixin(int i) {
 		super(i);
 	}
 
-	@ModifyVariable(method = "<init>", argsOnly = true, at= @At(value = "FIELD", target = "Lnet/minecraft/item/BlockItem;blockId:I"))
+	@ModifyVariable(method = "<init>", argsOnly = true, at= @At(value = "FIELD", target = "Lnet/minecraft/item/BlockItem;itemId:I"))
 	private int fixBlockId(int i) {
 		if (ApronStAPICompat.isModLoaderTime()) {
 			ModContents modContents = ApronStAPICompat.getModContent();
@@ -51,7 +51,7 @@ public class BlockItemMixin extends Item {
 			Block block = BlockRegistry.INSTANCE.get(id);
 
 			if (block != null) {
-				if (this.blockId != block.id) {
+				if (this.itemId != block.id) {
 					((StationFlatteningBlockItem) this).setBlock(block);
 				}
 			} else if (id.path.endsWith("_")) {
@@ -60,7 +60,7 @@ public class BlockItemMixin extends Item {
 				block = BlockRegistry.INSTANCE.get(fixId);
 
 				if (block != null) {
-					if (this.blockId != block.id) {
+					if (this.itemId != block.id) {
 						((StationFlatteningBlockItem) this).setBlock(block);
 					}
 				}

@@ -5,8 +5,8 @@ import io.github.betterthanupdates.apron.stapi.hmi.HMICompat;
 import modloader.ModLoader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.stat.achievement.Achievements;
-
+import net.minecraft.achievement.Achievement;
+import net.minecraft.achievement.Achievements;
 import net.modificationstation.stationapi.api.client.gui.screen.achievement.AchievementPage;
 import net.modificationstation.stationapi.api.registry.BlockRegistry;
 import net.modificationstation.stationapi.api.registry.DimensionContainer;
@@ -22,9 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import net.minecraft.stat.achievement.Achievement;
-
 import io.github.betterthanupdates.apron.stapi.mixin.AchievementPageAccessor;
 
 import static net.modificationstation.stationapi.api.vanillafix.datafixer.schema.StationFlatteningItemStackSchema.putItem;
@@ -205,7 +202,7 @@ public class LoadingDoneListener implements Runnable {
 				registeredAchievements.addAll(page.getAchievements());
 			}
 
-			for (Achievement achievement : (List<Achievement>) Achievements.achievements) {
+			for (Achievement achievement : (List<Achievement>) Achievements.ACHIEVEMENTS) {
 				if (!registeredAchievements.contains(achievement)) {
 					for (AchievementPage page : AchievementPageAccessor.getPAGES()) {
 						if (page.name().equals("station-achievements-v0:minecraft")) {
@@ -216,7 +213,7 @@ public class LoadingDoneListener implements Runnable {
 			}
 
 			if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-				ModLoader.getMinecraftInstance().textureManager.reloadTexturesFromTexturePack();
+				ModLoader.getMinecraftInstance().textureManager.method_1096();
 			}
 
 			if (FabricLoader.getInstance().isModLoaded("hmifabric")) {

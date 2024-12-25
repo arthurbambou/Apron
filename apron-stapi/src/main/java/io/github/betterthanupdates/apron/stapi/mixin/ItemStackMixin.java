@@ -4,7 +4,7 @@ import io.github.betterthanupdates.apron.stapi.LoadingDoneListener;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.io.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.modificationstation.stationapi.api.registry.BlockRegistry;
 import net.modificationstation.stationapi.api.registry.ItemRegistry;
 import net.modificationstation.stationapi.api.util.Identifier;
@@ -23,22 +23,22 @@ public class ItemStackMixin {
 
 	@Inject(method = "<init>(III)V", at = @At("RETURN"))
 	private void fixId(int j, int k, int par3, CallbackInfo ci) {
-		if (ItemRegistry.INSTANCE.get(this.itemId) == null && this.itemId < Block.BY_ID.length && Block.BY_ID[this.itemId] != null) {
-			this.apron$fixId(Block.BY_ID[this.itemId]);
+		if (ItemRegistry.INSTANCE.get(this.itemId) == null && this.itemId < Block.BLOCKS.length && Block.BLOCKS[this.itemId] != null) {
+			this.apron$fixId(Block.BLOCKS[this.itemId]);
 		}
 	}
 
-	@Inject(method = "<init>(Lnet/minecraft/util/io/CompoundTag;)V", at = @At("RETURN"))
-	private void fixId(CompoundTag par1, CallbackInfo ci) {
-		if (ItemRegistry.INSTANCE.get(this.itemId) == null && this.itemId < Block.BY_ID.length && Block.BY_ID[this.itemId] != null) {
-			this.apron$fixId(Block.BY_ID[this.itemId]);
+	@Inject(method = "<init>(Lnet/minecraft/nbt/NbtCompound;)V", at = @At("RETURN"))
+	private void fixId(NbtCompound par1, CallbackInfo ci) {
+		if (ItemRegistry.INSTANCE.get(this.itemId) == null && this.itemId < Block.BLOCKS.length && Block.BLOCKS[this.itemId] != null) {
+			this.apron$fixId(Block.BLOCKS[this.itemId]);
 		}
 	}
 
-	@Inject(method = "writeNBT", at = @At("HEAD"))
-	private void fixNbtId(CompoundTag par1, CallbackInfoReturnable<CompoundTag> cir) {
+	@Inject(method = "writeNbt", at = @At("HEAD"))
+	private void fixNbtId(NbtCompound par1, CallbackInfoReturnable<NbtCompound> cir) {
 		if (ItemRegistry.INSTANCE.get(this.itemId) == null) {
-			if (this.itemId < Block.BY_ID.length && Block.BY_ID[this.itemId] != null) this.apron$fixId(Block.BY_ID[this.itemId]);
+			if (this.itemId < Block.BLOCKS.length && Block.BLOCKS[this.itemId] != null) this.apron$fixId(Block.BLOCKS[this.itemId]);
 		}
 	}
 

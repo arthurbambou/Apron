@@ -3,11 +3,9 @@ package io.github.betterthanupdates.apron.stapi.dataconverter.stonewall;
 import java.util.Properties;
 
 import com.mojang.serialization.Dynamic;
+import net.minecraft.nbt.NbtCompound;
 import net.modificationstation.stationapi.api.nbt.NbtOps;
 import net.modificationstation.stationapi.api.util.Namespace;
-
-import net.minecraft.util.io.CompoundTag;
-
 import io.github.betterthanupdates.apron.stapi.dataconverter.ModDatabase;
 
 public class StoneWallDatabase extends ModDatabase {
@@ -29,12 +27,12 @@ public class StoneWallDatabase extends ModDatabase {
 	@Override
 	public Dynamic<?> blockState(String id, Dynamic<?> dynamic) {
 		if (this.hasBlockOld(id)) {
-			CompoundTag tag = new CompoundTag();
-			tag.put("east", "none");
-			tag.put("north", "none");
-			tag.put("west", "none");
-			tag.put("south", "none");
-			tag.put("up", false);
+			NbtCompound tag = new NbtCompound();
+			tag.putString("east", "none");
+			tag.putString("north", "none");
+			tag.putString("west", "none");
+			tag.putString("south", "none");
+			tag.putBoolean("up", false);
 			dynamic = dynamic.set("Properties", new Dynamic<>(NbtOps.INSTANCE, tag));
 		}
 

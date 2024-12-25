@@ -5,7 +5,7 @@ import buildcraft.transport.RenderPipe;
 import io.github.betterthanupdates.apron.stapi.ApronStAPICompat;
 import net.minecraft.block.Block;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.block.BlockRenderer;
+import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = RenderPipe.class, remap = false)
 public class RenderPipeMixin {
 	@Shadow(remap = false)
-	private BlockRenderer renderBlocks;
+	private BlockRenderManager renderBlocks;
 
 	/**
 	 * @author CatCore
@@ -56,11 +56,11 @@ public class RenderPipeMixin {
 			SpriteAtlasTexture atlas = StationRenderAPI.getBakedModelManager().getAtlas(Atlases.GAME_ATLAS_TEXTURE);
 			atlas.bindTexture();
 
-			if (item instanceof BlockItem blockItem && BlockRenderer.method_42(blockItem.getBlock().getRenderType())) {
+			if (item instanceof BlockItem blockItem && BlockRenderManager.isSideLit(blockItem.getBlock().getRenderType())) {
 				GL11.glTranslatef(0.0F, 0.25F, 0.0F);
 
 				float f4 = 0.25F;
-				if (!blockItem.getBlock().isFullCube() && blockItem.getBlock() != Block.STONE_SLAB) {
+				if (!blockItem.getBlock().isFullCube() && blockItem.getBlock() != Block.SLAB) {
 					f4 = 0.5F;
 				}
 
@@ -68,14 +68,14 @@ public class RenderPipeMixin {
 
 				for(int j = 0; j < byte0; ++j) {
 					GL11.glPushMatrix();
-					this.renderBlocks.method_48(blockItem.getBlock(), itemstack.getMeta(), (float)brigntess);
+					this.renderBlocks.render(blockItem.getBlock(), itemstack.getDamage(), (float)brigntess);
 					GL11.glPopMatrix();
 				}
 			} else {
 				GL11.glTranslatef(0.0F, 0.1F, 0.0F);
 				GL11.glScalef(0.5F, 0.5F, 0.5F);
 
-				int i = ApronStAPICompat.fixItemTexture(itemstack.getItemTexture(), item);
+				int i = ApronStAPICompat.fixItemTexture(itemstack.getTextureId(), item);
 				Identifier textureId = item.getAtlas().getTexture(i).getId();
 				Sprite sprite = atlas.getSprite(
 						textureId
@@ -88,14 +88,14 @@ public class RenderPipeMixin {
 
 				for(int k = 0; k < byte0; ++k) {
 					GL11.glPushMatrix();
-					GL11.glRotatef(180.0F - EntityRenderDispatcher.INSTANCE.field_2497, 0.0F, 1.0F, 0.0F);
-					tessellator.start();
-					tessellator.setNormal(0.0F, 1.0F, 0.0F);
+					GL11.glRotatef(180.0F - EntityRenderDispatcher.field_2489.field_2497, 0.0F, 1.0F, 0.0F);
+					tessellator.startQuads();
+					tessellator.normal(0.0F, 1.0F, 0.0F);
 					tessellator.vertex((double)(0.0F - f13), (double)(0.0F - f14), 0.0, (double)sprite.getMinU(), (double)sprite.getMaxV());
 					tessellator.vertex((double)(f12 - f13), (double)(0.0F - f14), 0.0, (double)sprite.getMaxU(), (double)sprite.getMaxV());
 					tessellator.vertex((double)(f12 - f13), (double)(1.0F - f14), 0.0, (double)sprite.getMaxU(), (double)sprite.getMinV());
 					tessellator.vertex((double)(0.0F - f13), (double)(1.0F - f14), 0.0, (double)sprite.getMinU(), (double)sprite.getMinV());
-					tessellator.tessellate();
+					tessellator.draw();
 					GL11.glPopMatrix();
 				}
 			}

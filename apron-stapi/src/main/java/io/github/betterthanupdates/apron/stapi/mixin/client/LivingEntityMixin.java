@@ -16,7 +16,7 @@ import io.github.betterthanupdates.apron.stapi.ApronStAPICompat;
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
 	@Environment(EnvType.CLIENT)
-	@Inject(method = "getHeldItemTexture", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "method_917", at = @At("RETURN"), cancellable = true)
 	private void apron$fixItemTextureIndex(ItemStack par1, CallbackInfoReturnable<Integer> cir) {
 		Item item = par1.getItem();
 		int result = cir.getReturnValue();

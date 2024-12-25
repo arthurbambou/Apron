@@ -85,7 +85,10 @@ allprojects {
 
 	dependencies {
 		minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-		mappings "net.legacyfabric:beta-yarn:${rootProject.minecraft_version}+build.${rootProject.mappings}:v2"
+		mappings loom.layered {
+			it.mappings "net.glasslauncher:biny:${rootProject.mappings}:v2"
+//			it.mappings file("${rootProject.projectDir}/mappings/mod-mappings.tiny")
+		}
 		modApi "net.fabricmc:fabric-loader:${rootProject.loader_version}"
 
 		modApi("net.legacyfabric.legacy-fabric-api:legacy-fabric-logger-api-v1:${rootProject.lfapi_version}")

@@ -14,18 +14,18 @@ import io.github.betterthanupdates.apron.stapi.ApronStAPICompat;
 
 @Mixin(ArsenicItemRenderer.class)
 public class ArsenicItemRendererMixin {
-	@Redirect(method = "renderVanilla", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItemTexture()I"))
+	@Redirect(method = "renderVanilla", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getTextureId()I"))
 	private int apron$fixItemTextureIndex(ItemStack instance) {
-		int oldIndex = instance.getItemTexture();
+		int oldIndex = instance.getTextureId();
 		Item item = instance.getItem();
 
 		return ApronStAPICompat.fixItemTexture(oldIndex, item);
 	}
 
-	@ModifyVariable(method = "renderItemOnGui(Lnet/minecraft/client/render/TextRenderer;Lnet/minecraft/client/texture/TextureManager;IIIII)V",
+	@ModifyVariable(method = "renderItemOnGui(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/client/texture/TextureManager;IIIII)V",
 			argsOnly = true, at = @At("HEAD"), ordinal = 2)
 	private int apron$fixItemTextureIndex(int old, @Local(argsOnly = true, ordinal = 0) int id) {
-		Item item = Item.byId[id];
+		Item item = Item.ITEMS[id];
 
 		return ApronStAPICompat.fixItemTexture(old, item);
 	}

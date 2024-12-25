@@ -2,8 +2,8 @@ package io.github.betterthanupdates.apron.stapi.mixin.hmi;
 
 import io.github.betterthanupdates.apron.stapi.hmi.HMITab;
 import net.glasslauncher.hmifabric.tabs.TabCrafting;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeRegistry;
+import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.recipe.CraftingRecipeManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -20,12 +20,12 @@ public abstract class TabCraftingMixin implements HMITab {
 
 	@Override
 	public void apron$updateRecipeList() {
-		this.recipes = new ArrayList<Object>(RecipeRegistry.getInstance().getRecipes());
-		this.recipesComplete = new ArrayList<Object>(RecipeRegistry.getInstance().getRecipes());
+		this.recipes = new ArrayList<Object>(CraftingRecipeManager.getInstance().getRecipes());
+		this.recipesComplete = new ArrayList<Object>(CraftingRecipeManager.getInstance().getRecipes());
 
 		for (int i = 0; i < recipesComplete.size(); i++) {
 			//Removes recipes that are too big and ruin everything @flans mod
-			if (((Recipe) recipesComplete.get(i)).getIngredientCount() > 9) {
+			if (((CraftingRecipe) recipesComplete.get(i)).getSize() > 9) {
 				recipesComplete.remove(i);
 				i -= 1;
 			}

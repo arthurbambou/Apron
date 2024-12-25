@@ -1,0 +1,5 @@
+tiny	2	0	intermediary	named
+c   hmi/GuiRecipeViewer hmi/GuiRecipeViewer
+    m   ()V	init    initModded
+c   betatweaks/gui/GuiImprovedChat betatweaks/gui/GuiImprovedChat
+    m   ()V	init    initModded

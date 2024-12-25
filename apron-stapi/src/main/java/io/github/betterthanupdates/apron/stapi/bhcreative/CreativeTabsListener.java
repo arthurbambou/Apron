@@ -61,8 +61,8 @@ public class CreativeTabsListener {
 				String translationKey = stack.getTranslationKey();
 
 				if (translationKeys.contains(translationKey)
-						|| TranslationStorage.getInstance().translateNameOrEmpty(translationKey).isEmpty()
-						|| (meta > 0 && !item.usesMeta())
+						|| TranslationStorage.getInstance().getClientTranslation(translationKey).isEmpty()
+						|| (meta > 0 && !item.hasSubtypes())
 				) break;
 
 				tab.addItem(stack);

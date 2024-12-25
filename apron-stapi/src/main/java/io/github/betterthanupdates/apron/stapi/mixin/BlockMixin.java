@@ -7,7 +7,7 @@ import io.github.betterthanupdates.stapi.StAPIBlock;
 import io.github.betterthanupdates.apron.stapi.ApronStAPICompat;
 import io.github.betterthanupdates.apron.stapi.ModContents;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
@@ -44,7 +44,7 @@ public abstract class BlockMixin implements StAPIBlock, StationFlatteningBlock, 
 	@Unique
 	private static int currentId = -1;
 
-	@ModifyVariable(method = "<init>(ILnet/minecraft/block/material/Material;)V", argsOnly = true, at = @At(value = "HEAD"))
+	@ModifyVariable(method = "<init>(ILnet/minecraft/block/Material;)V", argsOnly = true, at = @At(value = "HEAD"))
 	private static int modifyItemId(int i) {
 		if (ApronStAPICompat.isModLoaderTime()) {
 			ModContents currentMod = ApronStAPICompat.getModContent();
@@ -57,7 +57,7 @@ public abstract class BlockMixin implements StAPIBlock, StationFlatteningBlock, 
 		return i;
 	}
 
-	@Inject(method = "<init>(ILnet/minecraft/block/material/Material;)V", at = @At("RETURN"))
+	@Inject(method = "<init>(ILnet/minecraft/block/Material;)V", at = @At("RETURN"))
 	private void registerItemInstance(int arg, Material par2, CallbackInfo ci) {
 		if (ApronStAPICompat.isModLoaderTime()) {
 			ModContents currentMod = ApronStAPICompat.getModContent();
@@ -79,7 +79,7 @@ public abstract class BlockMixin implements StAPIBlock, StationFlatteningBlock, 
 		return -1;
 	}
 
-	@WrapOperation(method = "beforeDestroyedByExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;getDropId(ILjava/util/Random;)I"))
+	@WrapOperation(method = "dropStacks(Lnet/minecraft/world/World;IIIIF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;getDroppedItemId(ILjava/util/Random;)I"))
 	private int fixBlockDrop(Block instance, int i, Random random, Operation<Integer> original) {
 		int originalId = this.id;
 

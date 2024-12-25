@@ -1,5 +1,5 @@
 accessWidener	v1	named
 
-accessible field net/minecraft/client/render/block/BlockRenderer textureOverride I
+accessible field net/minecraft/client/render/block/BlockRenderManager textureOverride I
 accessible method net/minecraft/block/Block setHardness (F)Lnet/minecraft/block/Block;
-accessible method net/minecraft/block/Block setLightOpacity (I)Lnet/minecraft/block/Block;
+accessible method net/minecraft/block/Block setOpacity (I)Lnet/minecraft/block/Block;

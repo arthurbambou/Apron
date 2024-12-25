@@ -1,9 +1,9 @@
 package io.github.betterthanupdates.apron.stapi.mixin;
 
 import io.github.betterthanupdates.shockahpi.block.ShockAhPIPortalBlock;
-import net.minecraft.block.PortalBlock;
+import net.minecraft.block.NetherPortalBlock;
+import net.minecraft.class_467;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.NetherTeleporter;
 import net.modificationstation.stationapi.api.block.CustomPortal;
 import net.modificationstation.stationapi.api.registry.DimensionRegistry;
 import net.modificationstation.stationapi.api.util.Identifier;
@@ -17,7 +17,7 @@ import shockahpi.Loc;
 
 import java.util.Optional;
 
-@Mixin(PortalBlock.class)
+@Mixin(NetherPortalBlock.class)
 public abstract class PortalBlockMixin implements ShockAhPIPortalBlock, TeleportationManager {
 	@Override
 	public void switchDimension(PlayerEntity player) {
@@ -39,7 +39,7 @@ public abstract class PortalBlockMixin implements ShockAhPIPortalBlock, Teleport
 	}
 
 	private void sapi$stapi$teleportToShockAhPIDimension(PlayerEntity player, DimensionBase dimensionBase, Identifier dimId) {
-		NetherTeleporter teleporter = dimensionBase.getTeleporter();
+		class_467 teleporter = dimensionBase.getTeleporter();
 
 		if (teleporter == null) {
 			NetherPortalImpl.switchDimension(player);
