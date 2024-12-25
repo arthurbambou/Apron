@@ -1,17 +1,16 @@
 package playerapi;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.block.Material;
+import net.minecraft.block.entity.DispenserBlockEntity;
+import net.minecraft.block.entity.FurnaceBlockEntity;
+import net.minecraft.block.entity.SignBlockEntity;
+import net.minecraft.class_141;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.block.DispenserBlockEntity;
-import net.minecraft.entity.block.FurnaceBlockEntity;
-import net.minecraft.entity.block.SignBlockEntity;
+import net.minecraft.entity.player.ClientPlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.SleepStatus;
-import net.minecraft.util.io.CompoundTag;
-
+import net.minecraft.nbt.NbtCompound;
 import io.github.betterthanupdates.Legacy;
 
 /**
@@ -19,9 +18,9 @@ import io.github.betterthanupdates.Legacy;
  */
 @Legacy
 public abstract class PlayerBase {
-	public AbstractClientPlayerEntity player;
+	public ClientPlayerEntity player;
 
-	public PlayerBase(AbstractClientPlayerEntity p) {
+	public PlayerBase(ClientPlayerEntity p) {
 		this.player = p;
 	}
 
@@ -40,11 +39,11 @@ public abstract class PlayerBase {
 		return false;
 	}
 
-	public boolean writeEntityToNBT(CompoundTag tag) {
+	public boolean writeEntityToNBT(NbtCompound tag) {
 		return false;
 	}
 
-	public boolean readEntityFromNBT(CompoundTag tag) {
+	public boolean readEntityFromNBT(NbtCompound tag) {
 		return false;
 	}
 
@@ -100,7 +99,7 @@ public abstract class PlayerBase {
 		return false;
 	}
 
-	public SleepStatus sleepInBedAt(int x, int y, int z, SleepStatus status) {
+	public class_141 sleepInBedAt(int x, int y, int z, class_141 status) {
 		return status;
 	}
 

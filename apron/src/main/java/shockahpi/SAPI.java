@@ -9,13 +9,12 @@ import net.legacyfabric.fabric.api.logger.v1.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.spongepowered.include.com.google.common.collect.ImmutableList;
 import playerapi.PlayerAPI;
-
+import net.minecraft.achievement.Achievement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stat.achievement.Achievement;
 import net.minecraft.world.World;
 
 import io.github.betterthanupdates.Legacy;
@@ -76,17 +75,17 @@ public class SAPI {
 	}
 
 	public static void drop(World world, Loc loc, ItemStack itemstack) {
-		if (!world.isClient) {
+		if (!world.isRemote) {
 			for (int i = 0; i < itemstack.count; ++i) {
 				float f = 0.7F;
-				double d = (double) (world.rand.nextFloat() * f) + (double) (1.0F - f) * 0.5;
-				double d1 = (double) (world.rand.nextFloat() * f) + (double) (1.0F - f) * 0.5;
-				double d2 = (double) (world.rand.nextFloat() * f) + (double) (1.0F - f) * 0.5;
+				double d = (double) (world.field_214.nextFloat() * f) + (double) (1.0F - f) * 0.5;
+				double d1 = (double) (world.field_214.nextFloat() * f) + (double) (1.0F - f) * 0.5;
+				double d2 = (double) (world.field_214.nextFloat() * f) + (double) (1.0F - f) * 0.5;
 				ItemEntity entityitem = new ItemEntity(
-						world, (double) loc.x() + d, (double) loc.y() + d1, (double) loc.z() + d2, new ItemStack(itemstack.itemId, 1, itemstack.getMeta())
+						world, (double) loc.x() + d, (double) loc.y() + d1, (double) loc.z() + d2, new ItemStack(itemstack.itemId, 1, itemstack.getDamage())
 				);
 				entityitem.pickupDelay = 10;
-				world.spawnEntity(entityitem);
+				world.method_210(entityitem);
 			}
 		}
 	}
@@ -110,7 +109,7 @@ public class SAPI {
 	}
 
 	public static float reachGet() {
-		ItemStack itemstack = getMinecraftInstance().player.inventory.getHeldItem();
+		ItemStack itemstack = getMinecraftInstance().player.inventory.getSelectedItem();
 
 		for (IReach ireach : reaches) {
 			if (ireach.reachItemMatches(itemstack)) {
@@ -244,11 +243,11 @@ public class SAPI {
 		dngItems.add(new DungeonLoot(new ItemStack(Item.GOLDEN_APPLE)));
 
 		for (int l1 = 0; l1 < 50; ++l1) {
-			dngItems.add(new DungeonLoot(new ItemStack(Item.REDSTONE_DUST), 1, 4));
+			dngItems.add(new DungeonLoot(new ItemStack(Item.REDSTONE), 1, 4));
 		}
 
 		for (int i2 = 0; i2 < 5; ++i2) {
-			dngItems.add(new DungeonLoot(new ItemStack(Item.RECORD_13)));
+			dngItems.add(new DungeonLoot(new ItemStack(Item.RECORD_THIRTEEN)));
 		}
 
 		for (int j2 = 0; j2 < 5; ++j2) {

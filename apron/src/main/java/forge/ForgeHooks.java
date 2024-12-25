@@ -10,11 +10,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.class_141;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.SleepStatus;
 
 import io.github.betterthanupdates.Legacy;
 import io.github.betterthanupdates.forge.block.ForgeBlock;
@@ -51,9 +51,9 @@ public class ForgeHooks {
 		}
 	}
 
-	public static SleepStatus sleepInBedAt(PlayerEntity player, int x, int y, int z) {
+	public static class_141 sleepInBedAt(PlayerEntity player, int x, int y, int z) {
 		for (ISleepHandler handler : sleepHandlers) {
-			SleepStatus status = handler.sleepInBedAt(player, x, y, z);
+			class_141 status = handler.sleepInBedAt(player, x, y, z);
 
 			if (status != null) {
 				return status;
@@ -64,10 +64,10 @@ public class ForgeHooks {
 	}
 
 	public static boolean canHarvestBlock(Block block, PlayerEntity player, int meta) {
-		if (block.material.doesRequireTool()) {
+		if (block.material.method_898()) {
 			return true;
 		} else {
-			ItemStack itemstack = player.inventory.getHeldItem();
+			ItemStack itemstack = player.inventory.getSelectedItem();
 			return itemstack != null && canToolHarvestBlock(block, meta, itemstack);
 		}
 	}
@@ -76,7 +76,7 @@ public class ForgeHooks {
 		ForgeTool forgeTool = toolClasses.get(itemStack.itemId);
 
 		if (forgeTool == null) {
-			return itemStack.isEffectiveOn(block);
+			return itemStack.isSuitableFor(block);
 		} else {
 			String toolType = forgeTool.toolType;
 			int harvestLevel = forgeTool.harvestLevel;
@@ -87,9 +87,9 @@ public class ForgeHooks {
 				Integer blockHarvestLevel = toolHarvestLevels.get(new ToolEffectiveness(block.id, meta, toolType));
 
 				if (blockHarvestLevel == null) {
-					return itemStack.isEffectiveOn(block);
+					return itemStack.isSuitableFor(block);
 				} else {
-					return blockHarvestLevel <= harvestLevel && itemStack.isEffectiveOn(block);
+					return blockHarvestLevel <= harvestLevel && itemStack.isSuitableFor(block);
 				}
 			}
 		}
@@ -120,20 +120,20 @@ public class ForgeHooks {
 	static void initTools() {
 		if (!toolInit) {
 			toolInit = true;
-			MinecraftForge.setToolClass(Item.WOOD_PICKAXE, "pickaxe", 0);
+			MinecraftForge.setToolClass(Item.WOODEN_PICKAXE, "pickaxe", 0);
 			MinecraftForge.setToolClass(Item.STONE_PICKAXE, "pickaxe", 1);
 			MinecraftForge.setToolClass(Item.IRON_PICKAXE, "pickaxe", 2);
-			MinecraftForge.setToolClass(Item.GOLD_PICKAXE, "pickaxe", 0);
+			MinecraftForge.setToolClass(Item.GOLDEN_PICKAXE, "pickaxe", 0);
 			MinecraftForge.setToolClass(Item.DIAMOND_PICKAXE, "pickaxe", 3);
-			MinecraftForge.setToolClass(Item.WOOD_AXE, "axe", 0);
-			MinecraftForge.setToolClass(Item.STONE_AXE, "axe", 1);
+			MinecraftForge.setToolClass(Item.WOODEN_AXE, "axe", 0);
+			MinecraftForge.setToolClass(Item.STONE_HATCHET, "axe", 1);
 			MinecraftForge.setToolClass(Item.IRON_AXE, "axe", 2);
-			MinecraftForge.setToolClass(Item.GOLD_AXE, "axe", 0);
+			MinecraftForge.setToolClass(Item.GOLDEN_AXE, "axe", 0);
 			MinecraftForge.setToolClass(Item.DIAMOND_AXE, "axe", 3);
-			MinecraftForge.setToolClass(Item.WOOD_SHOVEL, "shovel", 0);
+			MinecraftForge.setToolClass(Item.WOODEN_SHOVEL, "shovel", 0);
 			MinecraftForge.setToolClass(Item.STONE_SHOVEL, "shovel", 1);
 			MinecraftForge.setToolClass(Item.IRON_SHOVEL, "shovel", 2);
-			MinecraftForge.setToolClass(Item.GOLD_SHOVEL, "shovel", 0);
+			MinecraftForge.setToolClass(Item.GOLDEN_SHOVEL, "shovel", 0);
 			MinecraftForge.setToolClass(Item.DIAMOND_SHOVEL, "shovel", 3);
 			MinecraftForge.setBlockHarvestLevel(Block.OBSIDIAN, "pickaxe", 3);
 			MinecraftForge.setBlockHarvestLevel(Block.DIAMOND_ORE, "pickaxe", 2);
@@ -142,17 +142,17 @@ public class ForgeHooks {
 			MinecraftForge.setBlockHarvestLevel(Block.GOLD_BLOCK, "pickaxe", 2);
 			MinecraftForge.setBlockHarvestLevel(Block.IRON_ORE, "pickaxe", 1);
 			MinecraftForge.setBlockHarvestLevel(Block.IRON_BLOCK, "pickaxe", 1);
-			MinecraftForge.setBlockHarvestLevel(Block.LAPIS_LAZULI_ORE, "pickaxe", 1);
-			MinecraftForge.setBlockHarvestLevel(Block.LAPIS_LAZULI_BLOCK, "pickaxe", 1);
+			MinecraftForge.setBlockHarvestLevel(Block.LAPIS_ORE, "pickaxe", 1);
+			MinecraftForge.setBlockHarvestLevel(Block.LAPIS_BLOCK, "pickaxe", 1);
 			MinecraftForge.setBlockHarvestLevel(Block.REDSTONE_ORE, "pickaxe", 2);
-			MinecraftForge.setBlockHarvestLevel(Block.REDSTONE_ORE_LIT, "pickaxe", 2);
+			MinecraftForge.setBlockHarvestLevel(Block.LIT_REDSTONE_ORE, "pickaxe", 2);
 			MinecraftForge.removeBlockEffectiveness(Block.REDSTONE_ORE, "pickaxe");
-			MinecraftForge.removeBlockEffectiveness(Block.REDSTONE_ORE_LIT, "pickaxe");
+			MinecraftForge.removeBlockEffectiveness(Block.LIT_REDSTONE_ORE, "pickaxe");
 
 			Block[] pickaxeEffectiveOn = new Block[] {
 				Block.COBBLESTONE,
-				Block.DOUBLE_STONE_SLAB,
-				Block.STONE_SLAB,
+				Block.DOUBLE_SLAB,
+				Block.SLAB,
 				Block.STONE,
 				Block.SANDSTONE,
 				Block.MOSSY_COBBLESTONE,
@@ -165,8 +165,8 @@ public class ForgeHooks {
 				Block.DIAMOND_BLOCK,
 				Block.ICE,
 				Block.NETHERRACK,
-				Block.LAPIS_LAZULI_ORE,
-				Block.LAPIS_LAZULI_BLOCK
+				Block.LAPIS_ORE,
+				Block.LAPIS_BLOCK
 			};
 
 			for (Block block : pickaxeEffectiveOn) {

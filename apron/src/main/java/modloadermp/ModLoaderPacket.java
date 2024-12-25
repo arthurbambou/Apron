@@ -10,16 +10,15 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.network.PacketHandler;
-import net.minecraft.packet.AbstractPacket;
-import net.minecraft.server.entity.player.ServerPlayerEntity;
-import net.minecraft.server.network.ServerPlayPacketHandler;
-
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.NetworkHandler;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import io.github.betterthanupdates.Legacy;
 import io.github.betterthanupdates.apron.api.ApronApi;
 
 @Legacy
-public class ModLoaderPacket extends AbstractPacket {
+public class ModLoaderPacket extends Packet {
 	private static final ApronApi APRON = ApronApi.getInstance();
 	private static final int MAX_DATA_LENGTH = 0xFFFF;
 
@@ -29,7 +28,7 @@ public class ModLoaderPacket extends AbstractPacket {
 	public float[] dataFloat = new float[0];
 	public String[] dataString = new String[0];
 	@Environment(EnvType.SERVER)
-	private static Map<PacketHandler, ServerPlayerEntity> playerMap;
+	private static Map<NetworkHandler, ServerPlayerEntity> playerMap;
 
 	static {
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
@@ -147,7 +146,7 @@ public class ModLoaderPacket extends AbstractPacket {
 	}
 
 	@Override
-	public void apply(PacketHandler netHandler) {
+	public void apply(NetworkHandler netHandler) {
 		if (APRON.isClient()) {
 			ModLoaderMp.HandleAllPackets(this);
 		} else {
@@ -155,8 +154,8 @@ public class ModLoaderPacket extends AbstractPacket {
 
 			if (playerMap.containsKey(netHandler)) {
 				player = playerMap.get(netHandler);
-			} else if (netHandler instanceof ServerPlayPacketHandler) {
-				player = ((ServerPlayPacketHandler) netHandler).player;
+			} else if (netHandler instanceof ServerPlayNetworkHandler) {
+				player = ((ServerPlayNetworkHandler) netHandler).field_920;
 			}
 
 			ModLoaderMp.HandleAllPackets(this, player);
@@ -164,7 +163,7 @@ public class ModLoaderPacket extends AbstractPacket {
 	}
 
 	@Override
-	public int length() {
+	public int size() {
 		int i = 1;
 		++i;
 		i = ++i + (this.dataInt != null ? this.dataInt.length * 32 : 0);

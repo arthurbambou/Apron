@@ -11,12 +11,11 @@ import modoptionsapi.ModOptionsGuiController;
 import modoptionsapi.ModSliderOption;
 import modoptionsapi.ModTextOption;
 import org.lwjgl.input.Keyboard;
-
+import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.PauseScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widgets.OptionButtonWidget;
-import net.minecraft.client.options.GameOptions;
+import net.minecraft.client.gui.widget.OptionButtonWidget;
+import net.minecraft.client.option.GameOptions;
 
 public class ModMenu extends Screen {
 	protected ButtonWidget curButton = null;
@@ -35,7 +34,7 @@ public class ModMenu extends Screen {
 		this(guiscreen, "Mod Options List", false, false);
 	}
 
-	public ModMenu(PauseScreen guiscreen, String name, boolean mult) {
+	public ModMenu(GameMenuScreen guiscreen, String name, boolean mult) {
 		this(guiscreen, "World Specific Mod Options", true, mult);
 		this.worldName = name;
 	}
@@ -165,7 +164,7 @@ public class ModMenu extends Screen {
 
 	public void render(int i, int j, float f) {
 		this.renderBackground();
-		this.drawTextWithShadowCentred(this.textRenderer, this.screenTitle, this.width / 2, 20, 16777215);
+		this.drawCenteredTextWithShadow(this.textRenderer, this.screenTitle, this.width / 2, 20, 16777215);
 
 		if (this.sliderMiddle == -1) {
 			this.setInitialSlider();
@@ -199,12 +198,12 @@ public class ModMenu extends Screen {
 				btn.y = y - contentBottom;
 
 				if (btn.y > bottom && btn.y + 20 < top) {
-					btn.render(this.client, i, j);
+					btn.render(this.minecraft, i, j);
 				}
 
 				btn.y = y;
 			} else {
-				btn.render(this.client, i, j);
+				btn.render(this.minecraft, i, j);
 			}
 		}
 	}
@@ -234,7 +233,7 @@ public class ModMenu extends Screen {
 
 				if (this.buttonPressed(guibutton, i, j, true)) {
 					this.altActionPerformed(guibutton);
-					this.client.soundHelper.playSound("random.click", 1.0F, 1.0F);
+					this.minecraft.soundManager.method_2009("random.click", 1.0F, 1.0F);
 					this.setCurrentButton(guibutton);
 				}
 			}
@@ -260,18 +259,18 @@ public class ModMenu extends Screen {
 			ModOptions modOp = ModOptionsAPI.getModOptions(guibutton.text);
 
 			if (this.worldMode) {
-				this.client.openScreen(new ModMenu(this, modOp, this.worldName, this.multiplayerWorld));
+				this.minecraft.setScreen(new ModMenu(this, modOp, this.worldName, this.multiplayerWorld));
 			} else {
-				this.client.openScreen(new ModMenu(this, modOp));
+				this.minecraft.setScreen(new ModMenu(this, modOp));
 			}
 		} else if (guibutton.id >= 100 || !(guibutton instanceof Slider)) {
 			if (guibutton.id > 100 && guibutton.id < 200) {
 				ModOptions modOp = this.modOptions.getSubOption(guibutton.text);
 
 				if (this.worldMode) {
-					this.client.openScreen(new ModMenu(this, modOp, this.worldName, this.multiplayerWorld));
+					this.minecraft.setScreen(new ModMenu(this, modOp, this.worldName, this.multiplayerWorld));
 				} else {
-					this.client.openScreen(new ModMenu(this, modOp));
+					this.minecraft.setScreen(new ModMenu(this, modOp));
 				}
 			} else if (guibutton.id < 100) {
 				this.optionButtonPressed(guibutton);
@@ -321,14 +320,14 @@ public class ModMenu extends Screen {
 
 	public void changeScreen(Screen screen) {
 		this.saveChanges();
-		this.client.openScreen(screen);
+		this.minecraft.setScreen(screen);
 
 		if (!(screen instanceof ModMenu)) {
 			Keyboard.enableRepeatEvents(false);
 		}
 
 		if (this.worldMode && screen == null) {
-			this.client.lockCursor();
+			this.minecraft.method_2133();
 		}
 	}
 
@@ -350,7 +349,7 @@ public class ModMenu extends Screen {
 		}
 
 		if (this.curButton != null) {
-			this.client.soundHelper.playSound("random.click", 1.0F, 1.0F);
+			this.minecraft.soundManager.method_2009("random.click", 1.0F, 1.0F);
 			this.buttonClicked(this.curButton);
 		}
 	}
@@ -371,15 +370,15 @@ public class ModMenu extends Screen {
 
 			if (btn.y > bottom && btn.y + 20 < top) {
 				if (btn instanceof Slider) {
-					flag = ((Slider) btn).altMousePressed(this.client, i, j, rightClick);
-				} else if (btn.isMouseOver(this.client, i, j)) {
+					flag = ((Slider) btn).altMousePressed(this.minecraft, i, j, rightClick);
+				} else if (btn.isMouseOver(this.minecraft, i, j)) {
 					flag = true;
 				}
 			}
 
 			btn.y = y;
 		} else {
-			flag = btn.isMouseOver(this.client, i, j);
+			flag = btn.isMouseOver(this.minecraft, i, j);
 		}
 
 		return flag;

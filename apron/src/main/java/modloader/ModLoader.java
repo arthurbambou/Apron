@@ -36,7 +36,6 @@ import java.util.zip.ZipInputStream;
 
 import javax.imageio.ImageIO;
 
-import fr.catcore.modremapperapi.remapping.RemapUtil;
 import io.github.betterthanupdates.apron.LifecycleUtils;
 import io.github.betterthanupdates.apron.ReflectionUtils;
 import io.github.betterthanupdates.stapi.StAPIBlock;
@@ -45,53 +44,52 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import net.fabricmc.loader.api.FabricLoader;
 import net.legacyfabric.fabric.api.logger.v1.Logger;
+import net.minecraft.class_238;
+import net.minecraft.class_288;
+import net.minecraft.class_303;
+import net.minecraft.class_336;
+import net.minecraft.class_359;
+import net.minecraft.class_447;
+import net.minecraft.class_51;
+import net.minecraft.class_538;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
-
+import net.minecraft.achievement.Achievement;
 import net.minecraft.block.Block;
-import net.minecraft.client.GameStartupError;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.StatEntity;
-import net.minecraft.client.TexturePackManager;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.options.KeyBinding;
-import net.minecraft.client.render.TextureBinder;
-import net.minecraft.client.render.block.BlockRenderer;
-import net.minecraft.client.render.entity.BlockEntityRenderDispatcher;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.block.BlockRenderManager;
+import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
+import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.PlayerRenderer;
-import net.minecraft.client.render.entity.block.BlockEntityRenderer;
+import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.resource.language.TranslationStorage;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.Session;
-import net.minecraft.container.Container;
-import net.minecraft.entity.BlockEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityEntry;
 import net.minecraft.entity.EntityRegistry;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.packet.play.OpenContainerS2CPacket;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeRegistry;
-import net.minecraft.recipe.SmeltingRecipeRegistry;
+import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.recipe.CraftingRecipeManager;
+import net.minecraft.recipe.SmeltingRecipeManager;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.entity.player.ServerPlayerEntity;
+import net.minecraft.stat.ItemOrBlockStat;
 import net.minecraft.stat.Stats;
-import net.minecraft.stat.achievement.Achievement;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.source.NetherWorldSource;
-import net.minecraft.world.source.OverworldWorldSource;
-import net.minecraft.world.source.WorldSource;
 
 import io.github.betterthanupdates.Legacy;
 import io.github.betterthanupdates.apron.Apron;
@@ -105,7 +103,7 @@ public class ModLoader {
 	static final ApronApi APRON = ApronApi.getInstance();
 
 	@Environment(EnvType.CLIENT)
-	private static List<TextureBinder> ANIM_LIST;
+	private static List<class_336> ANIM_LIST;
 	@Environment(EnvType.CLIENT)
 	private static Map<Integer, BaseMod> BLOCK_MODELS;
 	@Environment(EnvType.CLIENT)
@@ -164,8 +162,8 @@ public class ModLoader {
 	@SuppressWarnings("unused")
 	public static void AddAchievementDesc(Achievement achievement, String name, String description) {
 		try {
-			if (achievement.name.contains(".")) {
-				String[] split = achievement.name.split("\\.");
+			if (achievement.stringId.contains(".")) {
+				String[] split = achievement.stringId.split("\\.");
 
 				if (split.length == 2) {
 					String key = split[1];
@@ -175,15 +173,15 @@ public class ModLoader {
 						AddLocalization("achievement." + key + ".desc", description);
 					}
 
-					achievement.name = APRON.translate("achievement." + key);
-					achievement.description = APRON.translate("achievement." + key + ".desc");
+					achievement.stringId = APRON.translate("achievement." + key);
+					achievement.translationKey = APRON.translate("achievement." + key + ".desc");
 				} else {
-					achievement.name = name;
-					achievement.description = description;
+					achievement.stringId = name;
+					achievement.translationKey = description;
 				}
 			} else {
-				achievement.name = name;
-				achievement.description = description;
+				achievement.stringId = name;
+				achievement.translationKey = description;
 			}
 		} catch (IllegalArgumentException | SecurityException e) {
 			MOD_LOGGER.throwing("ModLoader", "AddAchievementDesc", e);
@@ -237,11 +235,11 @@ public class ModLoader {
 	 * @param textureBinder animation instance to register
 	 */
 	@Environment(EnvType.CLIENT)
-	public static void addAnimation(TextureBinder textureBinder) {
+	public static void addAnimation(class_336 textureBinder) {
 		LOGGER.debug("Adding animation " + textureBinder.toString());
 
-		for (TextureBinder oldAnim : ANIM_LIST) {
-			if (oldAnim.renderMode == textureBinder.renderMode && oldAnim.index == textureBinder.index) {
+		for (class_336 oldAnim : ANIM_LIST) {
+			if (oldAnim.field_1416 == textureBinder.field_1416 && oldAnim.field_1412 == textureBinder.field_1412) {
 				ANIM_LIST.remove(textureBinder);
 				break;
 			}
@@ -260,7 +258,7 @@ public class ModLoader {
 	public static int AddArmor(String armor) {
 		if (APRON.isClient()) {
 			try {
-				String[] existingArmor = PlayerRenderer.armorTypes;
+				String[] existingArmor = PlayerEntityRenderer.armorTextureNames;
 				List<String> existingArmorList = Arrays.asList(existingArmor);
 				List<String> combinedList = new ArrayList<>(existingArmorList);
 
@@ -269,7 +267,7 @@ public class ModLoader {
 				}
 
 				int index = combinedList.indexOf(armor);
-				PlayerRenderer.armorTypes = combinedList.toArray(new String[0]);
+				PlayerEntityRenderer.armorTextureNames = combinedList.toArray(new String[0]);
 				return index;
 			} catch (IllegalArgumentException e) {
 				MOD_LOGGER.throwing("ModLoader", "AddArmor", e);
@@ -443,7 +441,7 @@ public class ModLoader {
 	 */
 	@SuppressWarnings("unused")
 	public static void AddRecipe(ItemStack output, Object... ingredients) {
-		RecipeRegistry.getInstance().addShapedRecipe(output, ingredients);
+		CraftingRecipeManager.getInstance().addShapedRecipe(output, ingredients);
 	}
 
 	/**
@@ -453,7 +451,7 @@ public class ModLoader {
 	 * @param ingredients ingredients for the recipe in any order
 	 */
 	public static void AddShapelessRecipe(ItemStack output, Object... ingredients) {
-		RecipeRegistry.getInstance().addShapelessRecipe(output, ingredients);
+		CraftingRecipeManager.getInstance().addShapelessRecipe(output, ingredients);
 	}
 
 	/**
@@ -463,7 +461,7 @@ public class ModLoader {
 	 * @param output the result of the furnace recipe
 	 */
 	public static void AddSmelting(int input, ItemStack output) {
-		SmeltingRecipeRegistry.getInstance().addSmeltingRecipe(input, output);
+		SmeltingRecipeManager.getInstance().addRecipe(input, output);
 	}
 
 	/**
@@ -473,7 +471,7 @@ public class ModLoader {
 	 * @param weightedProb chance of spawning for every try
 	 * @param spawnGroup   group to spawn the entity in
 	 */
-	public static void AddSpawn(Class<? extends LivingEntity> entityClass, int weightedProb, SpawnGroup spawnGroup) {
+	public static void AddSpawn(Class<? extends LivingEntity> entityClass, int weightedProb, class_238 spawnGroup) {
 		AddSpawn(entityClass, weightedProb, spawnGroup, (Biome[]) null);
 	}
 
@@ -486,7 +484,7 @@ public class ModLoader {
 	 * @param biomes       biomes to spawn the entity in
 	 */
 	@SuppressWarnings("unchecked")
-	public static void AddSpawn(Class<? extends LivingEntity> entityClass, int weightedProb, SpawnGroup spawnGroup, Biome... biomes) {
+	public static void AddSpawn(Class<? extends LivingEntity> entityClass, int weightedProb, class_238 spawnGroup, Biome... biomes) {
 		if (entityClass == null) {
 			throw new IllegalArgumentException("entityClass cannot be null");
 		} else if (spawnGroup == null) {
@@ -502,21 +500,21 @@ public class ModLoader {
 					continue;
 				}
 
-				List<EntityEntry> list = biome.getSpawnList(spawnGroup);
+				List<class_288> list = biome.method_789(spawnGroup);
 
 				if (list != null) {
 					boolean exists = false;
 
-					for (EntityEntry entry : list) {
-						if (entry.entryClass == entityClass) {
-							entry.rarity = weightedProb;
+					for (class_288 entry : list) {
+						if (entry.field_1142 == entityClass) {
+							entry.field_1143 = weightedProb;
 							exists = true;
 							break;
 						}
 					}
 
 					if (!exists) {
-						list.add(new EntityEntry(entityClass, weightedProb));
+						list.add(new class_288(entityClass, weightedProb));
 					}
 				}
 			}
@@ -530,7 +528,7 @@ public class ModLoader {
 	 * @param chance     Higher number means more likely to spawn
 	 * @param spawnGroup The spawn group to add entity to (Monster, Creature, or Water)
 	 */
-	public static void AddSpawn(String entityName, int chance, SpawnGroup spawnGroup) {
+	public static void AddSpawn(String entityName, int chance, class_238 spawnGroup) {
 		AddSpawn(entityName, chance, spawnGroup, (Biome[]) null);
 	}
 
@@ -543,8 +541,8 @@ public class ModLoader {
 	 * @param biomes       Array of biomes to add entity spawning to
 	 */
 	@SuppressWarnings("unchecked")
-	public static void AddSpawn(String entityName, int weightedProb, SpawnGroup spawnGroup, Biome... biomes) {
-		Class<? extends Entity> entityClass = (Class<? extends Entity>) EntityRegistry.STRING_ID_TO_CLASS.get(entityName);
+	public static void AddSpawn(String entityName, int weightedProb, class_238 spawnGroup, Biome... biomes) {
+		Class<? extends Entity> entityClass = (Class<? extends Entity>) EntityRegistry.idToClass.get(entityName);
 
 		if (entityClass != null && LivingEntity.class.isAssignableFrom(entityClass)) {
 			AddSpawn((Class<? extends LivingEntity>) entityClass, weightedProb, spawnGroup, biomes);
@@ -666,7 +664,7 @@ public class ModLoader {
 	 * Assigns a model id for blocks to use for the given mod.
 	 *
 	 * @param mod        to assign id to
-	 * @param full3DItem if true the item will have 3D model created from {@link #RenderInvBlock(BlockRenderer, Block, int, int)}, if false will be a flat image
+	 * @param full3DItem if true the item will have 3D model created from {@link #RenderInvBlock(BlockRenderManager, Block, int, int)}, if false will be a flat image
 	 * @return assigned block model id
 	 */
 	public static int getUniqueBlockModelID(BaseMod mod, boolean full3DItem) {
@@ -824,7 +822,7 @@ public class ModLoader {
 				Minecraft client = getMinecraftInstance();
 
 				if (client != null) {
-					client.options.keyBindings = RegisterAllKeys(client.options.keyBindings);
+					client.options.allKeys = RegisterAllKeys(client.options.allKeys);
 					client.options.load();
 				}
 			}
@@ -852,7 +850,7 @@ public class ModLoader {
 	private static void initGameRenderer() {
 		try {
 			Minecraft client = getMinecraftInstance();
-			if (client != null) client.gameRenderer = new EntityRendererProxy(client);
+			if (client != null) client.field_2818 = new EntityRendererProxy(client);
 		} catch (SecurityException | IllegalArgumentException e) {
 			MOD_LOGGER.throwing("ModLoader", "init", e);
 			ThrowException(e);
@@ -862,45 +860,45 @@ public class ModLoader {
 
 	@SuppressWarnings("unchecked")
 	private static void initStats() {
-		for (int id = 0; id < Block.BY_ID.length; ++id) {
-			if (!Stats.idMap.containsKey(16777216 + id) && Block.BY_ID[id] != null && Block.BY_ID[id].isStatEnabled()
-					&& id < Stats.mineBlock.length) {
-				String str = TranslationStorage.getInstance().translate("stat.mineBlock", Block.BY_ID[id].getTranslatedName());
-				Stats.mineBlock[id] = new StatEntity(16777216 + id, str, id).register();
-				Stats.blocksMinedList.add(Stats.mineBlock[id]);
+		for (int id = 0; id < Block.BLOCKS.length; ++id) {
+			if (!Stats.ID_TO_STAT.containsKey(16777216 + id) && Block.BLOCKS[id] != null && Block.BLOCKS[id].isTrackingStatistics()
+					&& id < Stats.MINE_BLOCK.length) {
+				String str = TranslationStorage.getInstance().get("stat.mineBlock", Block.BLOCKS[id].getTranslatedName());
+				Stats.MINE_BLOCK[id] = new ItemOrBlockStat(16777216 + id, str, id).addStat();
+				Stats.BLOCK_MINED_STATS.add(Stats.MINE_BLOCK[id]);
 			}
 		}
 
-		for (int id = 0; id < Item.byId.length; ++id) {
-			if (!Stats.idMap.containsKey(16908288 + id) && Item.byId[id] != null) {
-				String str = TranslationStorage.getInstance().translate("stat.useItem", Item.byId[id].getTranslatedName());
-				Stats.useItem[id] = new StatEntity(16908288 + id, str, id).register();
+		for (int id = 0; id < Item.ITEMS.length; ++id) {
+			if (!Stats.ID_TO_STAT.containsKey(16908288 + id) && Item.ITEMS[id] != null) {
+				String str = TranslationStorage.getInstance().get("stat.useItem", Item.ITEMS[id].getTranslatedName());
+				Stats.USED[id] = new ItemOrBlockStat(16908288 + id, str, id).addStat();
 
-				if (id >= Block.BY_ID.length) {
-					Stats.useStatList.add(Stats.useItem[id]);
+				if (id >= Block.BLOCKS.length) {
+					Stats.ITEM_STATS.add(Stats.USED[id]);
 				}
 			}
 
-			if (!Stats.idMap.containsKey(16973824 + id) && Item.byId[id] != null && Item.byId[id].hasDurability()) {
-				String str = TranslationStorage.getInstance().translate("stat.breakItem", Item.byId[id].getTranslatedName());
-				Stats.breakItem[id] = new StatEntity(16973824 + id, str, id).register();
+			if (!Stats.ID_TO_STAT.containsKey(16973824 + id) && Item.ITEMS[id] != null && Item.ITEMS[id].isDamageable()) {
+				String str = TranslationStorage.getInstance().get("stat.breakItem", Item.ITEMS[id].getTranslatedName());
+				Stats.BROKEN[id] = new ItemOrBlockStat(16973824 + id, str, id).addStat();
 			}
 		}
 
 		HashSet<Integer> idHashSet = new HashSet<>();
 
-		for (Object result : RecipeRegistry.getInstance().getRecipes()) {
-			idHashSet.add(((Recipe) result).getOutput().itemId);
+		for (Object result : CraftingRecipeManager.getInstance().getRecipes()) {
+			idHashSet.add(((CraftingRecipe) result).getOutput().itemId);
 		}
 
-		for (Object result : SmeltingRecipeRegistry.getInstance().getRecipes().values()) {
+		for (Object result : SmeltingRecipeManager.getInstance().getRecipes().values()) {
 			idHashSet.add(((ItemStack) result).itemId);
 		}
 
 		for (int id : idHashSet) {
-			if (!Stats.idMap.containsKey(16842752 + id) && Item.byId[id] != null) {
-				String str = TranslationStorage.getInstance().translate("stat.craftItem", Item.byId[id].getTranslatedName());
-				Stats.timesCrafted[id] = new StatEntity(16842752 + id, str, id).register();
+			if (!Stats.ID_TO_STAT.containsKey(16842752 + id) && Item.ITEMS[id] != null) {
+				String str = TranslationStorage.getInstance().get("stat.craftItem", Item.ITEMS[id].getTranslatedName());
+				Stats.CRAFTED[id] = new ItemOrBlockStat(16842752 + id, str, id).addStat();
 			}
 		}
 	}
@@ -980,11 +978,11 @@ public class ModLoader {
 	@Environment(EnvType.CLIENT)
 	public static BufferedImage loadImage(TextureManager textureManager, String path)
 			throws FileNotFoundException, Exception {
-		TexturePackManager packManager = textureManager.texturePackManager;
-		InputStream input = packManager.texturePack.getResourceAsStream(path);
+		class_303 packManager = textureManager.field_1256;
+		InputStream input = packManager.field_1175.method_976(path);
 
 		if (input == null && !path.startsWith("/")) {
-			input = packManager.texturePack.getResourceAsStream("/" + path);
+			input = packManager.field_1175.method_976("/" + path);
 		}
 
 		if (input == null) {
@@ -1021,9 +1019,9 @@ public class ModLoader {
 	public static void OnTick(Minecraft client) {
 		init();
 
-		if (texPack == null || !Objects.equals(client.options.activeTexturePack, texPack)) {
+		if (texPack == null || !Objects.equals(client.options.skin, texPack)) {
 			texturesAdded = false;
-			texPack = client.options.activeTexturePack;
+			texPack = client.options.skin;
 		}
 
 		if (!texturesAdded && client.textureManager != null) {
@@ -1034,7 +1032,7 @@ public class ModLoader {
 		long newClock = 0L;
 
 		if (client.world != null) {
-			newClock = client.world.getWorldTime();
+			newClock = client.world.getTime();
 			Iterator<Entry<BaseMod, Boolean>> iterator = inGameHooks.entrySet().iterator();
 
 			while (iterator.hasNext()) {
@@ -1061,7 +1059,7 @@ public class ModLoader {
 		if (clock != newClock) {
 			for (Entry<BaseMod, Map<KeyBinding, boolean[]>> modSet : keyList.entrySet()) {
 				for (Entry<KeyBinding, boolean[]> keySet : modSet.getValue().entrySet()) {
-					boolean state = Keyboard.isKeyDown(keySet.getKey().key);
+					boolean state = Keyboard.isKeyDown(keySet.getKey().code);
 					boolean[] keyInfo = keySet.getValue();
 					boolean oldState = keyInfo[1];
 					keyInfo[1] = state;
@@ -1082,8 +1080,8 @@ public class ModLoader {
 
 		long l = 0L;
 
-		if (server.worlds != null && server.worlds[0] != null) {
-			l = server.worlds[0].getWorldTime();
+		if (server.field_2841 != null && server.field_2841[0] != null) {
+			l = server.field_2841[0].getTime();
 
 			for (Entry<BaseMod, Boolean> entry : inGameHooks.entrySet()) {
 				if (clock != l || !entry.getValue()) {
@@ -1109,7 +1107,7 @@ public class ModLoader {
 
 		if (client != null && client.player == player) {
 			if (screen != null) {
-				client.openScreen(screen);
+				client.setScreen(screen);
 			}
 		}
 	}
@@ -1122,7 +1120,7 @@ public class ModLoader {
 	 * @param chunkZ Z coordinate of chunk
 	 * @param world  World to generate blocks in
 	 */
-	public static void PopulateChunk(WorldSource source, int chunkX, int chunkZ, World world) {
+	public static void PopulateChunk(class_51 source, int chunkX, int chunkZ, World world) {
 		init();
 
 		if (APRON.isClient()) {
@@ -1140,10 +1138,10 @@ public class ModLoader {
 			}
 		} else {
 			for (BaseMod mod : MOD_LIST) {
-				if (source instanceof OverworldWorldSource) {
-					mod.GenerateSurface(world, world.rand, chunkX, chunkZ);
-				} else if (source instanceof NetherWorldSource) {
-					mod.GenerateNether(world, world.rand, chunkX, chunkZ);
+				if (source instanceof class_538) {
+					mod.GenerateSurface(world, world.field_214, chunkX, chunkZ);
+				} else if (source instanceof class_359) {
+					mod.GenerateNether(world, world.field_214, chunkX, chunkZ);
 				}
 			}
 		}
@@ -1307,8 +1305,8 @@ public class ModLoader {
 			mod.RegisterAnimation(client);
 		}
 
-		for (TextureBinder anim : ANIM_LIST) {
-			manager.addTextureBinder(anim);
+		for (class_336 anim : ANIM_LIST) {
+			manager.method_1087(anim);
 		}
 
 		for (Entry<Integer, Map<String, Integer>> overlay : overrides.entrySet()) {
@@ -1319,8 +1317,8 @@ public class ModLoader {
 
 				try {
 					BufferedImage im = loadImage(manager, overlayPath);
-					TextureBinder anim = new ModTextureStatic(index, dst, im);
-					manager.addTextureBinder(anim);
+					class_336 anim = new ModTextureStatic(index, dst, im);
+					manager.method_1087(anim);
 				} catch (Exception e) {
 					MOD_LOGGER.throwing("ModLoader", "RegisterAllTextureOverrides", e);
 					ThrowException(e);
@@ -1349,7 +1347,7 @@ public class ModLoader {
 	public static void RegisterBlock(@NotNull Block block, Class<? extends BlockItem> itemClass) {
 		try {
 			if (APRON.isClient()) {
-				List<Block> list = (List<Block>) Session.defaultCreativeInventory;
+				List<Block> list = (List<Block>) Session.field_871;
 				list.add(block);
 			}
 
@@ -1370,8 +1368,8 @@ public class ModLoader {
 				item = new BlockItem(newId);
 			}
 
-			if (!FabricLoader.getInstance().isModLoaded("stationapi") && Block.BY_ID[id] != null && Item.byId[id] == null) {
-				Item.byId[id] = item;
+			if (!FabricLoader.getInstance().isModLoaded("stationapi") && Block.BLOCKS[id] != null && Item.ITEMS[id] == null) {
+				Item.ITEMS[id] = item;
 			}
 		} catch (IllegalArgumentException | IllegalAccessException | SecurityException | InstantiationException
 					| InvocationTargetException | NoSuchMethodException e) {
@@ -1426,7 +1424,7 @@ public class ModLoader {
 		if (APRON.isClient()) {
 			RegisterTileEntity(blockEntityClass, id, null);
 		} else {
-			BlockEntity.register(blockEntityClass, id);
+			BlockEntity.method_1067(blockEntityClass, id);
 			LifecycleUtils.MOD_BLOCK_ENTITIES.add(id);
 		}
 	}
@@ -1442,13 +1440,13 @@ public class ModLoader {
 	@SuppressWarnings("unchecked")
 	public static void RegisterTileEntity(Class<? extends BlockEntity> blockEntityClass, String id, BlockEntityRenderer renderer) {
 		try {
-			BlockEntity.register(blockEntityClass, id);
+			BlockEntity.method_1067(blockEntityClass, id);
 
 			if (renderer != null) {
 				BlockEntityRenderDispatcher ref = BlockEntityRenderDispatcher.INSTANCE;
-				Map<Class<? extends BlockEntity>, BlockEntityRenderer> renderers = (Map<Class<? extends BlockEntity>, BlockEntityRenderer>) ref.customRenderers;
+				Map<Class<? extends BlockEntity>, BlockEntityRenderer> renderers = (Map<Class<? extends BlockEntity>, BlockEntityRenderer>) ref.field_1564;
 				renderers.put(blockEntityClass, renderer);
-				renderer.setRenderDispatcher(ref);
+				renderer.setDispatcher(ref);
 			}
 			LifecycleUtils.MOD_BLOCK_ENTITIES.add(id);
 		} catch (IllegalArgumentException e) {
@@ -1463,7 +1461,7 @@ public class ModLoader {
 	 * @param entityClass Class of entity to spawn
 	 * @param spawnGroup  The spawn group to remove entity from. (Monster, Creature, or Water)
 	 */
-	public static void RemoveSpawn(Class<? extends LivingEntity> entityClass, SpawnGroup spawnGroup) {
+	public static void RemoveSpawn(Class<? extends LivingEntity> entityClass, class_238 spawnGroup) {
 		RemoveSpawn(entityClass, spawnGroup, (Biome[]) null);
 	}
 
@@ -1475,7 +1473,7 @@ public class ModLoader {
 	 * @param biomes      Array of biomes to remove entity spawning from
 	 */
 	@SuppressWarnings("unchecked")
-	public static void RemoveSpawn(Class<? extends LivingEntity> entityClass, SpawnGroup spawnGroup, Biome... biomes) {
+	public static void RemoveSpawn(Class<? extends LivingEntity> entityClass, class_238 spawnGroup, Biome... biomes) {
 		if (entityClass == null) {
 			throw new IllegalArgumentException("entityClass cannot be null");
 		} else if (spawnGroup == null) {
@@ -1486,10 +1484,10 @@ public class ModLoader {
 			}
 
 			for (Biome biome : biomes) {
-				List<EntityEntry> list = (List<EntityEntry>) biome.getSpawnList(spawnGroup);
+				List<class_288> list = (List<class_288>) biome.method_789(spawnGroup);
 
 				if (list != null) {
-					list.removeIf(entry -> entry.entryClass == entityClass);
+					list.removeIf(entry -> entry.field_1142 == entityClass);
 				}
 			}
 		}
@@ -1501,7 +1499,7 @@ public class ModLoader {
 	 * @param entityName Name of entity to remove
 	 * @param spawnGroup The spawn group to remove the entity from (Monster, Creature, or Water)
 	 */
-	public static void RemoveSpawn(String entityName, SpawnGroup spawnGroup) {
+	public static void RemoveSpawn(String entityName, class_238 spawnGroup) {
 		RemoveSpawn(entityName, spawnGroup, (Biome[]) null);
 	}
 
@@ -1513,8 +1511,8 @@ public class ModLoader {
 	 * @param biomes     Array of biomes to remove entity spawning from
 	 */
 	@SuppressWarnings("unchecked")
-	public static void RemoveSpawn(String entityName, SpawnGroup spawnGroup, Biome... biomes) {
-		Class<? extends Entity> entityClass = (Class<? extends Entity>) EntityRegistry.STRING_ID_TO_CLASS.get(entityName);
+	public static void RemoveSpawn(String entityName, class_238 spawnGroup, Biome... biomes) {
+		Class<? extends Entity> entityClass = (Class<? extends Entity>) EntityRegistry.idToClass.get(entityName);
 
 		if (entityClass != null && LivingEntity.class.isAssignableFrom(entityClass)) {
 			RemoveSpawn((Class<? extends LivingEntity>) entityClass, spawnGroup, biomes);
@@ -1525,7 +1523,7 @@ public class ModLoader {
 	 * Determines how the block should be rendered.
 	 *
 	 * @param modelID ID of block model
-	 * @return true if block should be rendered using {@link #RenderInvBlock(BlockRenderer, Block, int, int)}
+	 * @return true if block should be rendered using {@link #RenderInvBlock(BlockRenderManager, Block, int, int)}
 	 */
 	@Environment(EnvType.CLIENT)
 	public static boolean RenderBlockIsItemFull3D(int modelID) {
@@ -1545,7 +1543,7 @@ public class ModLoader {
 	 * @param modelID  ID of block model to render
 	 */
 	@Environment(EnvType.CLIENT)
-	public static void RenderInvBlock(BlockRenderer renderer, Block block, int metadata, int modelID) {
+	public static void RenderInvBlock(BlockRenderManager renderer, Block block, int metadata, int modelID) {
 		BaseMod mod = BLOCK_MODELS.get(modelID);
 
 		if (mod != null) {
@@ -1566,7 +1564,7 @@ public class ModLoader {
 	 * @return true if model was rendered
 	 */
 	@Environment(EnvType.CLIENT)
-	public static boolean RenderWorldBlock(BlockRenderer renderer, BlockView world, int x, int y, int z, Block block, int modelID) {
+	public static boolean RenderWorldBlock(BlockRenderManager renderer, BlockView world, int x, int y, int z, Block block, int modelID) {
 		BaseMod mod = BLOCK_MODELS.get(modelID);
 		return mod != null && mod.RenderWorldBlock(renderer, world, x, y, z, block, modelID);
 	}
@@ -1806,7 +1804,7 @@ public class ModLoader {
 			Minecraft client = getMinecraftInstance();
 
 			if (client != null) {
-				client.showGameStartupError(new GameStartupError(message, e));
+				client.method_2102(new class_447(message, e));
 			} else {
 				throw new RuntimeException(message, e);
 			}
@@ -1828,7 +1826,7 @@ public class ModLoader {
 	}
 
 	@Environment(EnvType.SERVER)
-	public static void OpenGUI(PlayerEntity player, int i, Inventory inventory, Container container) {
+	public static void OpenGUI(PlayerEntity player, int i, Inventory inventory, ScreenHandler container) {
 		if (!hasInit) {
 			init();
 		}
@@ -1837,9 +1835,9 @@ public class ModLoader {
 			ServerPlayerEntity entityplayermp = (ServerPlayerEntity) player;
 			entityplayermp.method_314();
 			int j = entityplayermp.field_260;
-			entityplayermp.packetHandler.send(new OpenContainerS2CPacket(j, i, inventory.getContainerName(), inventory.getInventorySize()));
+			entityplayermp.field_255.method_835(new OpenScreenS2CPacket(j, i, inventory.getName(), inventory.size()));
 			entityplayermp.container = container;
-			entityplayermp.container.currentContainerId = j;
+			entityplayermp.container.syncId = j;
 			entityplayermp.container.addListener(entityplayermp);
 		}
 	}

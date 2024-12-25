@@ -48,7 +48,7 @@ public class Slider extends ButtonWidget {
 		return option.transformValue(val, 0, 1);
 	}
 
-	protected void postRender(Minecraft minecraft, int i, int j) {
+	protected void method_1188(Minecraft minecraft, int i, int j) {
 		if (this.visible) {
 			if (this.dragging) {
 				float value = (float) (i - (this.x + 4)) / (float) (this.width - 8);
@@ -69,8 +69,8 @@ public class Slider extends ButtonWidget {
 
 			float sliderValue = this.getInternalValue(this.option);
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			this.blit(this.x + (int) (sliderValue * (float) (this.width - 8)), this.y, 0, 66, 4, 20);
-			this.blit(this.x + (int) (sliderValue * (float) (this.width - 8)) + 4, this.y, 196, 66, 4, 20);
+			this.drawTexture(this.x + (int) (sliderValue * (float) (this.width - 8)), this.y, 0, 66, 4, 20);
+			this.drawTexture(this.x + (int) (sliderValue * (float) (this.width - 8)) + 4, this.y, 196, 66, 4, 20);
 		}
 	}
 

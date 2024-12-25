@@ -41,7 +41,7 @@ public class ModSettings {
 	}
 
 	public static File getAppDir(String app) {
-		return Minecraft.getWorkingDirectory(app);
+		return Minecraft.getApplicationDirectory(app);
 	}
 
 	public static Minecraft getMcinst() {

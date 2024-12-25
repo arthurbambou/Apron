@@ -41,7 +41,7 @@ public class Configuration {
 
 	public Property getOrCreateBlockIdProperty(String key, int defaultId) {
 		if (this.configBlocks == null) {
-			this.configBlocks = new boolean[Block.BY_ID.length];
+			this.configBlocks = new boolean[Block.BLOCKS.length];
 
 			Arrays.fill(this.configBlocks, false);
 		}
@@ -55,13 +55,13 @@ public class Configuration {
 			this.blockProperties.put(key, property);
 			property.name = key;
 
-			if (Block.BY_ID[defaultId] == null && !this.configBlocks[defaultId]) {
+			if (Block.BLOCKS[defaultId] == null && !this.configBlocks[defaultId]) {
 				property.value = Integer.toString(defaultId);
 				this.configBlocks[defaultId] = true;
 				return property;
 			} else {
-				for (int j = Block.BY_ID.length - 1; j >= 0; --j) {
-					if (Block.BY_ID[j] == null && !this.configBlocks[j]) {
+				for (int j = Block.BLOCKS.length - 1; j >= 0; --j) {
+					if (Block.BLOCKS[j] == null && !this.configBlocks[j]) {
 						property.value = Integer.toString(j);
 						this.configBlocks[j] = true;
 						return property;

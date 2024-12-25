@@ -44,7 +44,7 @@ public class Reforged {
 	}
 
 	public static float reachGetEntityPlayer(PlayerEntity player) {
-		ItemStack itemstack = player.inventory.getHeldItem();
+		ItemStack itemstack = player.inventory.getSelectedItem();
 
 		for (IReachEntity reachEntity : reachesEntity) {
 			if (reachEntity.reachEntityItemMatches(itemstack)) {

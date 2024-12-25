@@ -16,23 +16,22 @@ import modloader.ModLoader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.class_39;
+import net.minecraft.class_426;
+import net.minecraft.class_454;
+import net.minecraft.class_488;
 import org.jetbrains.annotations.NotNull;
-
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.container.Container;
-import net.minecraft.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.packet.AbstractPacket;
-import net.minecraft.packet.play.ChatMessagePacket;
-import net.minecraft.packet.play.OpenContainerS2CPacket;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.play.ChatMessagePacket;
+import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.CommandSource;
-import net.minecraft.server.entity.player.ServerPlayerEntity;
-import net.minecraft.server.network.ServerEntityTracker;
 import net.minecraft.world.World;
 
 import io.github.betterthanupdates.Legacy;
@@ -105,10 +104,10 @@ public class ModLoaderMp {
 				try {
 					Entity entity = netclienthandlerentity.entityClass.getConstructor(World.class).newInstance(APRON.getWorld());
 					((ISpawnable) entity).spawn(packet);
-					ClientWorld world = (ClientWorld) APRON.getWorld();
+					class_454 world = (class_454) APRON.getWorld();
 
 					if (world != null) {
-						world.method_1495(entity.entityId, entity);
+						world.method_1495(entity.id, entity);
 					}
 				} catch (Exception e) {
 					ModLoader.getLogger().throwing("ModLoader", "handleCustomSpawn", e);
@@ -168,11 +167,11 @@ public class ModLoaderMp {
 	}
 
 	@Environment(EnvType.CLIENT)
-	public static void HandleGUI(final OpenContainerS2CPacket packet) {
+	public static void HandleGUI(final OpenScreenS2CPacket packet) {
 		init();
 
-		final BaseModMp basemodmp = GUI_MOD_MAP.get(packet.inventoryType);
-		final Screen guiScreen = basemodmp.HandleGUI(packet.inventoryType);
+		final BaseModMp basemodmp = GUI_MOD_MAP.get(packet.screenHandlerId);
+		final Screen guiScreen = basemodmp.HandleGUI(packet.screenHandlerId);
 
 		if (guiScreen != null) {
 			PlayerEntity player = APRON.getPlayer();
@@ -180,8 +179,8 @@ public class ModLoaderMp {
 			if (player != null) {
 				ModLoader.OpenGUI(player, guiScreen);
 
-				Container container = player.container;
-				if (container != null) container.currentContainerId = packet.containerId;
+				ScreenHandler container = player.container;
+				if (container != null) container.syncId = packet.syncId;
 			}
 		}
 	}
@@ -232,7 +231,7 @@ public class ModLoaderMp {
 	private static void init() {
 		if (hasInit) return;
 
-		AbstractPacket.register(230, true, true, ModLoaderPacket.class);
+		Packet.register(230, true, true, ModLoaderPacket.class);
 
 		if (!APRON.isClient()) {
 			try {
@@ -240,7 +239,7 @@ public class ModLoaderMp {
 
 				if (server == null) return;
 
-				File file = server.getFile("banned-mods.txt");
+				File file = server.method_2160("banned-mods.txt");
 
 				if (!file.exists()) {
 					file.createNewFile();
@@ -318,8 +317,8 @@ public class ModLoaderMp {
 
 		if (client == null) return;
 
-		if (packet230Received && client.world != null && client.world.isClient) {
-			client.getPacketHandler().sendPacket(packet);
+		if (packet230Received && client.world != null && client.world.isRemote) {
+			client.getNetworkHandler().sendPacket(packet);
 		}
 	}
 
@@ -415,12 +414,12 @@ public class ModLoaderMp {
 	}
 
 	@Environment(EnvType.SERVER)
-	public static void HandleEntityTrackers(ServerEntityTracker entitytracker, Entity entity) {
+	public static void HandleEntityTrackers(class_488 entitytracker, Entity entity) {
 		init();
 
 		for (Map.Entry<Class<? extends Entity>, AbstractMap.SimpleEntry<Integer, Integer>> entry : entityTrackerMap.entrySet()) {
 			if (entry.getKey().isInstance(entity)) {
-				entitytracker.trackEntity(entity, entry.getValue().getKey(), entry.getValue().getValue(), true);
+				entitytracker.method_1667(entity, entry.getValue().getKey(), entry.getValue().getValue(), true);
 				return;
 			}
 		}
@@ -448,11 +447,11 @@ public class ModLoaderMp {
 	}
 
 	@Environment(EnvType.SERVER)
-	private static void sendPacketToAll(AbstractPacket packet) {
+	private static void sendPacketToAll(Packet packet) {
 		MinecraftServer server = (MinecraftServer) APRON.getGame();
 
 		if (server != null && packet != null) {
-			server.serverPlayerConnectionManager.sendToAll(packet);
+			server.field_2842.method_559(packet);
 		}
 	}
 
@@ -481,7 +480,7 @@ public class ModLoaderMp {
 
 	@Environment(EnvType.SERVER)
 	private static void sendPacketTo(ServerPlayerEntity player, ModLoaderPacket packet) {
-		player.packetHandler.send(packet);
+		player.field_255.method_835(packet);
 	}
 
 	@Environment(EnvType.SERVER)
@@ -571,7 +570,7 @@ public class ModLoaderMp {
 				}
 			}
 
-			entityplayermp.packetHandler.kick("The following mods are banned on this server:" + stringbuilder3);
+			entityplayermp.field_255.method_833("The following mods are banned on this server:" + stringbuilder3);
 		} else if (arraylist1.size() != 0) {
 			StringBuilder stringbuilder2 = new StringBuilder();
 
@@ -582,7 +581,7 @@ public class ModLoaderMp {
 				}
 			}
 
-			entityplayermp.packetHandler.kick("You are missing the following mods:" + stringbuilder2);
+			entityplayermp.field_255.method_833("You are missing the following mods:" + stringbuilder2);
 		}
 	}
 
@@ -610,7 +609,7 @@ public class ModLoaderMp {
 	}
 
 	@Environment(EnvType.SERVER)
-	public static void getCommandInfo(CommandSource icommandlistener) {
+	public static void getCommandInfo(class_39 icommandlistener) {
 		for (int i = 0; i < ModLoader.getLoadedMods().size(); ++i) {
 			BaseMod basemod = ModLoader.getLoadedMods().get(i);
 
@@ -622,7 +621,7 @@ public class ModLoaderMp {
 	}
 
 	@Environment(EnvType.SERVER)
-	public static boolean handleCommand(String s, String s1, CommandSource icommandlistener, CommandManager consolecommandhandler) {
+	public static boolean handleCommand(String s, String s1, class_39 icommandlistener, class_426 consolecommandhandler) {
 		boolean flag = false;
 
 		for (int i = 0; i < ModLoader.getLoadedMods().size(); ++i) {
@@ -651,8 +650,8 @@ public class ModLoaderMp {
 		MinecraftServer server = (MinecraftServer) APRON.getGame();
 
 		if (server != null) {
-			server.serverPlayerConnectionManager.sendToAll(new ChatMessagePacket(encodedMessage));
-			MinecraftServer.logger.info(encodedMessage);
+			server.field_2842.method_559(new ChatMessagePacket(encodedMessage));
+			MinecraftServer.field_2837.info(encodedMessage);
 		}
 	}
 
@@ -668,20 +667,20 @@ public class ModLoaderMp {
 
 		if (server == null) return;
 
-		for (Object object : server.serverPlayerConnectionManager.players) {
+		for (Object object : server.field_2842.field_578) {
 			if (object instanceof ServerPlayerEntity) {
 				ServerPlayerEntity player = (ServerPlayerEntity) object;
 
-				if (server.serverPlayerConnectionManager.isOp(player.name)) {
-					player.packetHandler.send(new ChatMessagePacket(encodedMessage));
-					MinecraftServer.logger.info(encodedMessage);
+				if (server.field_2842.method_584(player.name)) {
+					player.field_255.method_835(new ChatMessagePacket(encodedMessage));
+					MinecraftServer.field_2837.info(encodedMessage);
 				}
 			}
 		}
 	}
 
 	@Environment(EnvType.SERVER)
-	public static AbstractPacket GetTileEntityPacket(BaseModMp basemodmp, int i, int j, int k, int l, int[] ai, float[] af, String[] as) {
+	public static Packet GetTileEntityPacket(BaseModMp basemodmp, int i, int j, int k, int l, int[] ai, float[] af, String[] as) {
 		ModLoaderPacket modloaderPacket = new ModLoaderPacket();
 		modloaderPacket.modId = "ModLoaderMP".hashCode();
 		modloaderPacket.packetType = 1;
@@ -706,6 +705,6 @@ public class ModLoaderMp {
 
 	@Environment(EnvType.SERVER)
 	public static void SendTileEntityPacket(BlockEntity blockEntity) {
-		sendPacketToAll(blockEntity.getPacketContents());
+		sendPacketToAll(blockEntity.createUpdatePacket());
 	}
 }

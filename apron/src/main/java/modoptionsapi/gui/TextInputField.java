@@ -4,9 +4,9 @@ import modoptionsapi.ModOption;
 import modoptionsapi.ModOptionsGuiController;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.TextRenderer;
 
 public abstract class TextInputField extends ButtonWidget {
 	protected ModOption<?> option;

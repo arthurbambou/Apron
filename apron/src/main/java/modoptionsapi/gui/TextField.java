@@ -4,8 +4,8 @@ import modoptionsapi.ModOptionsGuiController;
 import modoptionsapi.ModTextOption;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.TextRenderer;
 import net.minecraft.util.CharacterUtils;
 
 public class TextField extends TextInputField {
@@ -36,7 +36,7 @@ public class TextField extends TextInputField {
 
 	public void textboxKeyTyped(char c, int i) {
 		String text = this.getText();
-		String s = Screen.getClipboardContents();
+		String s = Screen.getClipboard();
 		int max = ((ModTextOption) this.option).getMaxLength();
 
 		if (this.active && this.isFocused()) {
@@ -58,7 +58,7 @@ public class TextField extends TextInputField {
 				}
 			} else if (i == 14 && text.length() > 0) {
 				text = text.substring(0, text.length() - 1);
-			} else if (CharacterUtils.validCharacters.indexOf(c) >= 0 && (text.length() < max || max == 0)) {
+			} else if (CharacterUtils.VALID_CHARACTERS.indexOf(c) >= 0 && (text.length() < max || max == 0)) {
 				text = text + c;
 			}
 
@@ -73,9 +73,9 @@ public class TextField extends TextInputField {
 		int len = text.length();
 		int padding = 30;
 		String counterStr = maxlen > 0 ? "(" + len + "/" + maxlen + ")" : "";
-		int nameWidth = this.fontRenderer.getTextWidth(name);
-		int textWidth = this.fontRenderer.getTextWidth(text);
-		int counterWidth = this.fontRenderer.getTextWidth(counterStr);
+		int nameWidth = this.fontRenderer.getWidth(name);
+		int textWidth = this.fontRenderer.getWidth(text);
+		int counterWidth = this.fontRenderer.getWidth(counterStr);
 
 		if (maxlen <= 0) {
 			padding -= 10;
@@ -85,7 +85,7 @@ public class TextField extends TextInputField {
 			while (nameWidth + textWidth + counterWidth + padding > this.width) {
 				text = text.substring(1, len - 1);
 				--len;
-				textWidth = this.fontRenderer.getTextWidth(text);
+				textWidth = this.fontRenderer.getWidth(text);
 			}
 		}
 

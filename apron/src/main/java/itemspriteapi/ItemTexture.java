@@ -8,8 +8,8 @@ public class ItemTexture extends Item implements IItemTexture {
 	public ItemTexture(int i, String s) {
 		super(i);
 		this.texturePath = s;
-		this.setHasSubItems(true);
-		this.setDurability(0);
+		this.setHasSubtypes(true);
+		this.setMaxDamage(0);
 	}
 
 	public String getTextureFile() {

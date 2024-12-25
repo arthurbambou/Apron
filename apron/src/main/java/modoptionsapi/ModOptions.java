@@ -484,7 +484,7 @@ public class ModOptions {
 			subDir.insert(0, p.getName() + "/");
 		}
 
-		return Minecraft.getGameDirectory() + "/ModOptions/" + subDir;
+		return Minecraft.getRunDirectory() + "/ModOptions/" + subDir;
 	}
 
 	private File getFile(String name, boolean multiplayer) {

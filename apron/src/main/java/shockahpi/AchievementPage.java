@@ -7,10 +7,8 @@ import java.util.Random;
 
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.ApiStatus;
-
+import net.minecraft.achievement.Achievement;
 import net.minecraft.block.Block;
-import net.minecraft.stat.achievement.Achievement;
-
 import io.github.betterthanupdates.Legacy;
 
 /**
@@ -47,22 +45,22 @@ public class AchievementPage {
 	}
 
 	public int bgGetSprite(Random random, int x, int y) {
-		int sprite = Block.SAND.texture;
+		int sprite = Block.SAND.textureId;
 		int rnd = random.nextInt(1 + y) + y / 2;
 		if (rnd <= 37 && y != 35) {
 			if (rnd == 22) {
-				sprite = random.nextInt(2) == 0 ? Block.DIAMOND_ORE.texture : Block.REDSTONE_ORE.texture;
+				sprite = random.nextInt(2) == 0 ? Block.DIAMOND_ORE.textureId : Block.REDSTONE_ORE.textureId;
 			} else if (rnd == 10) {
-				sprite = Block.IRON_ORE.texture;
+				sprite = Block.IRON_ORE.textureId;
 			} else if (rnd == 8) {
-				sprite = Block.COAL_ORE.texture;
+				sprite = Block.COAL_ORE.textureId;
 			} else if (rnd > 4) {
-				sprite = Block.STONE.texture;
+				sprite = Block.STONE.textureId;
 			} else if (rnd > 0) {
-				sprite = Block.DIRT.texture;
+				sprite = Block.DIRT.textureId;
 			}
 		} else {
-			sprite = Block.BEDROCK.texture;
+			sprite = Block.BEDROCK.textureId;
 		}
 
 		return sprite;

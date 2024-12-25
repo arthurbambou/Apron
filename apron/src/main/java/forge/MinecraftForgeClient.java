@@ -10,7 +10,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.render.block.BlockRenderer;
+import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.item.Item;
 
 import io.github.betterthanupdates.Legacy;
@@ -22,7 +22,7 @@ import io.github.betterthanupdates.stapi.StAPIMinecraftClient;
 @Environment(EnvType.CLIENT)
 @Legacy
 public class MinecraftForgeClient {
-	private static final ICustomItemRenderer[] CUSTOM_ITEM_RENDERERS = new ICustomItemRenderer[Item.byId.length];
+	private static final ICustomItemRenderer[] CUSTOM_ITEM_RENDERERS = new ICustomItemRenderer[Item.ITEMS.length];
 
 	public MinecraftForgeClient() {
 	}
@@ -51,7 +51,7 @@ public class MinecraftForgeClient {
 		}
 	}
 
-	public static void renderBlock(BlockRenderer blockRenderer, Block block, int x, int y, int z) {
+	public static void renderBlock(BlockRenderManager blockRenderer, Block block, int x, int y, int z) {
 		ForgeHooksClient.beforeBlockRender(block, blockRenderer);
 		blockRenderer.render(block, x, y, z);
 		ForgeHooksClient.afterBlockRender(block, blockRenderer);

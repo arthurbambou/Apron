@@ -5,9 +5,8 @@ import java.awt.image.BufferedImage;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.class_336;
 import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.render.TextureBinder;
 
 import io.github.betterthanupdates.Legacy;
 import io.github.betterthanupdates.apron.api.ApronApi;
@@ -16,7 +15,7 @@ import io.github.betterthanupdates.apron.impl.client.ApronClientImpl;
 @Legacy
 @Environment(EnvType.CLIENT)
 @SuppressWarnings("unused")
-public class ModTextureAnimation extends TextureBinder {
+public class ModTextureAnimation extends class_336 {
 	private final int tickRate;
 	private final byte[][] images;
 	private int index = 0;
@@ -28,11 +27,11 @@ public class ModTextureAnimation extends TextureBinder {
 
 	public ModTextureAnimation(int slot, int size, int dst, BufferedImage source, int rate) {
 		super(slot);
-		this.textureSize = size;
-		this.renderMode = dst;
+		this.field_1415 = size;
+		this.field_1416 = dst;
 		this.tickRate = rate;
 		this.ticks = rate;
-		this.bindTexture(((ApronClientImpl) ApronApi.getInstance()).getTextureManager());
+		this.method_1206(((ApronClientImpl) ApronApi.getInstance()).getTextureManager());
 		int targetWidth = GL11.glGetTexLevelParameteri(3553, 0, 4096) / 16;
 		int targetHeight = GL11.glGetTexLevelParameteri(3553, 0, 4097) / 16;
 		int width = source.getWidth();
@@ -72,7 +71,7 @@ public class ModTextureAnimation extends TextureBinder {
 	}
 
 	@Override
-	public void updateTexture() {
+	public void method_1205() {
 		if (this.ticks >= this.tickRate) {
 			++this.index;
 
@@ -80,7 +79,7 @@ public class ModTextureAnimation extends TextureBinder {
 				this.index = 0;
 			}
 
-			this.grid = this.images[this.index];
+			this.field_1411 = this.images[this.index];
 			this.ticks = 0;
 		}
 

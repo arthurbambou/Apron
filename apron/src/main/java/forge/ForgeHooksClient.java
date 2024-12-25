@@ -18,8 +18,8 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.WorldEventRenderer;
-import net.minecraft.client.render.block.BlockRenderer;
+import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.HitResult;
@@ -50,7 +50,7 @@ public class ForgeHooksClient {
 	public ForgeHooksClient() {
 	}
 
-	public static boolean onBlockHighlight(WorldEventRenderer worldEventRenderer, PlayerEntity player, HitResult hitResult, int i, ItemStack itemStack, float f) {
+	public static boolean onBlockHighlight(WorldRenderer worldEventRenderer, PlayerEntity player, HitResult hitResult, int i, ItemStack itemStack, float f) {
 		for (IHighlightHandler handler : highlightHandlers) {
 			if (handler.onBlockHighlight(worldEventRenderer, player, hitResult, i, itemStack, f)) {
 				return true;
@@ -65,7 +65,7 @@ public class ForgeHooksClient {
 			IMultipassRender multipassRender = (IMultipassRender) block;
 			return multipassRender.canRenderInPass(pass);
 		} else {
-			return pass == block.getRenderPass();
+			return pass == block.getRenderLayer();
 		}
 	}
 
@@ -83,8 +83,8 @@ public class ForgeHooksClient {
 		if (inWorld && !renderTextureTest.contains(key)) {
 			renderTextureTest.add(key);
 			renderTextureList.add(key);
-			tessellator.start();
-			tessellator.setOffset(
+			tessellator.startQuads();
+			tessellator.translate(
 					ForgeClientReflection.Tessellator$firstInstance.xOffset,
 					ForgeClientReflection.Tessellator$firstInstance.yOffset,
 					ForgeClientReflection.Tessellator$firstInstance.zOffset);
@@ -136,7 +136,7 @@ public class ForgeHooksClient {
 		for (IntegerPair l : renderTextureList) {
 			GL11.glBindTexture(3553, l.first());
 			Tessellator tessellator = tessellators.get(l);
-			tessellator.tessellate();
+			tessellator.draw();
 		}
 
 		GL11.glBindTexture(3553, ((ApronClientImpl) ApronApi.getInstance()).getTextureManager().getTextureId("/terrain.png"));
@@ -144,14 +144,14 @@ public class ForgeHooksClient {
 		ForgeClientReflection.Tessellator$renderingWorldRenderer = false;
 	}
 
-	public static void beforeBlockRender(Block block, BlockRenderer blockRenderer) {
+	public static void beforeBlockRender(Block block, BlockRenderManager blockRenderer) {
 		if (block instanceof ITextureProvider && blockRenderer.textureOverride == -1) {
 			ITextureProvider textureProvider = (ITextureProvider) block;
 			bindTexture(textureProvider.getTextureFile(), 0);
 		}
 	}
 
-	public static void afterBlockRender(Block block, BlockRenderer blockRenderer) {
+	public static void afterBlockRender(Block block, BlockRenderManager blockRenderer) {
 		if (block instanceof ITextureProvider && blockRenderer.textureOverride == -1) {
 			unbindTexture();
 		}
@@ -172,8 +172,8 @@ public class ForgeHooksClient {
 	}
 
 	// Not included in Reforged for unknown reasons
-	public static void renderCustomItem(ICustomItemRenderer customRenderer, BlockRenderer blockRenderer, int itemID, int meta, float f) {
-		if (blockRenderer.field_81) {
+	public static void renderCustomItem(ICustomItemRenderer customRenderer, BlockRenderManager blockRenderer, int itemID, int meta, float f) {
+		if (blockRenderer.inventoryColorEnabled) {
 			int j = 16777215;
 			float f1 = (float) (j >> 16 & 0xFF) / 255.0F;
 			float f3 = (float) (j >> 8 & 0xFF) / 255.0F;

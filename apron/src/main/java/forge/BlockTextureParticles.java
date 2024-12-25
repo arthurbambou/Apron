@@ -10,15 +10,14 @@ import java.util.List;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.entity.particle.ParticleEntity;
-
+import net.minecraft.client.particle.Particle;
 import io.github.betterthanupdates.Legacy;
 
 @Legacy
 @Environment(EnvType.CLIENT)
 public class BlockTextureParticles {
 	public String texture;
-	public List<ParticleEntity> effects = new ArrayList<>();
+	public List<Particle> effects = new ArrayList<>();
 
 	public BlockTextureParticles() {
 	}

@@ -6,7 +6,7 @@ import java.util.Iterator;
 import forge.ForgeHooks;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
@@ -32,8 +32,8 @@ public class Tool extends Item implements ForgeItem {
 
 	public Tool(boolean usingSAPI, ToolBase toolBase, int itemID, int uses, float baseDamage, float basePower, float toolSpeed, float defaultSpeed) {
 		super(itemID);
-		this.setDurability(uses);
-		this.maxStackSize = 1;
+		this.setMaxDamage(uses);
+		this.maxCount = 1;
 		this.usingSAPI = usingSAPI;
 		this.toolBase = toolBase;
 		this.baseDamage = baseDamage;
@@ -43,19 +43,19 @@ public class Tool extends Item implements ForgeItem {
 	}
 
 	@Override
-	public boolean isRendered3d() {
+	public boolean isHandheld() {
 		return true;
 	}
 
 	@Override
 	public boolean postHit(ItemStack stack, LivingEntity living, LivingEntity living2) {
-		stack.applyDamage(2, living2);
+		stack.damage(2, living2);
 		return true;
 	}
 
 	@Override
 	public boolean postMine(ItemStack stack, int blockID, int x, int y, int z, LivingEntity living) {
-		stack.applyDamage(1, living);
+		stack.damage(1, living);
 		return true;
 	}
 
@@ -69,7 +69,7 @@ public class Tool extends Item implements ForgeItem {
 	}
 
 	@Override
-	public float getStrengthOnBlock(ItemStack stack, Block block) {
+	public float getMiningSpeedMultiplier(ItemStack stack, Block block) {
 		return this.canHarvest(block) ? this.getToolSpeed() : this.defaultSpeed;
 	}
 
@@ -101,7 +101,7 @@ public class Tool extends Item implements ForgeItem {
 
 	@Override
 	public float getStrVsBlock(ItemStack itemstack, Block block, int md) {
-		return ForgeHooks.isToolEffective(itemstack, block, md) ? this.getToolSpeed() : this.getStrengthOnBlock(itemstack, block);
+		return ForgeHooks.isToolEffective(itemstack, block, md) ? this.getToolSpeed() : this.getMiningSpeedMultiplier(itemstack, block);
 	}
 
 	protected float getToolSpeed() {

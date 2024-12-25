@@ -302,7 +302,7 @@ public class ModOptionsAPI {
 	}
 
 	private static File getFile(String name) {
-		File file = new File(Minecraft.getGameDirectory() + "/ModOptions/" + name + "/" + name + ".modoptions");
+		File file = new File(Minecraft.getRunDirectory() + "/ModOptions/" + name + "/" + name + ".modoptions");
 		return !file.exists() ? null : file;
 	}
 }

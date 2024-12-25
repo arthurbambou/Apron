@@ -5,9 +5,9 @@ import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.renderer.lwjgl.RenderScale;
 import guiapi.widget.ScreenWidget;
 
+import net.minecraft.class_564;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.ScreenScaler;
 
 public class ModScreen extends Screen {
 	public static ModScreen currentScreen;
@@ -18,7 +18,7 @@ public class ModScreen extends Screen {
 	public static void back() {
 		if (currentScreen != null) {
 			Minecraft m = ModSettings.getMcinst();
-			m.openScreen(currentScreen.parentScreen);
+			m.setScreen(currentScreen.parentScreen);
 
 			if (currentScreen.parentScreen instanceof ModScreen) {
 				currentScreen = (ModScreen) currentScreen.parentScreen;
@@ -31,12 +31,12 @@ public class ModScreen extends Screen {
 
 	public static void clicksound() {
 		Minecraft m = ModSettings.getMcinst();
-		m.soundHelper.playSound("random.click", 1.0F, 1.0F);
+		m.soundManager.method_2009("random.click", 1.0F, 1.0F);
 	}
 
 	public static void show(ModScreen screen) {
 		Minecraft m = ModSettings.getMcinst();
-		m.openScreen(screen);
+		m.setScreen(screen);
 		screen.setActive();
 	}
 
@@ -47,14 +47,14 @@ public class ModScreen extends Screen {
 	public ModScreen(Screen screen) {
 		this.parentScreen = screen;
 		currentScreen = this;
-		this.passEvents = false;
+		this.field_155 = false;
 	}
 
 	public ModScreen(Screen screen, Widget widget) {
 		this.mainwidget = widget;
 		this.parentScreen = screen;
 		currentScreen = this;
-		this.passEvents = false;
+		this.field_155 = false;
 	}
 
 	@Override
@@ -64,22 +64,22 @@ public class ModScreen extends Screen {
 				this.renderBackground();
 				break;
 			case 1:
-				this.renderDirtBackground(0);
+				this.renderBackgroundTexture(0);
 		}
 
 		LWJGLRenderer var4 = (LWJGLRenderer) ScreenWidget.getInstance().gui.getRenderer();
-		ScreenScaler var5 = new ScreenScaler(
+		class_564 var5 = new class_564(
 				ScreenWidget.getInstance().minecraftInstance.options,
-				ScreenWidget.getInstance().minecraftInstance.actualWidth,
-				ScreenWidget.getInstance().minecraftInstance.actualHeight
+				ScreenWidget.getInstance().minecraftInstance.displayWidth,
+				ScreenWidget.getInstance().minecraftInstance.displayHeight
 		);
-		RenderScale.scale = var5.scale;
+		RenderScale.scale = var5.field_2391;
 		var4.syncViewportSize();
 		ScreenWidget.getInstance().gui.update();
 	}
 
 	@Override
-	public void method_130() {
+	public void tickInput() {
 	}
 
 	private void setActive() {

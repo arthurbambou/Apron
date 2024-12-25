@@ -15,12 +15,12 @@ public class DungeonLoot {
 	public final int max;
 
 	public DungeonLoot(ItemStack stack) {
-		this.loot = new ItemStack(stack.itemId, 1, stack.getMeta());
+		this.loot = new ItemStack(stack.itemId, 1, stack.getDamage());
 		this.min = this.max = stack.count;
 	}
 
 	public DungeonLoot(ItemStack stack, int min, int max) {
-		this.loot = new ItemStack(stack.itemId, 1, stack.getMeta());
+		this.loot = new ItemStack(stack.itemId, 1, stack.getDamage());
 		this.min = min;
 		this.max = max;
 	}
@@ -28,10 +28,10 @@ public class DungeonLoot {
 	public ItemStack getStack() {
 		int damage = 0;
 		if (this.loot.itemId <= 255) {
-			if (Block.BY_ID[this.loot.itemId].getBaseColor(1) != 1) {
-				damage = this.loot.getMeta();
-			} else if (!this.loot.getItem().isRendered3d) {
-				damage = this.loot.getMeta();
+			if (Block.BLOCKS[this.loot.itemId].getColor(1) != 1) {
+				damage = this.loot.getDamage();
+			} else if (!this.loot.getItem().handheld) {
+				damage = this.loot.getDamage();
 			}
 		}
 

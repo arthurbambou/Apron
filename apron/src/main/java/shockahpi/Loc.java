@@ -1,9 +1,8 @@
 package shockahpi;
 
 import java.util.ArrayList;
-
-import net.minecraft.entity.BlockEntity;
-import net.minecraft.util.Vec3i;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
@@ -33,7 +32,7 @@ public class Loc {
 	}
 
 	public Loc(World world) {
-		this(world.getSpawnPosition().x, world.getSpawnPosition().y, world.getSpawnPosition().z);
+		this(world.getSpawnPos().x, world.getSpawnPos().y, world.getSpawnPos().z);
 	}
 
 	public Loc(double x, double y, double z) {
@@ -229,7 +228,7 @@ public class Loc {
 	}
 
 	public Loc setBlock(World world, int blockID) {
-		world.setBlockInChunk(this.x(), this.y(), this.z(), blockID);
+		world.method_200(this.x(), this.y(), this.z(), blockID);
 		return this;
 	}
 
@@ -243,45 +242,45 @@ public class Loc {
 	}
 
 	public Loc setMetaNotify(World world, int meta) {
-		world.setBlockMeta(this.x(), this.y(), this.z(), meta);
+		world.method_215(this.x(), this.y(), this.z(), meta);
 		return this;
 	}
 
 	public Loc setBlockAndMeta(World world, int blockID, int meta) {
-		world.setBlockWithMetadata(this.x(), this.y(), this.z(), blockID, meta);
+		world.method_154(this.x(), this.y(), this.z(), blockID, meta);
 		return this;
 	}
 
 	public Loc setBlockAndMetaNotify(World world, int blockID, int meta) {
-		world.placeBlockWithMetaData(this.x(), this.y(), this.z(), blockID, meta);
+		world.method_201(this.x(), this.y(), this.z(), blockID, meta);
 		return this;
 	}
 
 	public BlockEntity getTileEntity(BlockView blockAc) {
-		return blockAc.getBlockEntity(this.x(), this.y(), this.z());
+		return blockAc.method_1777(this.x(), this.y(), this.z());
 	}
 
 	public Loc setTileEntity(World world, BlockEntity tileEntity) {
-		world.setBlockEntity(this.x(), this.y(), this.z(), tileEntity);
+		world.method_157(this.x(), this.y(), this.z(), tileEntity);
 		return this;
 	}
 
 	public Loc removeTileEntity(World world) {
-		world.removeBlockEntity(this.x(), this.y(), this.z());
+		world.method_260(this.x(), this.y(), this.z());
 		return this;
 	}
 
 	public int getLight(World world) {
-		return world.getLightLevel(this.x(), this.y(), this.z());
+		return world.method_252(this.x(), this.y(), this.z());
 	}
 
 	public Loc notify(World world) {
-		world.notifyOfNeighborChange(this.x(), this.y(), this.z(), this.getBlock(world));
+		world.method_235(this.x(), this.y(), this.z(), this.getBlock(world));
 		return this;
 	}
 
 	public Loc setSpawnPoint(World world) {
-		world.setSpawnPosition(new Vec3i(this.x(), this.y(), this.z()));
+		world.setSpawnPos(new Vec3i(this.x(), this.y(), this.z()));
 		return this;
 	}
 }

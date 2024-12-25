@@ -9,8 +9,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.options.KeyBinding;
-import net.minecraft.client.render.block.BlockRenderer;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -141,7 +141,7 @@ public abstract class BaseMod {
 	 * @param modelID  ID of block model to render
 	 */
 	@Environment(EnvType.CLIENT)
-	public void RenderInvBlock(BlockRenderer renderer, Block block, int metadata, int modelID) {
+	public void RenderInvBlock(BlockRenderManager renderer, Block block, int metadata, int modelID) {
 	}
 
 	/**
@@ -157,7 +157,7 @@ public abstract class BaseMod {
 	 * @return true if model was rendered.
 	 */
 	@Environment(EnvType.CLIENT)
-	public boolean RenderWorldBlock(BlockRenderer renderer, BlockView world, int x, int y, int z, Block block, int modelID) {
+	public boolean RenderWorldBlock(BlockRenderManager renderer, BlockView world, int x, int y, int z, Block block, int modelID) {
 		return false;
 	}
 

@@ -6,14 +6,14 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import net.minecraft.class_336;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.render.TextureBinder;
 
 import io.github.betterthanupdates.Legacy;
 
 @Legacy
 @SuppressWarnings("unused")
-public abstract class AnimBase extends TextureBinder {
+public abstract class AnimBase extends class_336 {
 	protected int[][] fileBuf;
 	protected int[][] frame;
 	protected int size;
@@ -40,7 +40,7 @@ public abstract class AnimBase extends TextureBinder {
 
 	public AnimBase(int spriteID, String spritePath) {
 		super(spriteID);
-		this.size = (int)Math.sqrt((double)(this.grid.length / 4));
+		this.size = (int)Math.sqrt((double)(this.field_1411.length / 4));
 		this.fileBuf = new int[this.size][this.size];
 		this.frame = new int[this.size][this.size];
 
@@ -49,7 +49,7 @@ public abstract class AnimBase extends TextureBinder {
 			int xx;
 			int yy;
 			if (spritePath.isEmpty()) {
-				bufImage = ImageIO.read(Minecraft.class.getResource(this.renderMode == 0 ? "/terrain.png" : "/gui/items.png"));
+				bufImage = ImageIO.read(Minecraft.class.getResource(this.field_1416 == 0 ? "/terrain.png" : "/gui/items.png"));
 				xx = spriteID % 16 * this.size;
 				yy = (int)Math.floor((double)(spriteID / 16)) * this.size;
 
@@ -92,10 +92,10 @@ public abstract class AnimBase extends TextureBinder {
 		for (int y = 0; y < this.size; ++y) {
 			for (int x = 0; x < this.size; ++x) {
 				int index = this.getXYIndex(x, y);
-				this.grid[index * 4 + 0] = (byte) (this.frame[x][y] >> 16 & 0xFF);
-				this.grid[index * 4 + 1] = (byte) (this.frame[x][y] >> 8 & 0xFF);
-				this.grid[index * 4 + 2] = (byte) (this.frame[x][y] & 0xFF);
-				this.grid[index * 4 + 3] = (byte) (this.frame[x][y] >> 24 & 0xFF);
+				this.field_1411[index * 4 + 0] = (byte) (this.frame[x][y] >> 16 & 0xFF);
+				this.field_1411[index * 4 + 1] = (byte) (this.frame[x][y] >> 8 & 0xFF);
+				this.field_1411[index * 4 + 2] = (byte) (this.frame[x][y] & 0xFF);
+				this.field_1411[index * 4 + 3] = (byte) (this.frame[x][y] >> 24 & 0xFF);
 			}
 		}
 	}

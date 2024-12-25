@@ -5,9 +5,8 @@ import java.awt.image.BufferedImage;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.class_336;
 import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.render.TextureBinder;
 
 import io.github.betterthanupdates.Legacy;
 import io.github.betterthanupdates.apron.api.ApronApi;
@@ -16,7 +15,7 @@ import io.github.betterthanupdates.apron.impl.client.ApronClientImpl;
 @SuppressWarnings("unused")
 @Legacy
 @Environment(EnvType.CLIENT)
-public class ModTextureStatic extends TextureBinder {
+public class ModTextureStatic extends class_336 {
 	private boolean oldAnaglyph;
 	private final int[] pixels;
 
@@ -26,15 +25,15 @@ public class ModTextureStatic extends TextureBinder {
 
 	public ModTextureStatic(int slot, int size, int dst, BufferedImage source) {
 		super(slot);
-		this.textureSize = size;
-		this.renderMode = dst;
-		this.bindTexture(((ApronClientImpl) ApronApi.getInstance()).getTextureManager());
+		this.field_1415 = size;
+		this.field_1416 = dst;
+		this.method_1206(((ApronClientImpl) ApronApi.getInstance()).getTextureManager());
 		int targetWidth = GL11.glGetTexLevelParameteri(3553, 0, 4096) / 16;
 		int targetHeight = GL11.glGetTexLevelParameteri(3553, 0, 4097) / 16;
 		int width = source.getWidth();
 		int height = source.getHeight();
 		this.pixels = new int[targetWidth * targetHeight];
-		this.grid = new byte[targetWidth * targetHeight * 4];
+		this.field_1411 = new byte[targetWidth * targetHeight * 4];
 
 		if (width == height && width == targetWidth) {
 			source.getRGB(0, 0, width, height, this.pixels, 0, width);
@@ -57,25 +56,25 @@ public class ModTextureStatic extends TextureBinder {
 			int g = this.pixels[i] >> 8 & 0xFF;
 			int b = this.pixels[i] >> 0 & 0xFF;
 
-			if (this.render3d) {
+			if (this.field_1413) {
 				int grey = (r + g + b) / 3;
 				b = grey;
 				g = grey;
 				r = grey;
 			}
 
-			this.grid[i * 4 + 0] = (byte) r;
-			this.grid[i * 4 + 1] = (byte) g;
-			this.grid[i * 4 + 2] = (byte) b;
-			this.grid[i * 4 + 3] = (byte) a;
+			this.field_1411[i * 4 + 0] = (byte) r;
+			this.field_1411[i * 4 + 1] = (byte) g;
+			this.field_1411[i * 4 + 2] = (byte) b;
+			this.field_1411[i * 4 + 3] = (byte) a;
 		}
 
-		this.oldAnaglyph = this.render3d;
+		this.oldAnaglyph = this.field_1413;
 	}
 
 	@Override
-	public void updateTexture() {
-		if (this.oldAnaglyph != this.render3d) {
+	public void method_1205() {
+		if (this.oldAnaglyph != this.field_1413) {
 			this.update();
 		}
 	}
