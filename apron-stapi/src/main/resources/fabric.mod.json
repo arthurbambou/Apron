@@ -10,8 +10,8 @@
   "contributors": [
   ],
   "contact": {
-    "sources": "https://github.com/thecatcore/Apron",
-    "issues": "https://github.com/thecatcore/Apron/issues"
+    "sources": "https://github.com/FabricCompatibilityLayers/Apron",
+    "issues": "https://github.com/FabricCompatibilityLayers/Apron/issues"
   },
   "license": "MIT",
   "icon": "assets/apron/icon.png",
@@ -36,12 +36,11 @@
     "apron-stapi.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">0.14.23",
+    "fabricloader": ">0.16.0",
     "minecraft": "1.0.0-beta.7.3",
     "mod-remapping-api": ">=1.22.1",
     "legacy-fabric-logger-api-v1": "*",
-    "com_github_llamalad7_mixinextras": ">=0.2.1",
-    "stationapi": ">=2.0-alpha.2.4",
+    "stationapi": ">=2.0.0-alpha.3",
     "java": ">=17"
   }
 }
