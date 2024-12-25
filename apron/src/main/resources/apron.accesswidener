@@ -1,194 +1,194 @@
 accessWidener	v1	named
 
-accessible method net/minecraft/entity/BlockEntity register (Ljava/lang/Class;Ljava/lang/String;)V
+accessible method net/minecraft/block/entity/BlockEntity method_1067 (Ljava/lang/Class;Ljava/lang/String;)V
 accessible method net/minecraft/item/Item <init> (I)V
 
-accessible method net/minecraft/recipe/RecipeRegistry addShapedRecipe (Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
-accessible method net/minecraft/recipe/RecipeRegistry addShapelessRecipe (Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+accessible method net/minecraft/recipe/CraftingRecipeManager addShapedRecipe (Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
+accessible method net/minecraft/recipe/CraftingRecipeManager addShapelessRecipe (Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)V
 
-accessible field net/minecraft/entity/EntityRegistry STRING_ID_TO_CLASS Ljava/util/Map;
-accessible field net/minecraft/entity/EntityRegistry CLASS_TO_STRING_ID Ljava/util/Map;
-accessible field net/minecraft/entity/EntityRegistry ID_TO_CLASS Ljava/util/Map;
-accessible field net/minecraft/entity/EntityRegistry CLASS_TO_ID Ljava/util/Map;
+accessible field net/minecraft/entity/EntityRegistry idToClass Ljava/util/Map;
+accessible field net/minecraft/entity/EntityRegistry classToId Ljava/util/Map;
+accessible field net/minecraft/entity/EntityRegistry rawIdToClass Ljava/util/Map;
+accessible field net/minecraft/entity/EntityRegistry classToRawId Ljava/util/Map;
 
 accessible method net/minecraft/entity/EntityRegistry register (Ljava/lang/Class;Ljava/lang/String;I)V
 
-accessible field net/minecraft/client/texture/TextureManager textureBinders Ljava/util/List;
-accessible field net/minecraft/client/texture/TextureManager texturePackManager Lnet/minecraft/client/TexturePackManager;
+accessible field net/minecraft/client/texture/TextureManager field_1251 Ljava/util/List;
+accessible field net/minecraft/client/texture/TextureManager field_1256 Lnet/minecraft/class_303;
 
-accessible field net/minecraft/client/render/entity/PlayerRenderer armorTypes [Ljava/lang/String;
-mutable field net/minecraft/client/render/entity/PlayerRenderer armorTypes [Ljava/lang/String;
+accessible field net/minecraft/client/render/entity/PlayerEntityRenderer armorTextureNames [Ljava/lang/String;
+mutable field net/minecraft/client/render/entity/PlayerEntityRenderer armorTextureNames [Ljava/lang/String;
 
-accessible field net/minecraft/client/render/entity/BlockEntityRenderDispatcher customRenderers Ljava/util/Map;
-mutable field net/minecraft/client/render/entity/BlockEntityRenderDispatcher customRenderers Ljava/util/Map;
+accessible field net/minecraft/client/render/block/entity/BlockEntityRenderDispatcher field_1564 Ljava/util/Map;
+mutable field net/minecraft/client/render/block/entity/BlockEntityRenderDispatcher field_1564 Ljava/util/Map;
 
-accessible field net/minecraft/stat/Stats idMap Ljava/util/Map;
+accessible field net/minecraft/stat/Stats ID_TO_STAT Ljava/util/Map;
 
 accessible field net/minecraft/client/resource/language/TranslationStorage translations Ljava/util/Properties;
 
-accessible field net/minecraft/stat/achievement/Achievement description Ljava/lang/String;
-mutable field net/minecraft/stat/achievement/Achievement description Ljava/lang/String;
+accessible field net/minecraft/achievement/Achievement translationKey Ljava/lang/String;
+mutable field net/minecraft/achievement/Achievement translationKey Ljava/lang/String;
 
-mutable field net/minecraft/stat/Stat name Ljava/lang/String;
+mutable field net/minecraft/stat/Stat stringId Ljava/lang/String;
 
-accessible method net/minecraft/packet/AbstractPacket register (IZZLjava/lang/Class;)V
+accessible method net/minecraft/network/packet/Packet register (IZZLjava/lang/Class;)V
 
-accessible class net/minecraft/block/RailBlock$RailMagicStuff
+accessible class net/minecraft/block/RailBlock$class_338
 
-accessible method net/minecraft/block/RailBlock$RailMagicStuff <init> (Lnet/minecraft/block/RailBlock;Lnet/minecraft/world/World;III)V
-accessible method net/minecraft/block/RailBlock$RailMagicStuff method_1116 ()I
+accessible method net/minecraft/block/RailBlock$class_338 <init> (Lnet/minecraft/block/RailBlock;Lnet/minecraft/world/World;III)V
+accessible method net/minecraft/block/RailBlock$class_338 method_1116 ()I
 
-accessible field net/minecraft/client/render/block/BlockRenderer blockView Lnet/minecraft/world/BlockView;
-accessible field net/minecraft/client/render/block/BlockRenderer textureOverride I
-accessible field net/minecraft/client/render/block/BlockRenderer eastFaceRotation I
-accessible field net/minecraft/client/render/block/BlockRenderer westFaceRotation I
-accessible field net/minecraft/client/render/block/BlockRenderer southFaceRotation I
-accessible field net/minecraft/client/render/block/BlockRenderer northFaceRotation I
-accessible field net/minecraft/client/render/block/BlockRenderer topFaceRotation I
-accessible field net/minecraft/client/render/block/BlockRenderer bottomFaceRotation I
-accessible field net/minecraft/client/render/block/BlockRenderer field_55 I
-accessible field net/minecraft/client/render/block/BlockRenderer mirrorTexture Z
-accessible field net/minecraft/client/render/block/BlockRenderer renderAllSides Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_92 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_69 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_70 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_71 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_72 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_73 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_74 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_75 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_76 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_77 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_78 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_79 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_80 Z
-accessible field net/minecraft/client/render/block/BlockRenderer field_93 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_94 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_95 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_96 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_97 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_98 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_99 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_100 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_101 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_102 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_103 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_104 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_105 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_41 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_42 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_43 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_44 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_45 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_46 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_47 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_48 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_49 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_50 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_51 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_52 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_53 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_54 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_56 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_57 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_58 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_59 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_60 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_61 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_62 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_63 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_64 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_65 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_66 F
-accessible field net/minecraft/client/render/block/BlockRenderer field_68 F
-accessible method net/minecraft/client/render/block/BlockRenderer renderBed (Lnet/minecraft/block/Block;III)Z
-extendable method net/minecraft/client/render/block/BlockRenderer renderBed (Lnet/minecraft/block/Block;III)Z
-accessible method net/minecraft/client/render/block/BlockRenderer renderRedstoneRepeater (Lnet/minecraft/block/Block;III)Z
-extendable method net/minecraft/client/render/block/BlockRenderer renderRedstoneRepeater (Lnet/minecraft/block/Block;III)Z
-accessible method net/minecraft/client/render/block/BlockRenderer renderPiston (Lnet/minecraft/block/Block;IIIZ)Z
-extendable method net/minecraft/client/render/block/BlockRenderer renderPiston (Lnet/minecraft/block/Block;IIIZ)Z
-accessible method net/minecraft/client/render/block/BlockRenderer method_41 (DDDDDDFD)V
-extendable method net/minecraft/client/render/block/BlockRenderer method_41 (DDDDDDFD)V
-accessible method net/minecraft/client/render/block/BlockRenderer method_54 (DDDDDDFD)V
-extendable method net/minecraft/client/render/block/BlockRenderer method_54 (DDDDDDFD)V
-accessible method net/minecraft/client/render/block/BlockRenderer method_60 (DDDDDDFD)V
-extendable method net/minecraft/client/render/block/BlockRenderer method_60 (DDDDDDFD)V
-accessible method net/minecraft/client/render/block/BlockRenderer renderPistonHead (Lnet/minecraft/block/Block;IIIZ)Z
-extendable method net/minecraft/client/render/block/BlockRenderer renderPistonHead (Lnet/minecraft/block/Block;IIIZ)Z
-accessible method net/minecraft/client/render/block/BlockRenderer method_43 (IIILnet/minecraft/block/material/Material;)F
-extendable method net/minecraft/client/render/block/BlockRenderer method_43 (IIILnet/minecraft/block/material/Material;)F
+accessible field net/minecraft/client/render/block/BlockRenderManager blockView Lnet/minecraft/world/BlockView;
+accessible field net/minecraft/client/render/block/BlockRenderManager textureOverride I
+accessible field net/minecraft/client/render/block/BlockRenderManager eastFaceRotation I
+accessible field net/minecraft/client/render/block/BlockRenderManager westFaceRotation I
+accessible field net/minecraft/client/render/block/BlockRenderManager southFaceRotation I
+accessible field net/minecraft/client/render/block/BlockRenderManager northFaceRotation I
+accessible field net/minecraft/client/render/block/BlockRenderManager topFaceRotation I
+accessible field net/minecraft/client/render/block/BlockRenderManager bottomFaceRotation I
+accessible field net/minecraft/client/render/block/BlockRenderManager useSurroundingBrightness I
+accessible field net/minecraft/client/render/block/BlockRenderManager flipTextureHorizontally Z
+accessible field net/minecraft/client/render/block/BlockRenderManager skipFaceCulling Z
+accessible field net/minecraft/client/render/block/BlockRenderManager useAo Z
+accessible field net/minecraft/client/render/block/BlockRenderManager field_69 Z
+accessible field net/minecraft/client/render/block/BlockRenderManager field_70 Z
+accessible field net/minecraft/client/render/block/BlockRenderManager field_71 Z
+accessible field net/minecraft/client/render/block/BlockRenderManager field_72 Z
+accessible field net/minecraft/client/render/block/BlockRenderManager field_73 Z
+accessible field net/minecraft/client/render/block/BlockRenderManager field_74 Z
+accessible field net/minecraft/client/render/block/BlockRenderManager field_75 Z
+accessible field net/minecraft/client/render/block/BlockRenderManager field_76 Z
+accessible field net/minecraft/client/render/block/BlockRenderManager field_77 Z
+accessible field net/minecraft/client/render/block/BlockRenderManager field_78 Z
+accessible field net/minecraft/client/render/block/BlockRenderManager field_79 Z
+accessible field net/minecraft/client/render/block/BlockRenderManager field_80 Z
+accessible field net/minecraft/client/render/block/BlockRenderManager selfBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager northBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager bottomBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager eastBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager southBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager topBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager westBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager northEastBottomBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager northBottomBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager northWestBottomBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager eastBottomBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager westBottomBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager southEastBottomBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager southBottomBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager southWestBottomBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager northEastTopBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager northTopBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager northWestTopBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager eastTopBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager southEastTopBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager southTopBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager westTopBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager southWestTopBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager northEastBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager southEastBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager northWestBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager southWestBrightness F
+accessible field net/minecraft/client/render/block/BlockRenderManager firstVertexRed F
+accessible field net/minecraft/client/render/block/BlockRenderManager secondVertexRed F
+accessible field net/minecraft/client/render/block/BlockRenderManager thirdVertexRed F
+accessible field net/minecraft/client/render/block/BlockRenderManager fourthVertexRed F
+accessible field net/minecraft/client/render/block/BlockRenderManager firstVertexGreen F
+accessible field net/minecraft/client/render/block/BlockRenderManager secondVertexGreen F
+accessible field net/minecraft/client/render/block/BlockRenderManager thirdVertexGreen F
+accessible field net/minecraft/client/render/block/BlockRenderManager fourthVertexGreen F
+accessible field net/minecraft/client/render/block/BlockRenderManager firstVertexBlue F
+accessible field net/minecraft/client/render/block/BlockRenderManager secondVertexBlue F
+accessible field net/minecraft/client/render/block/BlockRenderManager thirdVertexBlue F
+accessible field net/minecraft/client/render/block/BlockRenderManager fourthVertexBlue F
+accessible method net/minecraft/client/render/block/BlockRenderManager renderBed (Lnet/minecraft/block/Block;III)Z
+extendable method net/minecraft/client/render/block/BlockRenderManager renderBed (Lnet/minecraft/block/Block;III)Z
+accessible method net/minecraft/client/render/block/BlockRenderManager renderRepeater (Lnet/minecraft/block/Block;III)Z
+extendable method net/minecraft/client/render/block/BlockRenderManager renderRepeater (Lnet/minecraft/block/Block;III)Z
+accessible method net/minecraft/client/render/block/BlockRenderManager renderPiston (Lnet/minecraft/block/Block;IIIZ)Z
+extendable method net/minecraft/client/render/block/BlockRenderManager renderPiston (Lnet/minecraft/block/Block;IIIZ)Z
+accessible method net/minecraft/client/render/block/BlockRenderManager renderPistonHeadYAxis (DDDDDDFD)V
+extendable method net/minecraft/client/render/block/BlockRenderManager renderPistonHeadYAxis (DDDDDDFD)V
+accessible method net/minecraft/client/render/block/BlockRenderManager renderPistonHeadZAxis (DDDDDDFD)V
+extendable method net/minecraft/client/render/block/BlockRenderManager renderPistonHeadZAxis (DDDDDDFD)V
+accessible method net/minecraft/client/render/block/BlockRenderManager renderPistonHeadXAxis (DDDDDDFD)V
+extendable method net/minecraft/client/render/block/BlockRenderManager renderPistonHeadXAxis (DDDDDDFD)V
+accessible method net/minecraft/client/render/block/BlockRenderManager renderPistonHead (Lnet/minecraft/block/Block;IIIZ)Z
+extendable method net/minecraft/client/render/block/BlockRenderManager renderPistonHead (Lnet/minecraft/block/Block;IIIZ)Z
+accessible method net/minecraft/client/render/block/BlockRenderManager getFluidHeight (IIILnet/minecraft/block/Material;)F
+extendable method net/minecraft/client/render/block/BlockRenderManager getFluidHeight (IIILnet/minecraft/block/Material;)F
 
-accessible field net/minecraft/client/render/Tessellator drawingMode I
+accessible field net/minecraft/client/render/Tessellator mode I
 accessible field net/minecraft/client/render/Tessellator xOffset D
 accessible field net/minecraft/client/render/Tessellator yOffset D
 accessible field net/minecraft/client/render/Tessellator zOffset D
-accessible field net/minecraft/client/render/Tessellator tessellating Z
+accessible field net/minecraft/client/render/Tessellator drawing Z
 mutable field net/minecraft/client/render/Tessellator INSTANCE Lnet/minecraft/client/render/Tessellator;
 accessible method net/minecraft/client/render/Tessellator <init> (I)V
 
-accessible field net/minecraft/client/render/WorldEventRenderer world Lnet/minecraft/world/World;
-accessible field net/minecraft/client/render/WorldEventRenderer textureManager Lnet/minecraft/client/texture/TextureManager;
-accessible field net/minecraft/client/render/WorldEventRenderer client Lnet/minecraft/client/Minecraft;
-accessible field net/minecraft/client/render/WorldEventRenderer blockRenderer Lnet/minecraft/client/render/block/BlockRenderer;
+accessible field net/minecraft/client/render/WorldRenderer world Lnet/minecraft/world/World;
+accessible field net/minecraft/client/render/WorldRenderer textureManager Lnet/minecraft/client/texture/TextureManager;
+accessible field net/minecraft/client/render/WorldRenderer client Lnet/minecraft/client/Minecraft;
+accessible field net/minecraft/client/render/WorldRenderer blockRenderManager Lnet/minecraft/client/render/block/BlockRenderManager;
 
-accessible field net/minecraft/item/ToolItem field_2713 F
-accessible field net/minecraft/item/ToolItem field_2714 I
+accessible field net/minecraft/item/ToolItem miningSpeed F
+accessible field net/minecraft/item/ToolItem damage I
 
 accessible method net/minecraft/block/Block setHardness (F)Lnet/minecraft/block/Block;
-accessible method net/minecraft/block/Block setLightOpacity (I)Lnet/minecraft/block/Block;
-accessible method net/minecraft/block/Block setSounds (Lnet/minecraft/block/BlockSounds;)Lnet/minecraft/block/Block;
-accessible method net/minecraft/block/Block setBlastResistance (F)Lnet/minecraft/block/Block;
-accessible method net/minecraft/block/Block setLightEmittance (F)Lnet/minecraft/block/Block;
-accessible method net/minecraft/block/Block disableNotifyOnMetaDataChange ()Lnet/minecraft/block/Block;
+accessible method net/minecraft/block/Block setOpacity (I)Lnet/minecraft/block/Block;
+accessible method net/minecraft/block/Block setSoundGroup (Lnet/minecraft/sound/BlockSoundGroup;)Lnet/minecraft/block/Block;
+accessible method net/minecraft/block/Block setResistance (F)Lnet/minecraft/block/Block;
+accessible method net/minecraft/block/Block setLuminance (F)Lnet/minecraft/block/Block;
+accessible method net/minecraft/block/Block ignoreMetaUpdates ()Lnet/minecraft/block/Block;
 accessible method net/minecraft/block/Block setUnbreakable ()Lnet/minecraft/block/Block;
-accessible method net/minecraft/block/Block setTicksRandomly (Z)Lnet/minecraft/block/Block;
-accessible method net/minecraft/block/Block disableStat ()Lnet/minecraft/block/Block;
+accessible method net/minecraft/block/Block setTickRandomly (Z)Lnet/minecraft/block/Block;
+accessible method net/minecraft/block/Block disableTrackingStatistics ()Lnet/minecraft/block/Block;
 
-accessible method net/minecraft/item/Item setHasSubItems (Z)Lnet/minecraft/item/Item;
-accessible method net/minecraft/item/Item setDurability (I)Lnet/minecraft/item/Item;
-accessible field net/minecraft/item/Item texturePosition I
-accessible field net/minecraft/item/Item maxStackSize I
-accessible field net/minecraft/item/Item isRendered3d Z
-accessible field net/minecraft/item/Item hasSubItems Z
+accessible method net/minecraft/item/Item setHasSubtypes (Z)Lnet/minecraft/item/Item;
+accessible method net/minecraft/item/Item setMaxDamage (I)Lnet/minecraft/item/Item;
+accessible field net/minecraft/item/Item textureId I
+accessible field net/minecraft/item/Item maxCount I
+accessible field net/minecraft/item/Item handheld Z
+accessible field net/minecraft/item/Item hasSubtypes Z
 
-accessible method net/minecraft/world/World notifyOfNeighborChange (IIII)V
+accessible method net/minecraft/world/World method_235 (IIII)V
 accessible field net/minecraft/world/World dimensionData Lnet/minecraft/world/dimension/DimensionData;
 accessible field net/minecraft/world/World properties Lnet/minecraft/world/WorldProperties;
-accessible field net/minecraft/world/World autoSaveInterval I
+accessible field net/minecraft/world/World field_212 I
 
-accessible method net/minecraft/world/dimension/DimensionFile getParentFolder ()Ljava/io/File;
+accessible method net/minecraft/class_81 method_332 ()Ljava/io/File;
 
 accessible field net/minecraft/entity/LivingEntity texture Ljava/lang/String;
 
-accessible method net/minecraft/entity/Entity kill ()V
+accessible method net/minecraft/entity/Entity method_1319 ()V
 
 accessible field net/minecraft/client/gui/screen/Screen buttons Ljava/util/List;
 
-accessible field net/minecraft/client/gui/screen/container/ContainerScreen containerWidth I
-accessible field net/minecraft/client/gui/screen/container/ContainerScreen containerHeight I
+accessible field net/minecraft/client/gui/screen/ingame/HandledScreen backgroundWidth I
+accessible field net/minecraft/client/gui/screen/ingame/HandledScreen backgroundHeight I
 
 accessible method net/minecraft/item/AxeItem <init> (ILnet/minecraft/item/ToolMaterial;)V
 
 accessible method net/minecraft/item/PickaxeItem <init> (ILnet/minecraft/item/ToolMaterial;)V
 
-accessible method net/minecraft/item/RecordItem <init> (ILjava/lang/String;)V
+accessible method net/minecraft/item/MusicDiscItem <init> (ILjava/lang/String;)V
 
-accessible method net/minecraft/client/gui/GuiElement fill (IIIII)V
-accessible method net/minecraft/client/gui/GuiElement drawLineVertical (IIII)V
-accessible method net/minecraft/client/gui/GuiElement drawLineHorizontal (IIII)V
-accessible method net/minecraft/client/gui/GuiElement fillGradient (IIIIII)V
-accessible field net/minecraft/client/gui/GuiElement zOffset F
+accessible method net/minecraft/client/gui/DrawContext fill (IIIII)V
+accessible method net/minecraft/client/gui/DrawContext drawVerticalLine (IIII)V
+accessible method net/minecraft/client/gui/DrawContext drawHorizontalLine (IIII)V
+accessible method net/minecraft/client/gui/DrawContext fillGradient (IIIIII)V
+accessible field net/minecraft/client/gui/DrawContext zOffset F
 
 accessible method net/minecraft/util/math/Vec3d <init> (DDD)V
 
-accessible method net/minecraft/client/Minecraft loadIntoWorld (Ljava/lang/String;)V
+accessible method net/minecraft/client/Minecraft method_2130 (Ljava/lang/String;)V
 
-accessible method net/minecraft/entity/player/PlayerEntity onEntityCollision (Lnet/minecraft/entity/Entity;)V
+accessible method net/minecraft/entity/player/PlayerEntity method_520 (Lnet/minecraft/entity/Entity;)V
 
 ## ModLoaderMP Server
-accessible method net/minecraft/server/entity/player/ServerPlayerEntity method_314 ()V
-accessible field net/minecraft/server/entity/player/ServerPlayerEntity field_260 I
-accessible field net/minecraft/server/network/ServerPlayPacketHandler player Lnet/minecraft/server/entity/player/ServerPlayerEntity;
+accessible method net/minecraft/entity/player/ServerPlayerEntity method_314 ()V
+accessible field net/minecraft/entity/player/ServerPlayerEntity field_260 I
+accessible field net/minecraft/server/network/ServerPlayNetworkHandler field_920 Lnet/minecraft/entity/player/ServerPlayerEntity;
 
 accessible class argo/jdom/JsonListenerToJdomAdapter
 accessible class argo/jdom/JsonListenerToJdomAdapter$NodeContainer
@@ -198,14 +198,14 @@ accessible class argo/jdom/JsonListenerToJdomAdapter$3
 accessible class argo/jdom/JsonFieldBuilder
 
 accessible method net/minecraft/client/render/entity/EntityRenderer bindTexture (Ljava/lang/String;)V
-extendable method net/minecraft/entity/player/PlayerEntity onEntityCollision (Lnet/minecraft/entity/Entity;)V
-accessible field net/minecraft/entity/Entity rand Ljava/util/Random;
-accessible field net/minecraft/client/entity/player/AbstractClientPlayerEntity client Lnet/minecraft/client/Minecraft;
+extendable method net/minecraft/entity/player/PlayerEntity method_520 (Lnet/minecraft/entity/Entity;)V
+accessible field net/minecraft/entity/Entity random Ljava/util/Random;
+accessible field net/minecraft/entity/player/ClientPlayerEntity minecraft Lnet/minecraft/client/Minecraft;
 accessible field net/minecraft/entity/player/PlayerEntity field_512 Z
-accessible method net/minecraft/client/entity/player/AbstractClientPlayerEntity method_1372 (DDD)Z
+accessible method net/minecraft/entity/player/ClientPlayerEntity pushOutOfBlock (DDD)Z
 
 ## Forge Server
-accessible class net/minecraft/server/ServerPlayerView$class_514
+accessible class net/minecraft/class_167$class_514
 
 ## Mods
 mutable field net/minecraft/block/Block FARMLAND Lnet/minecraft/block/Block;
