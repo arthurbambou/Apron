@@ -22,7 +22,7 @@ public abstract class ItemEntityMixin extends Entity {
 		super(arg);
 	}
 
-	@Inject(method = "onPlayerCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/Entity;Ljava/lang/String;FF)V"))
+	@Inject(method = "onPlayerInteraction", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/Entity;Ljava/lang/String;FF)V"))
 	private void modloader$onPlayerCollision(PlayerEntity par1, CallbackInfo ci) {
 		ModLoader.OnItemPickup(par1, this.stack);
 	}

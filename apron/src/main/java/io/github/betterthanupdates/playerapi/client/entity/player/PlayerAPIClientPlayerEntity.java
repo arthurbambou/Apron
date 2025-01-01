@@ -3,14 +3,14 @@ package io.github.betterthanupdates.playerapi.client.entity.player;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.class_141;
 import playerapi.PlayerBase;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.SleepStatus;
 
 /**
  * Implements getter for public field patch in ClientPlayerEntity.
@@ -22,7 +22,7 @@ public interface PlayerAPIClientPlayerEntity {
 
 	void superOnUpdate();
 
-	SleepStatus superSleepInBedAt(int i, int j, int k);
+	class_141 superSleepInBedAt(int i, int j, int k);
 
 	Minecraft getMc();
 

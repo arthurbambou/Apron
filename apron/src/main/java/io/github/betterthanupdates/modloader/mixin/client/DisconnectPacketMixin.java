@@ -1,10 +1,9 @@
 package io.github.betterthanupdates.modloader.mixin.client;
 
+import net.minecraft.network.packet.play.DisconnectPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
-
-import net.minecraft.packet.misc.DisconnectPacket;
 
 @Mixin(DisconnectPacket.class)
 public abstract class DisconnectPacketMixin {

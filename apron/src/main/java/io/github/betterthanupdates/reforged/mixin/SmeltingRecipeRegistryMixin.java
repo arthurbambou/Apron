@@ -11,11 +11,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.SmeltingRecipeRegistry;
-
+import net.minecraft.recipe.SmeltingRecipeManager;
 import io.github.betterthanupdates.reforged.recipe.ReforgedSmeltingRecipeRegistry;
 
-@Mixin(SmeltingRecipeRegistry.class)
+@Mixin(SmeltingRecipeManager.class)
 public class SmeltingRecipeRegistryMixin implements ReforgedSmeltingRecipeRegistry {
 	@Shadow
 	private Map<Integer, ItemStack> recipes;
@@ -36,7 +35,7 @@ public class SmeltingRecipeRegistryMixin implements ReforgedSmeltingRecipeRegist
 	@Override
 	public ItemStack reforged$getSmeltingResult(ItemStack itemStack) {
 		if (itemStack != null) {
-			return this.metaSmeltingList.get(Arrays.asList(itemStack.itemId, itemStack.getMeta()));
+			return this.metaSmeltingList.get(Arrays.asList(itemStack.itemId, itemStack.getDamage()));
 		}
 
 		return null;

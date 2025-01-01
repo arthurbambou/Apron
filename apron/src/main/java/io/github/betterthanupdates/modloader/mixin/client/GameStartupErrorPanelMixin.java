@@ -10,16 +10,15 @@ import modloader.BaseMod;
 import modloader.ModLoader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.class_622;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-import net.minecraft.applet.GameStartupErrorPanel;
-
 @Environment(EnvType.CLIENT)
-@Mixin(GameStartupErrorPanel.class)
+@Mixin(class_622.class)
 public abstract class GameStartupErrorPanelMixin extends Panel {
 	private static StringWriter stringWriter = new StringWriter();
 
@@ -110,6 +109,6 @@ public abstract class GameStartupErrorPanelMixin extends Panel {
 		str4 = str4 + "\n";
 		str4 = str4 + "\n";
 
-		return str1;
+		return str4;
 	}
 }

@@ -4,30 +4,23 @@ import java.util.Random;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import reforged.ICustomDrop;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 import io.github.betterthanupdates.reforged.block.ReforgedBlock;
 
 @Mixin(Block.class)
 public abstract class BlockMixin implements ReforgedBlock {
 	@Shadow
-	public abstract int getDropId(int i, Random random);
+	public abstract int getDroppedItemId(int i, Random random);
 
 	@Shadow
-	public abstract int getDropCount(Random random);
+	public abstract int getDroppedItemCount(Random random);
 
 	@Shadow
-	protected abstract int droppedMeta(int i);
+	protected abstract int getDroppedItemMeta(int i);
 //
 //	// Reforged fields
 //	@Unique
@@ -35,7 +28,7 @@ public abstract class BlockMixin implements ReforgedBlock {
 
 	@Override
 	public int quantityDropped(int i, Random random) {
-		return this.getDropCount(random);
+		return this.getDroppedItemCount(random);
 	}
 
 	@Override
@@ -47,14 +40,14 @@ public abstract class BlockMixin implements ReforgedBlock {
 
 	@Override
 	public int damageDropped(int i, ItemStack stack) {
-		return stack != null && stack.getItem() instanceof ICustomDrop ? ((ICustomDrop) stack.getItem()).getDamageDropped((Block) (Object) this, i, stack) : this.droppedMeta(i);
+		return stack != null && stack.getItem() instanceof ICustomDrop ? ((ICustomDrop) stack.getItem()).getDamageDropped((Block) (Object) this, i, stack) : this.getDroppedItemMeta(i);
 	}
 
 	@Override
 	public int idDropped(int i, Random random, ItemStack stack) {
 		return stack != null && stack.getItem() instanceof ICustomDrop
 				? ((ICustomDrop) stack.getItem()).getIdDropped((Block) (Object) this, i, random, stack)
-				: this.getDropId(i, random);
+				: this.getDroppedItemId(i, random);
 	}
 
 //	int cachedL;

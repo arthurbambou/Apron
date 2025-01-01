@@ -30,26 +30,26 @@ public class ShearsItemMixin extends Item implements ReforgedItem {
 	@Inject(method = "postMine", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;postMine(Lnet/minecraft/item/ItemStack;IIIILnet/minecraft/entity/LivingEntity;)Z"))
 	private void reforged$postMine(ItemStack itemstack, int i, int j, int k, int l, LivingEntity livingEntity, CallbackInfoReturnable<Boolean> cir) {
 		if (i != Block.COBWEB.id && i != Block.LEAVES.id // Don't apply damage if it has already been applied before.
-				&& Block.BY_ID[i] instanceof IShearable) {
-			itemstack.applyDamage(1, livingEntity);
+				&& Block.BLOCKS[i] instanceof IShearable) {
+			itemstack.damage(1, livingEntity);
 		}
 	}
 
 	@Override
-	public void interactWithEntity(ItemStack itemstack, LivingEntity entity) {
-		if (!entity.world.isClient) {
+	public void useOnEntity(ItemStack itemstack, LivingEntity entity) {
+		if (!entity.world.isRemote) {
 			if (entity instanceof IShearable) {
 				IShearable target = (IShearable) entity;
 
 				if (target.isShearable(itemstack, entity.world, (int) entity.x, (int) entity.y, (int) entity.z)) {
 					for (ItemStack stack : target.onSheared(itemstack, entity.world, (int) entity.x, (int) entity.y, (int) entity.z)) {
-						ItemEntity ent = entity.dropItem(stack, 1.0F);
-						ent.yVelocity += (double) (entity.rand.nextFloat() * 0.05F);
-						ent.xVelocity += (double) ((entity.rand.nextFloat() - entity.rand.nextFloat()) * 0.1F);
-						ent.zVelocity += (double) ((entity.rand.nextFloat() - entity.rand.nextFloat()) * 0.1F);
+						ItemEntity ent = entity.method_1327(stack, 1.0F);
+						ent.velocityY += (double) (entity.random.nextFloat() * 0.05F);
+						ent.velocityX += (double) ((entity.random.nextFloat() - entity.random.nextFloat()) * 0.1F);
+						ent.velocityZ += (double) ((entity.random.nextFloat() - entity.random.nextFloat()) * 0.1F);
 					}
 
-					itemstack.applyDamage(1, entity);
+					itemstack.damage(1, entity);
 				}
 			}
 		}
@@ -57,25 +57,25 @@ public class ShearsItemMixin extends Item implements ReforgedItem {
 
 	@Override
 	public boolean onBlockStartBreak(ItemStack itemstack, int x, int y, int z, PlayerEntity player) {
-		if (!player.world.isClient) {
+		if (!player.world.isRemote) {
 			int id = player.world.getBlockId(x, y, z);
 
-			if (Block.BY_ID[id] != null && Block.BY_ID[id] instanceof IShearable) {
-				IShearable target = (IShearable) Block.BY_ID[id];
+			if (Block.BLOCKS[id] != null && Block.BLOCKS[id] instanceof IShearable) {
+				IShearable target = (IShearable) Block.BLOCKS[id];
 
 				if (target.isShearable(itemstack, player.world, x, y, z)) {
 					for (ItemStack stack : target.onSheared(itemstack, player.world, x, y, z)) {
 						float f = 0.7F;
-						double d = (double) (player.rand.nextFloat() * f) + (double) (1.0F - f) * 0.5;
-						double d1 = (double) (player.rand.nextFloat() * f) + (double) (1.0F - f) * 0.5;
-						double d2 = (double) (player.rand.nextFloat() * f) + (double) (1.0F - f) * 0.5;
+						double d = (double) (player.random.nextFloat() * f) + (double) (1.0F - f) * 0.5;
+						double d1 = (double) (player.random.nextFloat() * f) + (double) (1.0F - f) * 0.5;
+						double d2 = (double) (player.random.nextFloat() * f) + (double) (1.0F - f) * 0.5;
 						ItemEntity entityitem = new ItemEntity(player.world, (double) x + d, (double) y + d1, (double) z + d2, stack);
 						entityitem.pickupDelay = 10;
-						player.world.spawnEntity(entityitem);
+						player.world.method_210(entityitem);
 					}
 
-					itemstack.applyDamage(1, player);
-					player.increaseStat(Stats.mineBlock[id], 1);
+					itemstack.damage(1, player);
+					player.increaseStat(Stats.MINE_BLOCK[id], 1);
 				}
 			}
 		}

@@ -6,8 +6,10 @@ import java.util.Random;
 
 import fr.catcore.cursedmixinextensions.annotations.ShadowSuper;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.class_141;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,69 +18,69 @@ import playerapi.PlayerAPI;
 import playerapi.PlayerBase;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
+import net.minecraft.block.entity.DispenserBlockEntity;
+import net.minecraft.block.entity.FurnaceBlockEntity;
+import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.util.Session;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.block.DispenserBlockEntity;
-import net.minecraft.entity.block.FurnaceBlockEntity;
-import net.minecraft.entity.block.SignBlockEntity;
+import net.minecraft.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.SleepStatus;
-import net.minecraft.util.io.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 
 import io.github.betterthanupdates.playerapi.client.entity.player.PlayerAPIClientPlayerEntity;
 
-@Mixin(AbstractClientPlayerEntity.class)
+@Mixin(ClientPlayerEntity.class)
 public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity implements PlayerAPIClientPlayerEntity {
 	@Shadow
-	public Minecraft client;
+	public Minecraft minecraft;
 
 	public AbstractClientPlayerEntityMixin(World arg) {
 		super(arg);
 	}
 
+	@Unique
 	public List<PlayerBase> playerBases = new ArrayList<>();
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void papi$init(Minecraft arg, World arg2, Session i, int par4, CallbackInfo ci) {
-		this.playerBases = PlayerAPI.playerInit((AbstractClientPlayerEntity) (Object) this);
+		this.playerBases = PlayerAPI.playerInit((ClientPlayerEntity) (Object) this);
 	}
 
 	@Override
 	public boolean damage(Entity entity, int i) {
-		return !PlayerAPI.attackEntityFrom((AbstractClientPlayerEntity) (Object) this, entity, i) && super.damage(entity, i);
+		return !PlayerAPI.attackEntityFrom((ClientPlayerEntity) (Object) this, entity, i) && super.damage(entity, i);
 	}
 
 	@Override
-	public void onKilledBy(Entity entity) {
-		if (!PlayerAPI.onDeath((AbstractClientPlayerEntity) (Object) this, entity)) {
-			super.onKilledBy(entity);
+	public void method_938(Entity entity) {
+		if (!PlayerAPI.onDeath((ClientPlayerEntity) (Object) this, entity)) {
+			super.method_938(entity);
 		}
 	}
 
-	@Inject(method = "tickHandSwing", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_910", at = @At("HEAD"), cancellable = true)
 	private void papi$tickHandSwing(CallbackInfo ci) {
-		if (PlayerAPI.updatePlayerActionState((AbstractClientPlayerEntity) (Object) this)) ci.cancel();
+		if (PlayerAPI.updatePlayerActionState((ClientPlayerEntity) (Object) this)) ci.cancel();
 	}
 
 	@Override
 	public void superUpdatePlayerActionState() {
-		super.tickHandSwing();
+		super.method_910();
 	}
 
-	@Inject(method = "updateDespawnCounter", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_937", at = @At("HEAD"), cancellable = true)
 	private void papi$updateDespawnCounter(CallbackInfo ci) {
-		if (PlayerAPI.onLivingUpdate((AbstractClientPlayerEntity) (Object) this)) ci.cancel();
+		if (PlayerAPI.onLivingUpdate((ClientPlayerEntity) (Object) this)) ci.cancel();
 	}
 
 	@Override
 	public void superOnLivingUpdate() {
-		super.updateDespawnCounter();
+		super.method_937();
 	}
 
 	@Override
@@ -87,129 +89,129 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 	}
 
 	@Override
-	public void movementInputToVelocity(float f, float f1, float f2) {
-		if (!PlayerAPI.moveFlying((AbstractClientPlayerEntity) (Object) this, f, f1, f2)) {
-			super.movementInputToVelocity(f, f1, f2);
+	public void method_1324(float f, float f1, float f2) {
+		if (!PlayerAPI.moveFlying((ClientPlayerEntity) (Object) this, f, f1, f2)) {
+			super.method_1324(f, f1, f2);
 		}
 	}
 
 	@Override
-	protected boolean canClimb() {
-		return PlayerAPI.canTriggerWalking((AbstractClientPlayerEntity) (Object) this, true);
+	protected boolean bypassesSteppingEffects() {
+		return PlayerAPI.canTriggerWalking((ClientPlayerEntity) (Object) this, true);
 	}
 
 	@Inject(method = "method_136", at = @At("HEAD"), cancellable = true)
 	private void papi$method_136(int i, boolean flag, CallbackInfo ci) {
-		if (PlayerAPI.handleKeyPress((AbstractClientPlayerEntity) (Object) this, i, flag)) ci.cancel();
+		if (PlayerAPI.handleKeyPress((ClientPlayerEntity) (Object) this, i, flag)) ci.cancel();
 	}
 
-	@Inject(method = "writeAdditional", at = @At("HEAD"), cancellable = true)
-	private void papi$writeAdditional(CompoundTag par1, CallbackInfo ci) {
-		if (PlayerAPI.writeEntityToNBT((AbstractClientPlayerEntity) (Object) this, par1)) ci.cancel();
+	@Inject(method = "writeNbt", at = @At("HEAD"), cancellable = true)
+	private void papi$writeAdditional(NbtCompound par1, CallbackInfo ci) {
+		if (PlayerAPI.writeEntityToNBT((ClientPlayerEntity) (Object) this, par1)) ci.cancel();
 	}
 
-	@Inject(method = "readAdditional", at = @At("HEAD"), cancellable = true)
-	private void papi$readAdditional(CompoundTag par1, CallbackInfo ci) {
-		if (PlayerAPI.readEntityFromNBT((AbstractClientPlayerEntity) (Object) this, par1)) ci.cancel();
+	@Inject(method = "readNbt", at = @At("HEAD"), cancellable = true)
+	private void papi$readAdditional(NbtCompound par1, CallbackInfo ci) {
+		if (PlayerAPI.readEntityFromNBT((ClientPlayerEntity) (Object) this, par1)) ci.cancel();
 	}
 
-	@Inject(method = "closeContainer", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "closeScreen", at = @At("HEAD"), cancellable = true)
 	private void papi$closeContainer(CallbackInfo ci) {
-		if (PlayerAPI.onExitGUI((AbstractClientPlayerEntity) (Object) this)) ci.cancel();
+		if (PlayerAPI.onExitGUI((ClientPlayerEntity) (Object) this)) ci.cancel();
 	}
 
-	@Inject(method = "openSignScreen", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_489", at = @At("HEAD"), cancellable = true)
 	private void papi$openSignScreen(SignBlockEntity par1, CallbackInfo ci) {
-		if (PlayerAPI.displayGUIEditSign((AbstractClientPlayerEntity) (Object) this, par1)) ci.cancel();
+		if (PlayerAPI.displayGUIEditSign((ClientPlayerEntity) (Object) this, par1)) ci.cancel();
 	}
 
-	@Inject(method = "openChestScreen", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_486", at = @At("HEAD"), cancellable = true)
 	private void papi$openChestScreen(Inventory par1, CallbackInfo ci) {
-		if (PlayerAPI.displayGUIChest((AbstractClientPlayerEntity) (Object) this, par1)) ci.cancel();
+		if (PlayerAPI.displayGUIChest((ClientPlayerEntity) (Object) this, par1)) ci.cancel();
 	}
 
-	@Inject(method = "openCraftingScreen", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_484", at = @At("HEAD"), cancellable = true)
 	private void papi$openCraftingScreen(int i, int j, int k, CallbackInfo ci) {
-		if (PlayerAPI.displayWorkbenchGUI((AbstractClientPlayerEntity) (Object) this, i, j, k)) ci.cancel();
+		if (PlayerAPI.displayWorkbenchGUI((ClientPlayerEntity) (Object) this, i, j, k)) ci.cancel();
 	}
 
-	@Inject(method = "openFurnaceScreen", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_487", at = @At("HEAD"), cancellable = true)
 	private void papi$openFurnaceScreen(FurnaceBlockEntity par1, CallbackInfo ci) {
-		if (PlayerAPI.displayGUIFurnace((AbstractClientPlayerEntity) (Object) this, par1)) ci.cancel();
+		if (PlayerAPI.displayGUIFurnace((ClientPlayerEntity) (Object) this, par1)) ci.cancel();
 	}
 
-	@Inject(method = "openDispenserScreen", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_485", at = @At("HEAD"), cancellable = true)
 	private void papi$openDispenserScreen(DispenserBlockEntity par1, CallbackInfo ci) {
-		if (PlayerAPI.displayGUIDispenser((AbstractClientPlayerEntity) (Object) this, par1)) ci.cancel();
+		if (PlayerAPI.displayGUIDispenser((ClientPlayerEntity) (Object) this, par1)) ci.cancel();
 	}
 
-	@Inject(method = "getArmorValue", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "method_141", at = @At("RETURN"), cancellable = true)
 	private void papi$getArmorValue(CallbackInfoReturnable<Integer> cir) {
-		cir.setReturnValue(PlayerAPI.getPlayerArmorValue((AbstractClientPlayerEntity) (Object) this, cir.getReturnValue()));
+		cir.setReturnValue(PlayerAPI.getPlayerArmorValue((ClientPlayerEntity) (Object) this, cir.getReturnValue()));
 	}
 
 	@Override
-	public void remove() {
-		if (!PlayerAPI.setEntityDead((AbstractClientPlayerEntity) (Object) this)) {
-			super.remove();
+	public void markDead() {
+		if (!PlayerAPI.setEntityDead((ClientPlayerEntity) (Object) this)) {
+			super.markDead();
 		}
 	}
 
 	@Override
-	public double squaredDistanceTo(double d, double d1, double d2) {
-		return PlayerAPI.getDistanceSq((AbstractClientPlayerEntity) (Object) this, d, d1, d2, super.squaredDistanceTo(d, d1, d2));
+	public double method_1347(double d, double d1, double d2) {
+		return PlayerAPI.getDistanceSq((ClientPlayerEntity) (Object) this, d, d1, d2, super.method_1347(d, d1, d2));
 	}
 
 	@Override
 	public boolean method_1334() {
-		return PlayerAPI.isInWater((AbstractClientPlayerEntity) (Object) this, this.field_1612);
+		return PlayerAPI.isInWater((ClientPlayerEntity) (Object) this, this.field_1612);
 	}
 
 	@Inject(method = "method_1373", at = @At("RETURN"), cancellable = true)
 	private void papi$isSneaking(CallbackInfoReturnable<Boolean> cir) {
-		cir.setReturnValue(PlayerAPI.isSneaking((AbstractClientPlayerEntity) (Object) this, cir.getReturnValue()));
+		cir.setReturnValue(PlayerAPI.isSneaking((ClientPlayerEntity) (Object) this, cir.getReturnValue()));
 	}
 
 	@Override
-	public float getStrengh(Block block) {
-		float f = this.inventory.getStrengthOnBlock(block);
+	public float method_511(Block block) {
+		float f = this.inventory.method_674(block);
 
 		if (this.isInFluid(Material.WATER)) {
 			f /= 5.0F;
 		}
 
-		if (!this.onGround) {
+		if (!this.field_1623) {
 			f /= 5.0F;
 		}
 
-		return PlayerAPI.getCurrentPlayerStrVsBlock((AbstractClientPlayerEntity) (Object) this, block, f);
+		return PlayerAPI.getCurrentPlayerStrVsBlock((ClientPlayerEntity) (Object) this, block, f);
 	}
 
 	@Override
-	public void addHealth(int i) {
-		if (!PlayerAPI.heal((AbstractClientPlayerEntity) (Object) this, i)) {
-			super.addHealth(i);
+	public void method_939(int i) {
+		if (!PlayerAPI.heal((ClientPlayerEntity) (Object) this, i)) {
+			super.method_939(i);
 		}
 	}
 
 	@Inject(method = "respawn", at = @At("HEAD"), cancellable = true)
 	private void papi$respawn(CallbackInfo ci) {
-		if (PlayerAPI.respawn((AbstractClientPlayerEntity) (Object) this)) ci.cancel();
+		if (PlayerAPI.respawn((ClientPlayerEntity) (Object) this)) ci.cancel();
 	}
 
-	@Inject(method = "method_1372", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "pushOutOfBlock", at = @At("HEAD"), cancellable = true)
 	private void papi$method_1372(double d, double d1, double d2, CallbackInfoReturnable<Boolean> cir) {
-		if (PlayerAPI.pushOutOfBlocks((AbstractClientPlayerEntity) (Object) this, d, d1, d2)) cir.setReturnValue(false);
+		if (PlayerAPI.pushOutOfBlocks((ClientPlayerEntity) (Object) this, d, d1, d2)) cir.setReturnValue(false);
 	}
 
 	@Override
-	public SleepStatus superSleepInBedAt(int i, int j, int k) {
-		return super.trySleep(i, j, k);
+	public class_141 superSleepInBedAt(int i, int j, int k) {
+		return super.method_495(i, j, k);
 	}
 
 	@Override
 	public Minecraft getMc() {
-		return this.client;
+		return this.minecraft;
 	}
 
 	@Override
@@ -219,12 +221,12 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 
 	@Override
 	public void setMoveForward(float f) {
-		this.forwardVelocity = f;
+		this.field_1029 = f;
 	}
 
 	@Override
 	public void setMoveStrafing(float f) {
-		this.horizontalVelocity = f;
+		this.field_1060 = f;
 	}
 
 	@Override
@@ -233,63 +235,63 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 	}
 
 	@Override
-	public float getBrightnessAtEyes(float f) {
-		return PlayerAPI.getEntityBrightness((AbstractClientPlayerEntity) (Object) this, f, super.getBrightnessAtEyes(f));
+	public float method_1394(float f) {
+		return PlayerAPI.getEntityBrightness((ClientPlayerEntity) (Object) this, f, super.method_1394(f));
 	}
 
 	@Override
 	public void tick() {
-		PlayerAPI.beforeUpdate((AbstractClientPlayerEntity) (Object) this);
+		PlayerAPI.beforeUpdate((ClientPlayerEntity) (Object) this);
 
-		if (!PlayerAPI.onUpdate((AbstractClientPlayerEntity) (Object) this)) {
+		if (!PlayerAPI.onUpdate((ClientPlayerEntity) (Object) this)) {
 			super.tick();
 		}
 
-		PlayerAPI.afterUpdate((AbstractClientPlayerEntity) (Object) this);
+		PlayerAPI.afterUpdate((ClientPlayerEntity) (Object) this);
 	}
 
 	@Override
 	public void superMoveFlying(float f, float f1, float f2) {
-		super.movementInputToVelocity(f, f1, f2);
+		super.method_1324(f, f1, f2);
 	}
 
 	@Inject(method = "move", at = @At("HEAD"))
 	private void papi$beforeMoveEntity(double d, double d1, double d2, CallbackInfo ci) {
-		PlayerAPI.beforeMoveEntity((AbstractClientPlayerEntity) (Object) this, d, d1, d2);
+		PlayerAPI.beforeMoveEntity((ClientPlayerEntity) (Object) this, d, d1, d2);
 	}
 
 	@Inject(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;move(DDD)V"), cancellable = true)
 	private void papi$moveEntity(double d, double d1, double d2, CallbackInfo ci) {
-		if (PlayerAPI.moveEntity((AbstractClientPlayerEntity) (Object) this, d, d1, d2)) {
+		if (PlayerAPI.moveEntity((ClientPlayerEntity) (Object) this, d, d1, d2)) {
 			ci.cancel();
 		}
 	}
 
 	@Inject(method = "move", at = @At("RETURN"))
 	private void papi$afterMoveEntity(double d, double d1, double d2, CallbackInfo ci) {
-		PlayerAPI.afterMoveEntity((AbstractClientPlayerEntity) (Object) this, d, d1, d2);
+		PlayerAPI.afterMoveEntity((ClientPlayerEntity) (Object) this, d, d1, d2);
 	}
 
 	@Override
-	public SleepStatus trySleep(int i, int j, int k) {
-		PlayerAPI.beforeSleepInBedAt((AbstractClientPlayerEntity) (Object) this, i, j, k);
-		SleepStatus sleepStatus = PlayerAPI.sleepInBedAt((AbstractClientPlayerEntity) (Object) this, i, j, k);
-		return sleepStatus == null ? super.trySleep(i, j, k) : sleepStatus;
+	public class_141 method_495(int i, int j, int k) {
+		PlayerAPI.beforeSleepInBedAt((ClientPlayerEntity) (Object) this, i, j, k);
+		class_141 sleepStatus = PlayerAPI.sleepInBedAt((ClientPlayerEntity) (Object) this, i, j, k);
+		return sleepStatus == null ? super.method_495(i, j, k) : sleepStatus;
 	}
 
 	@Override
 	public void doFall(float fallDist) {
-		super.handleFallDamage(fallDist);
+		super.method_1389(fallDist);
 	}
 
 	@Override
 	public float getFallDistance() {
-		return this.fallDistance;
+		return this.field_1636;
 	}
 
 	@Override
 	public boolean getSleeping() {
-		return this.lyingOnBed;
+		return this.sleeping;
 	}
 
 	@Override
@@ -299,17 +301,17 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 
 	@Override
 	public void doJump() {
-		this.jump();
+		this.method_944();
 	}
 
 	@Override
 	public Random getRandom() {
-		return this.rand;
+		return this.random;
 	}
 
 	@Override
 	public void setFallDistance(float f) {
-		this.fallDistance = f;
+		this.field_1636 = f;
 	}
 
 	@Override
@@ -318,39 +320,39 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 	}
 
 	@Override
-	public void travel(float f, float f1) {
-		if (!PlayerAPI.moveEntityWithHeading((AbstractClientPlayerEntity) (Object) this, f, f1)) {
-			super.travel(f, f1);
+	public void method_945(float f, float f1) {
+		if (!PlayerAPI.moveEntityWithHeading((ClientPlayerEntity) (Object) this, f, f1)) {
+			super.method_945(f, f1);
 		}
 	}
 
 	@Override
 	public boolean method_932() {
-		return PlayerAPI.isOnLadder((AbstractClientPlayerEntity) (Object) this, super.method_932());
+		return PlayerAPI.isOnLadder((ClientPlayerEntity) (Object) this, super.method_932());
 	}
 
 	@Override
 	public void setActionState(float newMoveStrafing, float newMoveForward, boolean newIsJumping) {
-		this.horizontalVelocity = newMoveStrafing;
-		this.forwardVelocity = newMoveForward;
+		this.field_1060 = newMoveStrafing;
+		this.field_1029 = newMoveForward;
 		this.jumping = newIsJumping;
 	}
 
 	@Override
 	public boolean isInFluid(Material material) {
-		return PlayerAPI.isInsideOfMaterial((AbstractClientPlayerEntity) (Object) this, material, super.isInFluid(material));
+		return PlayerAPI.isInsideOfMaterial((ClientPlayerEntity) (Object) this, material, super.isInFluid(material));
 	}
 
 	@Override
 	public void dropSelectedItem() {
-		if (!PlayerAPI.dropCurrentItem((AbstractClientPlayerEntity) (Object) this)) {
+		if (!PlayerAPI.dropCurrentItem((ClientPlayerEntity) (Object) this)) {
 			super.dropSelectedItem();
 		}
 	}
 
 	@Override
 	public void dropItem(ItemStack itemstack) {
-		if (!PlayerAPI.dropPlayerItem((AbstractClientPlayerEntity) (Object) this, itemstack)) {
+		if (!PlayerAPI.dropPlayerItem((ClientPlayerEntity) (Object) this, itemstack)) {
 			super.dropItem(itemstack);
 		}
 	}
@@ -362,69 +364,69 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 
 	@Override
 	public float superGetEntityBrightness(float f) {
-		return super.getBrightnessAtEyes(f);
+		return super.method_1394(f);
 	}
 
 	@Inject(method = "sendChatMessage", at = @At("RETURN"))
 	private void papi$sendChatMessage(String s, CallbackInfo ci) {
-		PlayerAPI.sendChatMessage((AbstractClientPlayerEntity) (Object) this, s);
+		PlayerAPI.sendChatMessage((ClientPlayerEntity) (Object) this, s);
 	}
 
 	@Override
-	protected String getHurtSound() {
-		String result = PlayerAPI.getHurtSound((AbstractClientPlayerEntity) (Object) this);
-		return result != null ? result : super.getHurtSound();
+	protected String method_912() {
+		String result = PlayerAPI.getHurtSound((ClientPlayerEntity) (Object) this);
+		return result != null ? result : super.method_912();
 	}
 
 	@Override
 	public String superGetHurtSound() {
-		return super.getHurtSound();
+		return super.method_912();
 	}
 
 	@Override
 	public float superGetCurrentPlayerStrVsBlock(Block block) {
-		return super.getStrengh(block);
+		return super.method_511(block);
 	}
 
 	@Override
-	public boolean canRemoveBlock(Block block) {
-		Boolean result = PlayerAPI.canHarvestBlock((AbstractClientPlayerEntity) (Object) this, block);
-		return result != null ? result : super.canRemoveBlock(block);
+	public boolean method_514(Block block) {
+		Boolean result = PlayerAPI.canHarvestBlock((ClientPlayerEntity) (Object) this, block);
+		return result != null ? result : super.method_514(block);
 	}
 
 	@Override
 	public boolean superCanHarvestBlock(Block block) {
-		return super.canRemoveBlock(block);
+		return super.method_514(block);
 	}
 
 	@Override
-	protected void handleFallDamage(float f) {
-		if (!PlayerAPI.fall((AbstractClientPlayerEntity) (Object) this, f)) {
-			super.handleFallDamage(f);
+	protected void method_1389(float f) {
+		if (!PlayerAPI.fall((ClientPlayerEntity) (Object) this, f)) {
+			super.method_1389(f);
 		}
 	}
 
 	@Override
 	public void superFall(float f) {
-		super.handleFallDamage(f);
+		super.method_1389(f);
 	}
 
 	@Override
-	protected void jump() {
-		if (!PlayerAPI.jump((AbstractClientPlayerEntity) (Object) this)) {
-			super.jump();
+	protected void method_944() {
+		if (!PlayerAPI.jump((ClientPlayerEntity) (Object) this)) {
+			super.method_944();
 		}
 	}
 
 	@Override
 	public void superJump() {
-		super.jump();
+		super.method_944();
 	}
 
 	@Override
-	protected void applyDamage(int i) {
-		if (!PlayerAPI.damageEntity((AbstractClientPlayerEntity) (Object) this, i)) {
-			super.applyDamage(i);
+	protected void method_946(int i) {
+		if (!PlayerAPI.damageEntity((ClientPlayerEntity) (Object) this, i)) {
+			super.method_946(i);
 		}
 	}
 
@@ -436,13 +438,13 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 		if (FabricLoader.getInstance().isModLoaded("station-player-api-v0")) {
 			this.superSuperDamageEntity(i);
 		} else {
-			super.applyDamage(i);
+			super.method_946(i);
 		}
 	}
 
 	@Override
 	public double method_1352(Entity entity) {
-		Double result = PlayerAPI.getDistanceSqToEntity((AbstractClientPlayerEntity) (Object) this, entity);
+		Double result = PlayerAPI.getDistanceSqToEntity((ClientPlayerEntity) (Object) this, entity);
 		return result != null ? result : super.method_1352(entity);
 	}
 
@@ -453,7 +455,7 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 
 	@Override
 	public void attack(Entity entity) {
-		if (!PlayerAPI.attackTargetEntityWithCurrentItem((AbstractClientPlayerEntity) (Object) this, entity)) {
+		if (!PlayerAPI.attackTargetEntityWithCurrentItem((ClientPlayerEntity) (Object) this, entity)) {
 			super.attack(entity);
 		}
 	}
@@ -464,19 +466,19 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 	}
 
 	@Override
-	public boolean method_1393() {
-		Boolean result = PlayerAPI.handleWaterMovement((AbstractClientPlayerEntity) (Object) this);
-		return result != null ? result : super.method_1393();
+	public boolean isSubmergedInWater() {
+		Boolean result = PlayerAPI.handleWaterMovement((ClientPlayerEntity) (Object) this);
+		return result != null ? result : super.isSubmergedInWater();
 	}
 
 	@Override
 	public boolean superHandleWaterMovement() {
-		return super.method_1393();
+		return super.isSubmergedInWater();
 	}
 
 	@Override
 	public boolean method_1335() {
-		Boolean result = PlayerAPI.handleLavaMovement((AbstractClientPlayerEntity) (Object) this);
+		Boolean result = PlayerAPI.handleLavaMovement((ClientPlayerEntity) (Object) this);
 		return result != null ? result : super.method_1335();
 	}
 
@@ -487,7 +489,7 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 
 	@Override
 	public void dropItem(ItemStack itemstack, boolean flag) {
-		if (!PlayerAPI.dropPlayerItemWithRandomChoice((AbstractClientPlayerEntity) (Object) this, itemstack, flag)) {
+		if (!PlayerAPI.dropPlayerItemWithRandomChoice((ClientPlayerEntity) (Object) this, itemstack, flag)) {
 			super.dropItem(itemstack, flag);
 		}
 	}

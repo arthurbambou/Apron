@@ -1,20 +1,16 @@
 package io.github.betterthanupdates.modloader.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.sugar.Local;
 import modloader.ModLoader;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.block.FurnaceBlock;
-import net.minecraft.entity.BlockEntity;
-import net.minecraft.entity.block.FurnaceBlockEntity;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.FurnaceBlockEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 
@@ -23,21 +19,23 @@ public abstract class FurnaceBlockEntityMixin extends BlockEntity implements Inv
 	@Shadow
 	private ItemStack[] inventory;
 
-	@WrapWithCondition(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/item/ItemStack;count:I", opcode = Opcodes.PUTFIELD))
+	@WrapWithCondition(method = "method_1076", at = @At(value = "FIELD", target = "Lnet/minecraft/item/ItemStack;count:I", opcode = Opcodes.PUTFIELD))
 	private boolean modloader$tick(ItemStack instance, int value) {
-		if (this.inventory[1].getItem().hasContainerItemType()) {
-			this.inventory[1] = new ItemStack(this.inventory[1].getItem().getContainerItemType());
+		if (this.inventory[1].getItem().hasCraftingReturnItem()) {
+			this.inventory[1] = new ItemStack(this.inventory[1].getItem().getCraftingReturnItem());
 			return false;
 		}
 
 		return true;
 	}
 
-	@Inject(method = "getFuelTime", cancellable = true, at = @At("RETURN"))
-	private void modloader$getFuelTime(ItemStack par1, CallbackInfoReturnable<Integer> cir) {
-		if (par1 != null && cir.getReturnValue() == 0) {
+	@ModifyReturnValue(method = "getFuelTime", at = @At("RETURN"))
+	private int modloader$getFuelTime(int original, @Local(ordinal = 0, argsOnly = true) ItemStack par1) {
+		if (par1 != null && original == 0) {
 			int j = par1.getItem().id;
-			cir.setReturnValue(ModLoader.AddAllFuel(j));
+			return ModLoader.AddAllFuel(j);
 		}
+
+		return original;
 	}
 }
