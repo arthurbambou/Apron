@@ -5,6 +5,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -15,25 +16,25 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.block.BlockRenderer;
+import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.world.BlockView;
 
 import io.github.betterthanupdates.forge.ForgeClientReflection;
 import io.github.betterthanupdates.forge.client.render.ForgeTessellator;
 
 @Environment(EnvType.CLIENT)
-@Mixin(BlockRenderer.class)
+@Mixin(BlockRenderManager.class)
 public abstract class BlockRendererMixin {
 	@Shadow
 	public BlockView blockView;
 	@Shadow
 	public int textureOverride;
 	@Shadow
-	public boolean field_81;
+	public boolean inventoryColorEnabled;
 	@Shadow
-	public boolean mirrorTexture;
+	public boolean flipTextureHorizontally;
 	@Shadow
-	public boolean renderAllSides;
+	public boolean skipFaceCulling;
 	@Shadow
 	public int eastFaceRotation;
 	@Shadow
@@ -47,9 +48,12 @@ public abstract class BlockRendererMixin {
 	@Shadow
 	public int bottomFaceRotation;
 	@Shadow
-	public int field_55;
+	public int useSurroundingBrightness;
 
+	// Forge Fields
+	@Unique
 	private float f;
+	@Unique
 	private float[] af;
 
 	/**
@@ -77,23 +81,23 @@ public abstract class BlockRendererMixin {
 	 */
 	private void forgeCtr() {
 		this.textureOverride = -1;
-		this.mirrorTexture = false;
-		this.renderAllSides = false;
-		this.field_81 = true;
+		this.flipTextureHorizontally = false;
+		this.skipFaceCulling = false;
+		this.inventoryColorEnabled = true;
 		this.eastFaceRotation = 0;
 		this.westFaceRotation = 0;
 		this.southFaceRotation = 0;
 		this.northFaceRotation = 0;
 		this.topFaceRotation = 0;
 		this.bottomFaceRotation = 0;
-		this.field_55 = 1;
+		this.useSurroundingBrightness = 1;
 	}
 
 	/**
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Inject(method = "render", cancellable = true, at = @At("RETURN"))
+	@Inject(method = "render(Lnet/minecraft/block/Block;III)Z", cancellable = true, at = @At("RETURN"))
 	private void forge$render(Block block, int i, int j, int k, CallbackInfoReturnable<Boolean> cir) {
 		int l = block.getRenderType();
 
@@ -118,7 +122,7 @@ public abstract class BlockRendererMixin {
 			case 17:
 				break;
 			default:
-				cir.setReturnValue(ModLoader.RenderWorldBlock((BlockRenderer) (Object) this, this.blockView, i, j, k, block, l));
+				cir.setReturnValue(ModLoader.RenderWorldBlock((BlockRenderManager) (Object) this, this.blockView, i, j, k, block, l));
 		}
 	}
 
@@ -129,7 +133,7 @@ public abstract class BlockRendererMixin {
 	@Inject(method = "renderRedstoneDust", at = @At("HEAD"))
 	public void renderRedstoneDust(Block block, int i, int j, int k, CallbackInfoReturnable<Boolean> cir) {
 		int l = this.blockView.getBlockMeta(i, j, k);
-		f = block.getBrightness(this.blockView, i, j, k);
+		f = block.getLuminance(this.blockView, i, j, k);
 		af = ForgeClientReflection.BlockRenderer$redstoneColors[l];
 	}
 
@@ -148,7 +152,7 @@ public abstract class BlockRendererMixin {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = "method_50", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/block/BlockRenderer;field_67:Z"))
+	@Redirect(method = "renderSmooth", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/block/BlockRenderManager;fancyGraphics:Z"))
 	public boolean method_50() {
 		return ((ForgeTessellator) Tessellator.INSTANCE).defaultTexture() && ForgeClientReflection.BlockRenderer$cfgGrassFix;
 	}
@@ -157,7 +161,7 @@ public abstract class BlockRendererMixin {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = "method_58", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/block/BlockRenderer;field_67:Z"))
+	@Redirect(method = "renderFlat", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/block/BlockRenderManager;fancyGraphics:Z"))
 	public boolean method_58() {
 		return ((ForgeTessellator) Tessellator.INSTANCE).defaultTexture() && ForgeClientReflection.BlockRenderer$cfgGrassFix;
 	}
@@ -166,7 +170,7 @@ public abstract class BlockRendererMixin {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Inject(method = "method_48", at = @At("RETURN"))
+	@Inject(method = "render(Lnet/minecraft/block/Block;IF)V", at = @At("RETURN"))
 	private void forge$method_48(Block block, int i, float f, CallbackInfo ci) {
 		int k = block.getRenderType();
 
@@ -180,7 +184,7 @@ public abstract class BlockRendererMixin {
 				case 13:
 					break;
 				default:
-					ModLoader.RenderInvBlock((BlockRenderer) (Object) this, block, i, k);
+					ModLoader.RenderInvBlock((BlockRenderManager) (Object) this, block, i, k);
 			}
 		}
 	}
@@ -189,7 +193,7 @@ public abstract class BlockRendererMixin {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Inject(method = "method_42", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "isSideLit", at = @At("RETURN"), cancellable = true)
 	private static void forge$method_42(int i, CallbackInfoReturnable<Boolean> cir) {
 		switch (i) {
 			case 0:

@@ -29,11 +29,11 @@ public abstract class ChunkMixin {
 	@Shadow
 	public World world;
 
-	@Inject(method = "setBlockWithMetadata", at = @At(value = "FIELD", target = "Lnet/minecraft/world/chunk/Chunk;blocks:[B", ordinal = 1), cancellable = true)
+	@Inject(method = "setBlock", at = @At(value = "FIELD", target = "Lnet/minecraft/world/chunk/Chunk;blocks:[B", ordinal = 1), cancellable = true)
 	private void forge$setBlockWithMetadata(int i, int j, int k, int l, int i1, CallbackInfoReturnable<Boolean> cir,
 											@Local(ordinal = 6) int blockId, @Local(ordinal = 7) int l1, @Local(ordinal = 8) int i2) {
-		if (Block.BY_ID[blockId] instanceof IOverrideReplace) {
-			IOverrideReplace overrideReplace = (IOverrideReplace) Block.BY_ID[blockId];
+		if (Block.BLOCKS[blockId] instanceof IOverrideReplace) {
+			IOverrideReplace overrideReplace = (IOverrideReplace) Block.BLOCKS[blockId];
 
 			if (!overrideReplace.canReplaceBlock(this.world, l1, j, i2, l)) {
 				cir.setReturnValue(overrideReplace.getReplacedSuccess());
@@ -41,11 +41,11 @@ public abstract class ChunkMixin {
 		}
 	}
 
-	@Inject(method = "method_860", at = @At(value = "FIELD", target = "Lnet/minecraft/world/chunk/Chunk;blocks:[B", ordinal = 1), cancellable = true)
+	@Inject(method = "setBlockId", at = @At(value = "FIELD", target = "Lnet/minecraft/world/chunk/Chunk;blocks:[B", ordinal = 1), cancellable = true)
 	private void forge$method_860(int i, int j, int k, int l, CallbackInfoReturnable<Boolean> cir,
 											@Local(ordinal = 5) int blockId, @Local(ordinal = 6) int l1, @Local(ordinal = 7) int i2) {
-		if (Block.BY_ID[blockId] instanceof IOverrideReplace) {
-			IOverrideReplace overrideReplace = (IOverrideReplace) Block.BY_ID[blockId];
+		if (Block.BLOCKS[blockId] instanceof IOverrideReplace) {
+			IOverrideReplace overrideReplace = (IOverrideReplace) Block.BLOCKS[blockId];
 
 			if (!overrideReplace.canReplaceBlock(this.world, l1, j, i2, l)) {
 				cir.setReturnValue(overrideReplace.getReplacedSuccess());

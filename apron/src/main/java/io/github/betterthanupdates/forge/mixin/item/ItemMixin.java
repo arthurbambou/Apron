@@ -12,10 +12,10 @@ import io.github.betterthanupdates.forge.item.ForgeItem;
 @Mixin(Item.class)
 public abstract class ItemMixin implements ForgeItem {
 	@Shadow
-	public abstract float getStrengthOnBlock(ItemStack stack, Block block);
+	public abstract float getMiningSpeedMultiplier(ItemStack stack, Block block);
 
 	@Override
 	public float getStrVsBlock(ItemStack stack, Block block, int meta) {
-		return this.getStrengthOnBlock(stack, block);
+		return this.getMiningSpeedMultiplier(stack, block);
 	}
 }

@@ -3,13 +3,13 @@ package io.github.betterthanupdates.forge.mixin.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import forge.BlockTextureParticles;
 import forge.ITextureProvider;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.class_75;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,9 +20,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.entity.particle.DiggingParticleEntity;
-import net.minecraft.client.entity.particle.ParticleEntity;
-import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.client.particle.BlockParticle;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.entity.Entity;
@@ -32,15 +31,12 @@ import net.minecraft.world.World;
 import io.github.betterthanupdates.forge.client.particle.ForgeParticleManager;
 
 @Environment(EnvType.CLIENT)
-@Mixin(ParticleManager.class)
+@Mixin(class_75.class)
 public abstract class ParticleManagerMixin implements ForgeParticleManager {
 	@Shadow
-	private TextureManager textureManager;
+	private TextureManager field_271;
 	@Shadow
-	protected World world;
-
-	@Shadow
-	public abstract void addParticle(ParticleEntity particle);
+	public abstract void method_325(Particle particle);
 
 	// Forge Fields
 	@Unique
@@ -56,9 +52,9 @@ public abstract class ParticleManagerMixin implements ForgeParticleManager {
 			BlockTextureParticles entry = this.effectList.get(x);
 
 			for (int y = 0; y < entry.effects.size(); ++y) {
-				ParticleEntity entityfx = entry.effects.get(y);
+				Particle entityfx = entry.effects.get(y);
 
-				if (entityfx.removed) {
+				if (entityfx.dead) {
 					entry.effects.remove(y--);
 				}
 			}
@@ -73,11 +69,9 @@ public abstract class ParticleManagerMixin implements ForgeParticleManager {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@WrapOperation(method = "method_324", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/particle/ParticleEntity;method_2002(Lnet/minecraft/client/render/Tessellator;FFFFFF)V", ordinal = 0))
-	private void forge$method_2002(ParticleEntity entityfx, Tessellator tessellator, float f, float f1, float f5, float f2, float f3, float f4, Operation<Void> operation) {
-		if (!(entityfx instanceof DiggingParticleEntity)) {
-			operation.call(entityfx, tessellator, f, f1, f5, f2, f3, f4);
-		}
+	@WrapWithCondition(method = "method_324", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/Particle;method_2002(Lnet/minecraft/client/render/Tessellator;FFFFFF)V", ordinal = 0))
+	private boolean forge$method_2002(Particle entityfx, Tessellator tessellator, float f, float f1, float f5, float f2, float f3, float f4) {
+		return !(entityfx instanceof BlockParticle);
 	}
 
 	/**
@@ -95,15 +89,15 @@ public abstract class ParticleManagerMixin implements ForgeParticleManager {
 		Tessellator tessellator = Tessellator.INSTANCE;
 
 		for (BlockTextureParticles entry : this.effectList) {
-			GL11.glBindTexture(3553, this.textureManager.getTextureId(entry.texture));
-			tessellator.start();
+			GL11.glBindTexture(3553, this.field_271.getTextureId(entry.texture));
+			tessellator.startQuads();
 
 			for (int y = 0; y < entry.effects.size(); ++y) {
-				ParticleEntity entityfx = entry.effects.get(y);
+				Particle entityfx = entry.effects.get(y);
 				entityfx.method_2002(tessellator, f, f1, f5, f2, f3, f4);
 			}
 
-			tessellator.tessellate();
+			tessellator.draw();
 		}
 	}
 
@@ -124,22 +118,22 @@ public abstract class ParticleManagerMixin implements ForgeParticleManager {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = "addBlockBreakParticles", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/ParticleManager;addParticle(Lnet/minecraft/client/entity/particle/ParticleEntity;)V"))
-	private void forge$addBlockBreakParticles(ParticleManager instance, ParticleEntity particleEntity, @Local(ordinal = 0) Block block) {
-		((ForgeParticleManager) instance).addDigParticleEffect((DiggingParticleEntity) particleEntity, block);
+	@Redirect(method = "method_322", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_75;method_325(Lnet/minecraft/client/particle/Particle;)V"))
+	private void forge$addBlockBreakParticles(class_75 instance, Particle particleEntity, @Local(ordinal = 0) Block block) {
+		((ForgeParticleManager) instance).addDigParticleEffect((BlockParticle) particleEntity, block);
 	}
 
 	/**
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = "addBlockClickParticle", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/ParticleManager;addParticle(Lnet/minecraft/client/entity/particle/ParticleEntity;)V"))
-	private void forge$addBlockClickParticle(ParticleManager instance, ParticleEntity particleEntity, @Local(ordinal = 0) Block block) {
-		((ForgeParticleManager) instance).addDigParticleEffect((DiggingParticleEntity) particleEntity, block);
+	@Redirect(method = "method_321", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_75;method_325(Lnet/minecraft/client/particle/Particle;)V"))
+	private void forge$addBlockClickParticle(class_75 instance, Particle particleEntity, @Local(ordinal = 0) Block block) {
+		((ForgeParticleManager) instance).addDigParticleEffect((BlockParticle) particleEntity, block);
 	}
 
 	@Override
-	public void addDigParticleEffect(DiggingParticleEntity dig_effect, Block block) {
+	public void addDigParticleEffect(BlockParticle dig_effect, Block block) {
 		boolean added = false;
 		String comp;
 
@@ -163,6 +157,6 @@ public abstract class ParticleManagerMixin implements ForgeParticleManager {
 			this.effectList.add(entry);
 		}
 
-		this.addParticle(dig_effect);
+		this.method_325(dig_effect);
 	}
 }

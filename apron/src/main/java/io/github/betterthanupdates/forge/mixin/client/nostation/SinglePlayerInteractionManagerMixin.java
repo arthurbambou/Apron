@@ -6,19 +6,18 @@ import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-
+import net.minecraft.SingleplayerInteractionManager;
 import net.minecraft.block.Block;
-import net.minecraft.client.ClientInteractionManager;
+import net.minecraft.client.InteractionManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.SingleplayerInteractionManager;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
 import io.github.betterthanupdates.forge.block.ForgeBlock;
 
 @Environment(EnvType.CLIENT)
 @Mixin(SingleplayerInteractionManager.class)
-public class SinglePlayerInteractionManagerMixin extends ClientInteractionManager {
+public class SinglePlayerInteractionManagerMixin extends InteractionManager {
 	public SinglePlayerInteractionManagerMixin(Minecraft client) {
 		super(client);
 	}
@@ -27,9 +26,9 @@ public class SinglePlayerInteractionManagerMixin extends ClientInteractionManage
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = "breakBlock", at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/client/entity/player/AbstractClientPlayerEntity;canRemoveBlock(Lnet/minecraft/block/Block;)Z"))
-	private boolean forge$method_1716(AbstractClientPlayerEntity instance, Block block, @Local(ordinal = 5) int meta) {
+	@Redirect(method = "method_1716", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/entity/player/ClientPlayerEntity;method_514(Lnet/minecraft/block/Block;)Z"))
+	private boolean forge$method_1716(ClientPlayerEntity instance, Block block, @Local(ordinal = 5) int meta) {
 		return ((ForgeBlock) block).canHarvestBlock(instance, meta);
 	}
 
@@ -37,17 +36,17 @@ public class SinglePlayerInteractionManagerMixin extends ClientInteractionManage
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = "destroyFireAndBreakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;getHardness(Lnet/minecraft/entity/player/PlayerEntity;)F"))
+	@Redirect(method = "method_1707", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;getHardness(Lnet/minecraft/entity/player/PlayerEntity;)F"))
 	private float forge$method_1707(Block instance, PlayerEntity playerEntity, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local(ordinal = 2) int k) {
-		return ((ForgeBlock) instance).blockStrength(this.client.world, playerEntity, i, j, k);
+		return ((ForgeBlock) instance).blockStrength(this.minecraft.world, playerEntity, i, j, k);
 	}
 
 	/**
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = "dig", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;getHardness(Lnet/minecraft/entity/player/PlayerEntity;)F"))
+	@Redirect(method = "method_1721", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;getHardness(Lnet/minecraft/entity/player/PlayerEntity;)F"))
 	private float forge$method_1721(Block instance, PlayerEntity playerEntity, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local(ordinal = 2) int k) {
-		return ((ForgeBlock) instance).blockStrength(this.client.world, playerEntity, i, j, k);
+		return ((ForgeBlock) instance).blockStrength(this.minecraft.world, playerEntity, i, j, k);
 	}
 }

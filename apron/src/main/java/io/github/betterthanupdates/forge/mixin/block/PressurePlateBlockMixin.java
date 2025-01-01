@@ -5,8 +5,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Material;
 import net.minecraft.block.PressurePlateBlock;
-import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
 import io.github.betterthanupdates.forge.world.ForgeWorld;
@@ -21,8 +21,8 @@ public class PressurePlateBlockMixin extends Block {
 	 * @author Eloraam
 	 * @reason Minecraft Forge patch to method
 	 */
-	@Redirect(method = {"canPlaceAt", "onAdjacentBlockUpdate"},
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canSuffocate(III)Z"))
+	@Redirect(method = {"canPlaceAt", "neighborUpdate"},
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z"))
 	private boolean forge$onAdjacentBlockUpdate(World world, int x, int y, int z) {
 		return ((ForgeWorld) world).isBlockSolidOnSide(x, y, z, 1);
 	}

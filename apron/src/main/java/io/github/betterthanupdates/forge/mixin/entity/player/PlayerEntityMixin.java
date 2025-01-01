@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import forge.ArmorProperties;
 import forge.ForgeHooks;
 import forge.ISpecialArmor;
+import net.minecraft.class_141;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,12 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.PlayerInventory;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.SleepStatus;
 import net.minecraft.world.World;
 
 import io.github.betterthanupdates.forge.entity.player.ForgePlayerEntity;
@@ -30,7 +30,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ForgePla
 	public PlayerInventory inventory;
 
 	@Shadow
-	public abstract boolean isLyingOnBed();
+	public abstract boolean method_943();
 
 	private PlayerEntityMixin(World world) {
 		super(world);
@@ -47,7 +47,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ForgePla
 	@Override
 	public float getCurrentPlayerStrVsBlock(Block block, int meta) {
 		float strength = 1.0F;
-		ItemStack heldItem = this.inventory.getHeldItem();
+		ItemStack heldItem = this.inventory.getSelectedItem();
 
 		if (heldItem != null) {
 			strength = ((ForgeItem) heldItem.getItem()).getStrVsBlock(heldItem, block, meta);
@@ -57,7 +57,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ForgePla
 			strength /= 5.0F;
 		}
 
-		if (!this.onGround) {
+		if (!this.field_1623) {
 			strength /= 5.0F;
 		}
 
@@ -68,7 +68,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ForgePla
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Inject(method = "applyDamage", cancellable = true, at = @At("HEAD"))
+	@Inject(method = "method_946", cancellable = true, at = @At("HEAD"))
 	private void forge$applyDamage(int i, CallbackInfo ci) {
 		boolean doRegularComputation = true;
 		int initialDamage = i;
@@ -83,7 +83,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ForgePla
 		}
 
 		if (!doRegularComputation) {
-			super.applyDamage(i);
+			super.method_946(i);
 			ci.cancel();
 		}
 	}
@@ -92,16 +92,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ForgePla
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Inject(method = "breakHeldItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/PlayerInventory;setInventoryItem(ILnet/minecraft/item/ItemStack;)V"))
+	@Inject(method = "method_503", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;setStack(ILnet/minecraft/item/ItemStack;)V"))
 	private void forge$breakHeldItem$Head(CallbackInfo ci, @Share("orig") LocalRef<ItemStack> ref) {
-		ref.set(this.inventory.getHeldItem());
+		ref.set(this.inventory.getSelectedItem());
 	}
 
 	/**
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Inject(method = "breakHeldItem", at = @At(value = "RETURN"))
+	@Inject(method = "method_503", at = @At(value = "RETURN"))
 	private void forge$breakHeldItem$Return(CallbackInfo ci, @Share("orig") LocalRef<ItemStack> ref) {
 		ForgeHooks.onDestroyCurrentItem((PlayerEntity) (Object) this, ref.get());
 	}
@@ -110,9 +110,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ForgePla
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Inject(method = "trySleep", at = @At("HEAD"), cancellable = true)
-	private void forge$trySleep(int i, int j, int k, CallbackInfoReturnable<SleepStatus> cir) {
-		SleepStatus customSleep = ForgeHooks.sleepInBedAt((PlayerEntity) (Object) this, i, j, k);
+	@Inject(method = "method_495", at = @At("HEAD"), cancellable = true)
+	private void forge$trySleep(int i, int j, int k, CallbackInfoReturnable<class_141> cir) {
+		class_141 customSleep = ForgeHooks.sleepInBedAt((PlayerEntity) (Object) this, i, j, k);
 
 		if (customSleep != null) {
 			cir.setReturnValue(customSleep);

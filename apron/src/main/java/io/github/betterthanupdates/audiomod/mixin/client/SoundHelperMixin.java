@@ -9,22 +9,21 @@ import java.util.Random;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.class_266;
+import net.minecraft.class_267;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.codecs.CodecIBXM;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.options.GameOptions;
-import net.minecraft.client.sound.SoundEntry;
-import net.minecraft.client.sound.SoundHelper;
-import net.minecraft.client.sound.SoundMap;
+import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.sound.SoundManager;
 import net.minecraft.util.math.MathHelper;
 
 import io.github.betterthanupdates.apron.api.ApronApi;
@@ -34,27 +33,25 @@ import io.github.betterthanupdates.apron.api.ApronApi;
  *
  * @see paulscode.sound.codecs.CodecIBXM
  */
-@Mixin(SoundHelper.class)
+@Mixin(SoundManager.class)
 public abstract class SoundHelperMixin {
 	@Shadow
-	private Random rand;
+	private Random field_2674;
 	@Shadow
-	private int musicCountdown;
-
+	private int field_2675;
 	@Shadow
-	private SoundMap sounds;
+	private class_266 field_2668;
 	@Shadow
-	private SoundMap streaming;
+	private class_266 field_2669;
 	@Shadow
-	private SoundMap music;
-	@Shadow
-	private static boolean initialized;
+	private class_266 field_2670;
 
 	@Shadow
 	private static SoundSystem soundSystem;
+
 	// AudioMod Fields
 	@Unique
-	private final SoundMap cave = new SoundMap();
+	private final class_266 cave = new class_266();
 	@Unique
 	private Minecraft client;
 	@Unique
@@ -62,14 +59,14 @@ public abstract class SoundHelperMixin {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void audiomod$ctr(CallbackInfo ci) {
-		this.musicCountdown = this.rand.nextInt(MUSIC_INTERVAL);
+		this.field_2675 = this.field_2674.nextInt(MUSIC_INTERVAL);
 	}
 
-	@Inject(method = "acceptOptions", at = @At("RETURN"))
+	@Inject(method = "method_2012", at = @At("RETURN"))
 	private void audiomod$acceptOptions(GameOptions options, CallbackInfo ci) {
-		loadModAudio("./resources/mod/sound", this.sounds);
-		loadModAudio("./resources/mod/streaming", this.streaming);
-		loadModAudio("./resources/mod/music", this.music);
+		loadModAudio("./resources/mod/sound", this.field_2668);
+		loadModAudio("./resources/mod/streaming", this.field_2669);
+		loadModAudio("./resources/mod/music", this.field_2670);
 		loadModAudio("./resources/mod/cavemusic", this.cave);
 
 		this.client = (Minecraft) ApronApi.getInstance().getGame();
@@ -78,7 +75,7 @@ public abstract class SoundHelperMixin {
 	/**
 	 * @author Risugami
 	 */
-	private static void loadModAudio(String folder, SoundMap array) {
+	private static void loadModAudio(String folder, class_266 array) {
 		File base = new File(FabricLoader.getInstance().getGameDir().toFile(), folder);
 
 		walkFolder(base, base, array);
@@ -87,7 +84,7 @@ public abstract class SoundHelperMixin {
 	/**
 	 * @author Risugami
 	 */
-	private static void walkFolder(File root, File folder, SoundMap sounds) {
+	private static void walkFolder(File root, File folder, class_266 sounds) {
 		if (folder.exists() || folder.mkdirs()) {
 			File[] files = folder.listFiles();
 
@@ -102,7 +99,7 @@ public abstract class SoundHelperMixin {
 							} else if (f.isRegularFile()) {
 								String path = file.getPath().substring(root.getPath().length() + 1)
 										.replace('\\', '/');
-								sounds.addSound(path, file);
+								sounds.method_959(path, file);
 							}
 						} catch (IOException ignored) {
 							// Simply don't load the file.
@@ -117,7 +114,7 @@ public abstract class SoundHelperMixin {
 	 * @author Risugami
 	 * @reason IBXM audio codec for Paul's SoundSystem
 	 */
-	@Inject(method = "setLibsAndCodecs", at = @At(value = "INVOKE", ordinal = 2, shift = At.Shift.AFTER, remap = false,
+	@Inject(method = "method_2019", at = @At(value = "INVOKE", ordinal = 2, shift = At.Shift.AFTER, remap = false,
 			target = "Lpaulscode/sound/SoundSystemConfig;setCodec(Ljava/lang/String;Ljava/lang/Class;)V"))
 	private void audiomod$setLibsAndCodecs(CallbackInfo ci) {
 		SoundSystemConfig.setCodec("xm", CodecIBXM.class);
@@ -129,35 +126,35 @@ public abstract class SoundHelperMixin {
 	 * @author Risugami
 	 * @reason AudioMod patches
 	 */
-	@Redirect(method = "updateMusicVolume", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sound/SoundHelper;initialized:Z", ordinal = 1))
-	public boolean updateMusicVolume() {
-		return initialized && soundSystem != null;
+	@WrapOperation(method = "method_2008", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sound/SoundManager;field_2673:Z", ordinal = 1))
+	public boolean updateMusicVolume(Operation<Boolean> original) {
+		return original.call() && soundSystem != null;
 	}
 
 	/**
 	 * @author Risugami
 	 * @reason AudioMod patches
 	 */
-	@Redirect(method = "handleBackgroundMusic", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sound/SoundHelper;initialized:Z"))
-	public boolean handleBackgroundMusic() {
-		return initialized && soundSystem != null;
+	@WrapOperation(method = "method_2017", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sound/SoundManager;field_2673:Z"))
+	public boolean handleBackgroundMusic(Operation<Boolean> original) {
+		return original.call() && soundSystem != null;
 	}
 
 	/**
 	 * @author Risugami
 	 * @reason AudioMod patches
 	 */
-	@WrapOperation(method = "handleBackgroundMusic", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundMap;getRandomSound()Lnet/minecraft/client/sound/SoundEntry;"))
-	public SoundEntry handleBackgroundMusic(SoundMap instance, Operation<SoundEntry> operation) {
+	@WrapOperation(method = "method_2017", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_266;method_957()Lnet/minecraft/class_267;"))
+	public class_267 handleBackgroundMusic(class_266 instance, Operation<class_267> operation) {
 		if (this.client != null
 				&& this.client.player != null
 				&& !this.client
 				.player
 				.world
-				.isAboveGroundCached(MathHelper.floor(this.client.player.x), MathHelper.floor(this.client.player.y), MathHelper.floor(this.client.player.z))) {
+				.method_249(MathHelper.floor(this.client.player.x), MathHelper.floor(this.client.player.y), MathHelper.floor(this.client.player.z))) {
 			return operation.call(this.cave);
 		} else {
-			return operation.call(this.music);
+			return operation.call(this.field_2670);
 		}
 	}
 
@@ -165,35 +162,35 @@ public abstract class SoundHelperMixin {
 	 * @author Risugami
 	 * @reason AudioMod patches
 	 */
-	@Redirect(method = "setSoundPosition", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sound/SoundHelper;initialized:Z"))
-	public boolean setSoundPosition() {
-		return initialized && soundSystem != null;
+	@WrapOperation(method = "method_2013", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sound/SoundManager;field_2673:Z"))
+	public boolean setSoundPosition(Operation<Boolean> original) {
+		return original.call() && soundSystem != null;
 	}
 
 	/**
 	 * @author Risugami
 	 * @reason AudioMod patches
 	 */
-	@Redirect(method = "playStreaming", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sound/SoundHelper;initialized:Z"))
-	public boolean playSound() {
-		return initialized && soundSystem != null;
+	@WrapOperation(method = "method_2010", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sound/SoundManager;field_2673:Z"))
+	public boolean playSound(Operation<Boolean> original) {
+		return original.call() && soundSystem != null;
 	}
 
 	/**
 	 * @author Risugami
 	 * @reason AudioMod patches
 	 */
-	@Redirect(method = "playSound(Ljava/lang/String;FFFFF)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sound/SoundHelper;initialized:Z"))
-	public boolean playSound$1() {
-		return initialized && soundSystem != null;
+	@WrapOperation(method = "method_2015", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sound/SoundManager;field_2673:Z"))
+	public boolean playSound$1(Operation<Boolean> original) {
+		return original.call() && soundSystem != null;
 	}
 
 	/**
 	 * @author Risugami
 	 * @reason AudioMod patches
 	 */
-	@Redirect(method = "playSound(Ljava/lang/String;FF)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sound/SoundHelper;initialized:Z"))
-	public boolean playSound$2() {
-		return initialized && soundSystem != null;
+	@WrapOperation(method = "method_2009", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sound/SoundManager;field_2673:Z"))
+	public boolean playSound$2(Operation<Boolean> original) {
+		return original.call() && soundSystem != null;
 	}
 }

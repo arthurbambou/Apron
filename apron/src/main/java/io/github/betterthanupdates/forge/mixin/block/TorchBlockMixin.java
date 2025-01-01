@@ -5,8 +5,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Material;
 import net.minecraft.block.TorchBlock;
-import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
 import io.github.betterthanupdates.forge.world.ForgeWorld;
@@ -21,7 +21,7 @@ public abstract class TorchBlockMixin extends Block {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = "method_1674", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canSuffocate(III)Z"))
+	@Redirect(method = "method_1674", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z"))
 	private boolean forge$isBlockSolidOnSide$0(World instance, int j, int k, int i) {
 		return ((ForgeWorld) instance).isBlockSolidOnSide(j, k, i, 1);
 	}
@@ -30,8 +30,8 @@ public abstract class TorchBlockMixin extends Block {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = {"canPlaceAt", "onBlockPlaced(Lnet/minecraft/world/World;III)V", "onAdjacentBlockUpdate"},
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canSuffocate(III)Z", ordinal = 0))
+	@Redirect(method = {"canPlaceAt", "onPlaced(Lnet/minecraft/world/World;III)V", "neighborUpdate"},
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z", ordinal = 0))
 	private boolean forge$canPlaceAt$1(World instance, int j, int k, int i) {
 		return ((ForgeWorld) instance).isBlockSolidOnSide(j, k, i, 5);
 	}
@@ -40,8 +40,8 @@ public abstract class TorchBlockMixin extends Block {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = {"canPlaceAt", "onBlockPlaced(Lnet/minecraft/world/World;III)V", "onAdjacentBlockUpdate"},
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canSuffocate(III)Z", ordinal = 1))
+	@Redirect(method = {"canPlaceAt", "onPlaced(Lnet/minecraft/world/World;III)V", "neighborUpdate"},
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z", ordinal = 1))
 	private boolean forge$canPlaceAt$2(World instance, int j, int k, int i) {
 		return ((ForgeWorld) instance).isBlockSolidOnSide(j, k, i, 4);
 	}
@@ -50,8 +50,8 @@ public abstract class TorchBlockMixin extends Block {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = {"canPlaceAt", "onBlockPlaced(Lnet/minecraft/world/World;III)V", "onAdjacentBlockUpdate"},
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canSuffocate(III)Z", ordinal = 2))
+	@Redirect(method = {"canPlaceAt", "onPlaced(Lnet/minecraft/world/World;III)V", "neighborUpdate"},
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z", ordinal = 2))
 	private boolean forge$canPlaceAt$3(World instance, int j, int k, int i) {
 		return ((ForgeWorld) instance).isBlockSolidOnSide(j, k, i, 3);
 	}
@@ -60,8 +60,8 @@ public abstract class TorchBlockMixin extends Block {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = {"canPlaceAt", "onBlockPlaced(Lnet/minecraft/world/World;III)V", "onAdjacentBlockUpdate"},
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canSuffocate(III)Z", ordinal = 3))
+	@Redirect(method = {"canPlaceAt", "onPlaced(Lnet/minecraft/world/World;III)V", "neighborUpdate"},
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z", ordinal = 3))
 	private boolean forge$canPlaceAt$4(World instance, int j, int k, int i) {
 		return ((ForgeWorld) instance).isBlockSolidOnSide(j, k, i, 2);
 	}
@@ -70,7 +70,7 @@ public abstract class TorchBlockMixin extends Block {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = "onBlockPlaced(Lnet/minecraft/world/World;IIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canSuffocate(III)Z", ordinal = 0))
+	@Redirect(method = "onPlaced(Lnet/minecraft/world/World;IIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z", ordinal = 0))
 	private boolean forge$isBlockSolidOnSide$1(World instance, int j, int k, int i) {
 		return ((ForgeWorld) instance).isBlockSolidOnSide(j, k, i, 2);
 	}
@@ -79,7 +79,7 @@ public abstract class TorchBlockMixin extends Block {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = "onBlockPlaced(Lnet/minecraft/world/World;IIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canSuffocate(III)Z", ordinal = 1))
+	@Redirect(method = "onPlaced(Lnet/minecraft/world/World;IIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z", ordinal = 1))
 	private boolean forge$isBlockSolidOnSide$2(World instance, int j, int k, int i) {
 		return ((ForgeWorld) instance).isBlockSolidOnSide(j, k, i, 3);
 	}
@@ -88,7 +88,7 @@ public abstract class TorchBlockMixin extends Block {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = "onBlockPlaced(Lnet/minecraft/world/World;IIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canSuffocate(III)Z", ordinal = 2))
+	@Redirect(method = "onPlaced(Lnet/minecraft/world/World;IIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z", ordinal = 2))
 	private boolean forge$isBlockSolidOnSide$3(World instance, int j, int k, int i) {
 		return ((ForgeWorld) instance).isBlockSolidOnSide(j, k, i, 4);
 	}
@@ -97,7 +97,7 @@ public abstract class TorchBlockMixin extends Block {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Redirect(method = "onBlockPlaced(Lnet/minecraft/world/World;IIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canSuffocate(III)Z", ordinal = 3))
+	@Redirect(method = "onPlaced(Lnet/minecraft/world/World;IIII)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z", ordinal = 3))
 	private boolean forge$isBlockSolidOnSide$4(World instance, int j, int k, int i) {
 		return ((ForgeWorld) instance).isBlockSolidOnSide(j, k, i, 5);
 	}

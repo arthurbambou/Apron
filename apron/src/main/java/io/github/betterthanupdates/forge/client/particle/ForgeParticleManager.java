@@ -1,8 +1,8 @@
 package io.github.betterthanupdates.forge.client.particle;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.entity.particle.DiggingParticleEntity;
+import net.minecraft.client.particle.BlockParticle;
 
 public interface ForgeParticleManager {
-	void addDigParticleEffect(DiggingParticleEntity dig_effect, Block block);
+	void addDigParticleEffect(BlockParticle dig_effect, Block block);
 }

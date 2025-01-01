@@ -1,16 +1,8 @@
 package io.github.betterthanupdates.forge.mixin.client;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.Arrays;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import org.lwjgl.opengl.ARBVertexBufferObject;
-import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,46 +19,9 @@ import io.github.betterthanupdates.forge.client.render.ForgeTessellator;
 public abstract class TessellatorMixin implements ForgeTessellator {
 	@Shadow
 	public static Tessellator INSTANCE;
-	@Shadow
-	private int vertexCount;
-	@Shadow
-	private boolean hasColor;
-	@Shadow
-	private boolean hasTexture;
-	@Shadow
-	private boolean hasNormals;
-	@Shadow
-	private int vertexAmount;
-	@Shadow
-	private boolean disableColor;
-	@Shadow
-	private int[] bufferArray;
-	@Shadow
-	private ByteBuffer byteBuffer;
-	@Shadow
-	private IntBuffer intBuffer;
-	@Shadow
-	private FloatBuffer floatBuffer;
-	@Shadow
-	private static boolean useTriangles;
 
 	@Shadow
-	protected abstract void clear();
-
-	@Shadow
-	public boolean tessellating;
-	@Shadow
-	private int bufferIndex;
-	@Shadow
-	private int vboIndex;
-	@Shadow
-	private boolean canUseVbo;
-	@Shadow
-	public int drawingMode;
-	@Shadow
-	private int vboCount;
-	@Shadow
-	private IntBuffer vertexBuffer;
+	public boolean drawing;
 
 	// Forge Fields
 	@Unique
@@ -94,6 +49,6 @@ public abstract class TessellatorMixin implements ForgeTessellator {
 
 	@Override
 	public boolean isTessellating() {
-		return tessellating;
+		return drawing;
 	}
 }

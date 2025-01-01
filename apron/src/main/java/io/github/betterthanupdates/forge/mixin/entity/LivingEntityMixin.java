@@ -24,7 +24,7 @@ public abstract class LivingEntityMixin extends Entity {
 	@Redirect(method = "method_932", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getBlockId(III)I"))
 	private int forge$method_932(World instance, int j, int k, int i) {
 		int blockId = instance.getBlockId(j, k, i);
-		Block block = Block.BY_ID[blockId];
+		Block block = Block.BLOCKS[blockId];
 		return block != null && ((ForgeBlock) block).isLadder() ? Block.LADDER.id : 0;
 	}
 }

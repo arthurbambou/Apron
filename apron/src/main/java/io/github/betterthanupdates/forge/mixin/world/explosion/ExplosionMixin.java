@@ -5,33 +5,33 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import forge.ISpecialResistance;
+import net.minecraft.class_60;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(Explosion.class)
+@Mixin(class_60.class)
 public class ExplosionMixin {
 	@Shadow
-	private World world;
+	private World field_1399;
 
 	@Shadow
-	public double x;
+	public double field_1392;
 
 	@Shadow
-	public double y;
+	public double field_1393;
 
 	@Shadow
-	public double z;
+	public double field_1394;
 
 	@Shadow
-	public Entity cause;
+	public Entity field_1395;
 
-	@WrapOperation(method = "kaboomPhase1", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getBlockId(III)I", ordinal = 0))
+	@WrapOperation(method = "method_1195", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getBlockId(III)I", ordinal = 0))
 	private int forge$getBlockPos(World instance, int x, int y, int z, Operation<Integer> operation,
 								  @Share("x") LocalIntRef xRef, @Share("y") LocalIntRef yRef, @Share("z") LocalIntRef zRef) {
 		xRef.set(x);
@@ -41,12 +41,12 @@ public class ExplosionMixin {
 		return operation.call(instance, x, y, z);
 	}
 
-	@WrapOperation(method = "kaboomPhase1", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;getBlastResistance(Lnet/minecraft/entity/Entity;)F"))
+	@WrapOperation(method = "method_1195", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;getBlastResistance(Lnet/minecraft/entity/Entity;)F"))
 	private float forge$getBlastResistance(Block instance, Entity entity, Operation<Float> operation,
 										   @Share("x") LocalIntRef xRef, @Share("y") LocalIntRef yRef, @Share("z") LocalIntRef zRef) {
 		if (instance instanceof ISpecialResistance) {
 			return ((ISpecialResistance) instance).getSpecialExplosionResistance(
-					this.world, xRef.get(), yRef.get(), zRef.get(), this.x, this.y, this.z, this.cause
+					this.field_1399, xRef.get(), yRef.get(), zRef.get(), this.field_1392, this.field_1393, this.field_1394, this.field_1395
 			);
 		}
 

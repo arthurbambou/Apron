@@ -21,6 +21,6 @@ public class class_417Mixin {
 	)
 	private int getStateLuminance(int original, @Local World world, @Local(index = 10) int x, @Local(index = 15) int y, @Local(index = 11) int z) {
 		int blockId = world.getBlockId(x, y, z);
-		return blockId == 0 ? 0 : ((ForgeBlock) Block.BY_ID[blockId]).getLightValue(world, x, y, z);
+		return blockId == 0 ? 0 : ((ForgeBlock) Block.BLOCKS[blockId]).getLightValue(world, x, y, z);
 	}
 }

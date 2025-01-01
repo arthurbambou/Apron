@@ -5,21 +5,16 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import forge.ForgeHooks;
 import forge.IUseItemFirst;
-import io.github.betterthanupdates.forge.block.ForgeBlock;
-import net.minecraft.block.Block;
+import net.minecraft.class_70;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.player.ServerInteractionManager;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ServerInteractionManager.class)
+@Mixin(class_70.class)
 public class ServerInteractionManagerMixin {
 
 	@Inject(method = "method_1831", at = @At(value = "RETURN", ordinal = 0))
@@ -29,7 +24,7 @@ public class ServerInteractionManagerMixin {
 		}
 	}
 
-	@Inject(method = "activateBlock", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "method_1832", at = @At("HEAD"), cancellable = true)
 	private void forge$activateBlock$first(PlayerEntity entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l, CallbackInfoReturnable<Boolean> cir) {
 		if (itemstack != null && itemstack.getItem() instanceof IUseItemFirst) {
 			IUseItemFirst iuif = (IUseItemFirst)itemstack.getItem();
@@ -39,16 +34,14 @@ public class ServerInteractionManagerMixin {
 		}
 	}
 
-	@WrapOperation(method = "activateBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;useOnBlock(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/World;IIII)Z"))
+	@WrapOperation(method = "method_1832", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;useOnBlock(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/World;IIII)Z"))
 	private boolean forge$activateBlock$destroyItemStack(ItemStack instance, PlayerEntity player, World world, int i, int j, int k, int l, Operation<Boolean> operation) {
-		if (!operation.call(instance, player, world, i, j, k, l)) {
-			return false;
-		} else {
-			if (instance.count == 0) {
-				ForgeHooks.onDestroyCurrentItem(player, instance);
-			}
+		boolean result = operation.call(instance, player, world, i, j, k, l);
 
-			return true;
+		if (result && instance.count == 0) {
+			ForgeHooks.onDestroyCurrentItem(player, instance);
 		}
+
+		return result;
 	}
 }

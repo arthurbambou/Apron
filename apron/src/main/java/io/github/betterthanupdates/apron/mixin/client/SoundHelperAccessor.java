@@ -1,17 +1,16 @@
 package io.github.betterthanupdates.apron.mixin.client;
 
+import net.minecraft.client.sound.SoundManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import paulscode.sound.SoundSystem;
 
-import net.minecraft.client.sound.SoundHelper;
-
-@Mixin(SoundHelper.class)
+@Mixin(SoundManager.class)
 public interface SoundHelperAccessor {
 	@Accessor
-	int getSoundUID();
+	int getField_2671();
 	@Accessor
-	void setMusicCountdown(int countdown);
+	void setField_2675(int countdown);
 
 	@Accessor
 	static SoundSystem getSoundSystem() {

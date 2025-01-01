@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ToolItem.class)
 public class ToolItemMixin extends Item implements ForgeItem {
 	@Shadow
-	public float field_2713;
+	public float miningSpeed;
 
 	public ToolItemMixin(int i) {
 		super(i);
@@ -20,6 +20,6 @@ public class ToolItemMixin extends Item implements ForgeItem {
 
 	@Override
 	public float getStrVsBlock(ItemStack itemstack, Block block, int md) {
-		return ForgeHooks.isToolEffective(itemstack, block, md) ? this.field_2713 : this.getStrengthOnBlock(itemstack, block);
+		return ForgeHooks.isToolEffective(itemstack, block, md) ? this.miningSpeed : this.getMiningSpeedMultiplier(itemstack, block);
 	}
 }

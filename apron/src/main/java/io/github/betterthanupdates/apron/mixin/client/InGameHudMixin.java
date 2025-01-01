@@ -14,14 +14,14 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiElement;
-import net.minecraft.client.gui.InGameHud;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.hud.InGameHud;
 
 @Environment(EnvType.CLIENT)
 @Mixin(InGameHud.class)
-public abstract class InGameHudMixin extends GuiElement {
+public abstract class InGameHudMixin extends DrawContext {
 	@Shadow
-	private Minecraft client;
+	private Minecraft minecraft;
 
 	@ModifyConstant(method = "render(FZII)V", constant = @Constant(stringValue = "Minecraft Beta 1.7.3 ("))
 	private String apron$replaceVersionString(String constant) {
@@ -37,7 +37,7 @@ public abstract class InGameHudMixin extends GuiElement {
 			y = 106;
 		}
 
-		this.drawTextWithShadow(this.client.textRenderer,
+		this.drawTextWithShadow(this.minecraft.textRenderer,
 				String.format("M: %s, %s", rmlModsLoaded(), fabricModsLoaded()), 2, y, 0xE0_E0_E0);
 	}
 }

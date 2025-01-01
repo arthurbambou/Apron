@@ -24,10 +24,10 @@ public class BucketItemMixin extends Item {
 	 * @author Eloraam
 	 * @reason implement Forge hooks
 	 */
-	@Inject(method = "use", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getMaterial(III)Lnet/minecraft/block/material/Material;", ordinal = 0))
+	@Inject(method = "use", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1779(III)Lnet/minecraft/block/Material;", ordinal = 0))
 	private void reforged$use(ItemStack itemStack, World world, PlayerEntity playerEntity, CallbackInfoReturnable<ItemStack> cir,
 							  @Local(ordinal = 0) HitResult hitResult) {
-		ItemStack customBucket = MinecraftForge.fillCustomBucket(world, hitResult.x, hitResult.y, hitResult.z);
+		ItemStack customBucket = MinecraftForge.fillCustomBucket(world, hitResult.blockX, hitResult.blockY, hitResult.blockZ);
 
 		if (customBucket != null) {
 			cir.setReturnValue(customBucket);

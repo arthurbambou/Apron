@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.Mixin;
 //import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.menu.TitleScreen;
+import net.minecraft.client.gui.screen.TitleScreen;
 
 //import io.github.betterthanupdates.apron.Apron;
 

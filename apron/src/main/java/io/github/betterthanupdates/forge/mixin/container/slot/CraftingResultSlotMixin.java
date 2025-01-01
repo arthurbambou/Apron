@@ -8,12 +8,11 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.container.slot.CraftingResultSlot;
-import net.minecraft.container.slot.Slot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.CraftingResultSlot;
+import net.minecraft.screen.slot.Slot;
 
 @Mixin(CraftingResultSlot.class)
 public class CraftingResultSlotMixin extends Slot {
@@ -22,19 +21,19 @@ public class CraftingResultSlotMixin extends Slot {
 
 	@Shadow
 	@Final
-	private Inventory craftingInventory;
+	private Inventory field_2366;
 
-	public CraftingResultSlotMixin(Inventory inventory, int x, int y, int z) {
-		super(inventory, x, y, z);
+	public CraftingResultSlotMixin(Inventory inventory, int index, int x, int y) {
+		super(inventory, index, x, y);
 	}
 
 	/**
 	 * @author Eloraam
 	 * @reason implement Forge + ModLoader hooks
 	 */
-	@Inject(method = "onCrafted", at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Inventory;getInventorySize()I", ordinal = 0, shift = At.Shift.BEFORE))
+	@Inject(method = "onCrafted", at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Inventory;size()I", ordinal = 0, shift = At.Shift.BEFORE))
 	private void forge$onCrafted(ItemStack itemStack, CallbackInfo ci) {
 		ModLoader.TakenFromCrafting(this.player, itemStack);
-		ForgeHooks.onTakenFromCrafting(this.player, itemStack, this.craftingInventory);
+		ForgeHooks.onTakenFromCrafting(this.player, itemStack, this.field_2366);
 	}
 }

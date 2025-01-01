@@ -8,5 +8,5 @@ import net.minecraft.entity.Entity;
 @Mixin(Entity.class)
 public interface EntityAccessor {
 	@Accessor
-	void setFallDistance(float distance);
+	void setField_1636(float distance);
 }

@@ -69,12 +69,12 @@ public final class ApronClientImpl implements ApronApi {
 
 	@Override
 	public String translate(String key) {
-		return TranslationStorage.getInstance().translate(key);
+		return TranslationStorage.getInstance().get(key);
 	}
 
 	@Override
 	public String translate(String key, Object... args) {
-		return TranslationStorage.getInstance().translate(key, args);
+		return TranslationStorage.getInstance().get(key, args);
 	}
 
 	@Nullable

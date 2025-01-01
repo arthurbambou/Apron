@@ -19,8 +19,8 @@ public interface ItemConvertible {
 		if (((Object)this) instanceof ItemStack) return ((ItemStack) (Object) this).getItem();
 		if (this instanceof Item) return ((Item) this);
 		if (this instanceof ItemEntity) return ((ItemConvertible)(Object)((ItemEntity) this).stack).asItem();
-		if (this instanceof Block) return Item.byId[((Block) this).id];
+		if (this instanceof Block) return Item.ITEMS[((Block) this).id];
 
-		return Item.byId[0];
+		return Item.ITEMS[0];
 	}
 }

@@ -28,37 +28,38 @@ public abstract class VanillaTessellatorMixin {
 	@Shadow
 	private boolean hasNormals;
 	@Shadow
-	private int bufferIndex;
+	private int bufferPosition;
 	@Shadow
-	private int vertexAmount;
+	private int addedVertexCount;
 	@Shadow
-	private boolean disableColor;
+	private boolean colorDisabled;
 	@Shadow
-	public boolean tessellating;
+	public boolean drawing;
 	@Shadow
-	private int vboIndex;
+	private int field_2079;
 	@Shadow
-	private int[] bufferArray;
+	private int[] buffer;
 
 	@Shadow
-	protected abstract void clear();
+	protected abstract void reset();
 
 	@Shadow
-	private int drawingMode;
+	public int mode;
 	@Shadow
 	private static boolean useTriangles;
 	@Shadow
 	private FloatBuffer floatBuffer;
 	@Shadow
-	private boolean canUseVbo;
+	private boolean field_2077;
 	@Shadow
 	private ByteBuffer byteBuffer;
 	@Shadow
-	private IntBuffer vertexBuffer;
+	private IntBuffer field_2078;
 	@Shadow
-	private int vboCount;
+	private int field_2052;
 	@Shadow
 	private IntBuffer intBuffer;
+
 	// Forge Fields
 	@Unique
 	private int rawBufferSize;
@@ -77,12 +78,12 @@ public abstract class VanillaTessellatorMixin {
 		this.hasColor = false;
 		this.hasTexture = false;
 		this.hasNormals = false;
-		this.bufferIndex = 0;
-		this.vertexAmount = 0;
-		this.disableColor = false;
-		this.tessellating = false;
-		this.vboIndex = 0;
-		this.bufferArray = null;
+		this.bufferPosition = 0;
+		this.addedVertexCount = 0;
+		this.colorDisabled = false;
+		this.drawing = false;
+		this.field_2079 = 0;
+		this.buffer = null;
 		this.rawBufferSize = 0;
 	}
 
@@ -91,36 +92,36 @@ public abstract class VanillaTessellatorMixin {
 	 * @reason Multi-tessellator
 	 */
 	@Overwrite
-	public void tessellate() {
-		if (!this.tessellating) {
+	public void draw() {
+		if (!this.drawing) {
 			throw new IllegalStateException("Not tesselating!");
 		} else {
-			this.tessellating = false;
+			this.drawing = false;
 			int offs = 0;
 
 			while (offs < this.vertexCount) {
 				int vtc;
 
-				if (this.drawingMode == 7 && useTriangles) {
+				if (this.mode == 7 && useTriangles) {
 					vtc = Math.min(this.vertexCount - offs, TRI_VERTS_IN_BUFFER);
 				} else {
 					vtc = Math.min(this.vertexCount - offs, NATIVE_BUFFER_SIZE >> 5);
 				}
 
 				intBuffer.clear();
-				intBuffer.put(this.bufferArray, offs * 8, vtc * 8);
+				intBuffer.put(this.buffer, offs * 8, vtc * 8);
 				byteBuffer.position(0);
 				byteBuffer.limit(vtc * 32);
 				offs += vtc;
 
-				if (canUseVbo) {
-					this.vboIndex = (this.vboIndex + 1) % vboCount;
-					ARBVertexBufferObject.glBindBufferARB(34962, vertexBuffer.get(this.vboIndex));
+				if (field_2077) {
+					this.field_2079 = (this.field_2079 + 1) % field_2052;
+					ARBVertexBufferObject.glBindBufferARB(34962, field_2078.get(this.field_2079));
 					ARBVertexBufferObject.glBufferDataARB(34962, byteBuffer, 35040);
 				}
 
 				if (this.hasTexture) {
-					if (canUseVbo) {
+					if (field_2077) {
 						GL11.glTexCoordPointer(2, 5126, 32, 12L);
 					} else {
 						floatBuffer.position(3);
@@ -131,7 +132,7 @@ public abstract class VanillaTessellatorMixin {
 				}
 
 				if (this.hasColor) {
-					if (canUseVbo) {
+					if (field_2077) {
 						GL11.glColorPointer(4, 5121, 32, 20L);
 					} else {
 						byteBuffer.position(20);
@@ -142,7 +143,7 @@ public abstract class VanillaTessellatorMixin {
 				}
 
 				if (this.hasNormals) {
-					if (canUseVbo) {
+					if (field_2077) {
 						GL11.glNormalPointer(5120, 32, 24L);
 					} else {
 						byteBuffer.position(24);
@@ -152,7 +153,7 @@ public abstract class VanillaTessellatorMixin {
 					GL11.glEnableClientState(32885);
 				}
 
-				if (canUseVbo) {
+				if (field_2077) {
 					GL11.glVertexPointer(3, 5126, 32, 0L);
 				} else {
 					floatBuffer.position(0);
@@ -161,10 +162,10 @@ public abstract class VanillaTessellatorMixin {
 
 				GL11.glEnableClientState(32884);
 
-				if (this.drawingMode == 7 && useTriangles) {
+				if (this.mode == 7 && useTriangles) {
 					GL11.glDrawArrays(4, 0, vtc);
 				} else {
-					GL11.glDrawArrays(this.drawingMode, 0, vtc);
+					GL11.glDrawArrays(this.mode, 0, vtc);
 				}
 
 				GL11.glDisableClientState(32884);
@@ -182,12 +183,12 @@ public abstract class VanillaTessellatorMixin {
 				}
 			}
 
-			if (this.rawBufferSize > 131072 && this.bufferIndex < this.rawBufferSize << 3) {
+			if (this.rawBufferSize > 131072 && this.bufferPosition < this.rawBufferSize << 3) {
 				this.rawBufferSize = 0;
-				this.bufferArray = null;
+				this.buffer = null;
 			}
 
-			this.clear();
+			this.reset();
 		}
 	}
 
@@ -195,15 +196,15 @@ public abstract class VanillaTessellatorMixin {
 	 * @author Eloraam
 	 * @reason method instruction order is different from vanilla.
 	 */
-	@Inject(method = "addVertex", at = @At("HEAD"))
+	@Inject(method = "vertex(DDD)V", at = @At("HEAD"))
 	private void forge$addVertex$1(double d, double d1, double d2, CallbackInfo ci) {
-		if (this.bufferIndex >= this.rawBufferSize - 32) {
+		if (this.bufferPosition >= this.rawBufferSize - 32) {
 			if (this.rawBufferSize == 0) {
 				this.rawBufferSize = 65536;
-				this.bufferArray = new int[this.rawBufferSize];
+				this.buffer = new int[this.rawBufferSize];
 			} else {
 				this.rawBufferSize *= 2;
-				this.bufferArray = Arrays.copyOf(this.bufferArray, this.rawBufferSize);
+				this.buffer = Arrays.copyOf(this.buffer, this.rawBufferSize);
 			}
 		}
 	}
@@ -212,7 +213,7 @@ public abstract class VanillaTessellatorMixin {
 	 * @author Eloraam
 	 * @reason method instruction order is different from vanilla.
 	 */
-	@Inject(method = "addVertex", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Tessellator;tessellate()V"), cancellable = true)
+	@Inject(method = "vertex(DDD)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Tessellator;draw()V"), cancellable = true)
 	private void forge$addVertex$2(double d, double d1, double d2, CallbackInfo ci) {
 		ci.cancel();
 	}

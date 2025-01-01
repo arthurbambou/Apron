@@ -4,8 +4,7 @@ import java.util.List;
 
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.client.resource.language.Internationalization;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
@@ -27,7 +26,7 @@ public final class ApronServerImpl implements ApronApi {
 		MinecraftServer server = (MinecraftServer) getGame();
 
 		if (server != null) {
-			return server.getWorld(0);
+			return server.method_2157(0);
 		}
 
 		return null;
@@ -39,7 +38,7 @@ public final class ApronServerImpl implements ApronApi {
 		MinecraftServer server = (MinecraftServer) getGame();
 
 		if (server != null) {
-			return server.serverPlayerConnectionManager.players;
+			return server.field_2842.field_578;
 		}
 
 		return null;
@@ -65,12 +64,12 @@ public final class ApronServerImpl implements ApronApi {
 
 	@Override
 	public String translate(String key) {
-		return Internationalization.translate(key);
+		return I18n.getTranslation(key);
 	}
 
 	@Override
 	public String translate(String key, Object... args) {
-		return Internationalization.translate(key, args);
+		return I18n.getTranslation(key, args);
 	}
 
 	/**

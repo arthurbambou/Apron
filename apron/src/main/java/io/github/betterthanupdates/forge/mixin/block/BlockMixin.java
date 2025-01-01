@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -36,7 +36,7 @@ public abstract class BlockMixin implements ForgeBlock {
 
 	@Shadow
 	@Final
-	public static int[] EMITTANCE;
+	public static int[] BLOCKS_LIGHT_LUMINANCE;
 
 	@Shadow
 	public abstract float getHardness();
@@ -46,9 +46,9 @@ public abstract class BlockMixin implements ForgeBlock {
 	 * @reason Minecraft Forge extension of this method
 	 */
 	@Environment(EnvType.CLIENT)
-	@Inject(method = "getBrightness", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "getLuminance", at = @At("RETURN"), cancellable = true)
 	private void getBrightness(BlockView blockView, int x, int y, int z, CallbackInfoReturnable<Float> cir) {
-		cir.setReturnValue(blockView.getNaturalBrightness(x, y, z, this.getLightValue(blockView, x, y, z)));
+		cir.setReturnValue(blockView.method_1784(x, y, z, this.getLightValue(blockView, x, y, z)));
 	}
 
 	/**
@@ -62,7 +62,7 @@ public abstract class BlockMixin implements ForgeBlock {
 
 	@Override
 	public int getLightValue(BlockView blockView, int x, int y, int z) {
-		return EMITTANCE[this.id];
+		return BLOCKS_LIGHT_LUMINANCE[this.id];
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public abstract class BlockMixin implements ForgeBlock {
 
 	@Override
 	public boolean isBlockNormalCube(World world, int x, int y, int z) {
-		return this.material.hasNoSuffocation() && this.isFullCube();
+		return this.material.method_897() && this.isFullCube();
 	}
 
 	@Override

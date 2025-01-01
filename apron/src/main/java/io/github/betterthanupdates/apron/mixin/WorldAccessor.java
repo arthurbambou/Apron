@@ -8,5 +8,5 @@ import net.minecraft.world.World;
 @Mixin(World.class)
 public interface WorldAccessor {
 	@Accessor
-	void setAutoSaveInterval(int interval);
+	void setField_212(int interval);
 }
