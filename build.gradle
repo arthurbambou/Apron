@@ -87,7 +87,7 @@ allprojects {
 		minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
 		mappings loom.layered {
 			it.mappings "net.glasslauncher:biny:${rootProject.mappings}:v2"
-//			it.mappings file("${rootProject.projectDir}/mappings/mod-mappings.tiny")
+			it.mappings file("${rootProject.projectDir}/mappings/mod-mappings.tiny")
 		}
 		modApi "net.fabricmc:fabric-loader:${rootProject.loader_version}"
 
