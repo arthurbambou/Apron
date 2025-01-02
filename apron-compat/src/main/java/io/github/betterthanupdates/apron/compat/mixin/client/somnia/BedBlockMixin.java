@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.mod_Somnia;
 import net.minecraft.world.World;
@@ -21,7 +21,7 @@ public class BedBlockMixin extends Block {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void somnia$ctr(int par1, CallbackInfo ci) {
-		this.setSounds(Block.WOOL_SOUNDS);
+		this.setSoundGroup(Block.WOOL_SOUND_GROUP);
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class BedBlockMixin extends Block {
 		return super.setHardness(0.8F);
 	}
 
-	@Inject(method = "canUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;trySleep(III)Lnet/minecraft/util/SleepStatus;"), cancellable = true)
+	@Inject(method = "onUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;method_495(III)Lnet/minecraft/class_141;"), cancellable = true)
 	private void somnia$canUse(World world, int i, int j, int k, PlayerEntity entityplayer, CallbackInfoReturnable<Boolean> cir) {
 		if (mod_Somnia.isValidActivation(world, entityplayer)) {
 			mod_Somnia.openGuiBedIfPossible(entityplayer, world, i, j, k);

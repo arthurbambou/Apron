@@ -1,19 +1,13 @@
 package io.github.betterthanupdates.apron.compat.mixin.client.betterthanwolves;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.FCISoil;
 import net.minecraft.FCUtilsMisc;
 import net.minecraft.block.Block;
 import net.minecraft.block.CropBlock;
 import net.minecraft.block.PlantBlock;
 import net.minecraft.world.World;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(CropBlock.class)
 public class CropBlockMixin extends PlantBlock {
@@ -36,7 +30,7 @@ public class CropBlockMixin extends PlantBlock {
 	 * @reason difficult to convert
 	 */
 	@Overwrite
-	private float growCropStage(World world, int i, int j, int k) {
+	private float method_997(World world, int i, int j, int k) {
 		float f = 1.0F;
 		int l = world.getBlockId(i, j, k - 1);
 		int i1 = world.getBlockId(i, j, k + 1);
@@ -61,7 +55,7 @@ public class CropBlockMixin extends PlantBlock {
 					}
 				} else if (FCUtilsMisc.CanPlantGrowOnBlock(world, l2, j - 1, i3, this)) {
 					f1 = 1.0F;
-					Block blockBelow = Block.BY_ID[j3];
+					Block blockBelow = Block.BLOCKS[j3];
 					if (blockBelow instanceof FCISoil && ((FCISoil)blockBelow).IsBlockHydrated(world, l2, j - 1, i3)) {
 						f1 = 3.0F;
 					}

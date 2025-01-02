@@ -9,14 +9,14 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.RailBlock;
-import net.minecraft.entity.ChestMinecartEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.mod_FCBetterThanWolves;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-@Mixin(ChestMinecartEntity.class)
+@Mixin(MinecartEntity.class)
 public abstract class ChestMinecartEntityMixin extends Entity {
 	@Shadow
 	public int field_2273;
@@ -50,19 +50,19 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 	private static int[][][] field_2281;
 
 	@Shadow
-	public int type;
+	public int field_2275;
 
 	@Shadow
-	public double pushX;
+	public double field_2277;
 
 	@Shadow
-	public double pushZ;
+	public double field_2278;
 
 	@Shadow
 	private boolean field_2280;
 
 	@Shadow
-	public int fuel;
+	public int field_2276;
 
 	public ChestMinecartEntityMixin(World arg) {
 		super(arg);
@@ -82,7 +82,7 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 			--this.field_2272;
 		}
 
-		if (this.world.isClient && this.field_2282 > 0) {
+		if (this.world.isRemote && this.field_2282 > 0) {
 			if (this.field_2282 > 0) {
 				double d = this.x + (this.field_2283 - this.x) / (double)this.field_2282;
 				double d1 = this.y + (this.field_2284 - this.y) / (double)this.field_2282;
@@ -100,17 +100,17 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 				this.yaw = (float)((double)this.yaw + d4 / (double)this.field_2282);
 				this.pitch = (float)((double)this.pitch + (this.field_2287 - (double)this.pitch) / (double)this.field_2282);
 				--this.field_2282;
-				this.setPosition(d, d1, d3);
-				this.setRotation(this.yaw, this.pitch);
+				this.method_1340(d, d1, d3);
+				this.method_1342(this.yaw, this.pitch);
 			} else {
-				this.setPosition(this.x, this.y, this.z);
-				this.setRotation(this.yaw, this.pitch);
+				this.method_1340(this.x, this.y, this.z);
+				this.method_1342(this.yaw, this.pitch);
 			}
 		} else {
 			this.prevX = this.x;
 			this.prevY = this.y;
 			this.prevZ = this.z;
-			this.yVelocity -= 0.04F;
+			this.velocityY -= 0.04F;
 			int i = MathHelper.floor(this.x);
 			int j = MathHelper.floor(this.y);
 			int k = MathHelper.floor(this.z);
@@ -122,18 +122,18 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 			boolean flag = false;
 			double d5 = 0.0078125;
 			int l = this.world.getBlockId(i, j, k);
-			if (RailBlock.isRail(l)) {
+			if (RailBlock.method_1107(l)) {
 				Vec3d vec3d = this.method_1813(this.x, this.y, this.z);
 				int i1 = this.world.getBlockMeta(i, j, k);
 				this.y = (double)j;
 				boolean flag1 = false;
 				boolean flag2 = false;
-				if (l == Block.GOLDEN_RAIL.id) {
+				if (l == Block.POWERED_RAIL.id) {
 					flag1 = (i1 & 8) != 0;
 					flag2 = !flag1;
 				}
 
-				if (((RailBlock)Block.BY_ID[l]).method_1108()) {
+				if (((RailBlock)Block.BLOCKS[l]).method_1108()) {
 					i1 &= 7;
 				}
 
@@ -142,44 +142,44 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 				}
 
 				if (i1 == 2) {
-					this.xVelocity -= d5;
+					this.velocityX -= d5;
 				}
 
 				if (i1 == 3) {
-					this.xVelocity += d5;
+					this.velocityX += d5;
 				}
 
 				if (i1 == 4) {
-					this.zVelocity += d5;
+					this.velocityZ += d5;
 				}
 
 				if (i1 == 5) {
-					this.zVelocity -= d5;
+					this.velocityZ -= d5;
 				}
 
 				int[][] ai = field_2281[i1];
 				double d9 = (double)(ai[1][0] - ai[0][0]);
 				double d10 = (double)(ai[1][2] - ai[0][2]);
 				double d11 = Math.sqrt(d9 * d9 + d10 * d10);
-				double d12 = this.xVelocity * d9 + this.zVelocity * d10;
+				double d12 = this.velocityX * d9 + this.velocityZ * d10;
 				if (d12 < 0.0) {
 					d9 = -d9;
 					d10 = -d10;
 				}
 
-				double d13 = Math.sqrt(this.xVelocity * this.xVelocity + this.zVelocity * this.zVelocity);
-				this.xVelocity = d13 * d9 / d11;
-				this.zVelocity = d13 * d10 / d11;
+				double d13 = Math.sqrt(this.velocityX * this.velocityX + this.velocityZ * this.velocityZ);
+				this.velocityX = d13 * d9 / d11;
+				this.velocityZ = d13 * d10 / d11;
 				if (flag2) {
-					double d16 = Math.sqrt(this.xVelocity * this.xVelocity + this.zVelocity * this.zVelocity);
+					double d16 = Math.sqrt(this.velocityX * this.velocityX + this.velocityZ * this.velocityZ);
 					if (d16 < 0.03) {
-						this.xVelocity *= 0.0;
-						this.yVelocity *= 0.0;
-						this.zVelocity *= 0.0;
+						this.velocityX *= 0.0;
+						this.velocityY *= 0.0;
+						this.velocityZ *= 0.0;
 					} else {
-						this.xVelocity *= 0.5;
-						this.yVelocity *= 0.0;
-						this.zVelocity *= 0.5;
+						this.velocityX *= 0.5;
+						this.velocityY *= 0.0;
+						this.velocityZ *= 0.5;
 					}
 				}
 
@@ -205,10 +205,10 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 
 				this.x = d18 + d9 * d17;
 				this.z = d19 + d10 * d17;
-				this.setPosition(this.x, this.y + (double)this.standingEyeHeight, this.z);
-				double d23 = this.xVelocity;
-				double d25 = this.zVelocity;
-				if (this.passenger != null) {
+				this.method_1340(this.x, this.y + (double)this.eyeHeight, this.z);
+				double d23 = this.velocityX;
+				double d25 = this.velocityZ;
+				if (this.field_1594 != null) {
 					d23 *= 0.75;
 					d25 *= 0.75;
 				}
@@ -231,44 +231,44 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 
 				this.move(d23, 0.0, d25);
 				if (ai[0][1] != 0 && MathHelper.floor(this.x) - i == ai[0][0] && MathHelper.floor(this.z) - k == ai[0][2]) {
-					this.setPosition(this.x, this.y + (double)ai[0][1], this.z);
+					this.method_1340(this.x, this.y + (double)ai[0][1], this.z);
 				} else if (ai[1][1] != 0 && MathHelper.floor(this.x) - i == ai[1][0] && MathHelper.floor(this.z) - k == ai[1][2]) {
-					this.setPosition(this.x, this.y + (double)ai[1][1], this.z);
+					this.method_1340(this.x, this.y + (double)ai[1][1], this.z);
 				}
 
-				if (this.passenger != null) {
-					this.xVelocity *= 0.997F;
-					this.yVelocity *= 0.0;
-					this.zVelocity *= 0.997F;
+				if (this.field_1594 != null) {
+					this.velocityX *= 0.997F;
+					this.velocityY *= 0.0;
+					this.velocityZ *= 0.997F;
 				} else {
-					if (this.type == 2) {
-						double d27 = (double)MathHelper.sqrt(this.pushX * this.pushX + this.pushZ * this.pushZ);
+					if (this.field_2275 == 2) {
+						double d27 = (double)MathHelper.sqrt(this.field_2277 * this.field_2277 + this.field_2278 * this.field_2278);
 						if (d27 > 0.01) {
 							flag = true;
-							this.pushX /= d27;
-							this.pushZ /= d27;
+							this.field_2277 /= d27;
+							this.field_2278 /= d27;
 							double d29 = 0.04;
-							this.xVelocity *= 0.8F;
-							this.yVelocity *= 0.0;
-							this.zVelocity *= 0.8F;
-							this.xVelocity += this.pushX * d29;
-							this.zVelocity += this.pushZ * d29;
+							this.velocityX *= 0.8F;
+							this.velocityY *= 0.0;
+							this.velocityZ *= 0.8F;
+							this.velocityX += this.field_2277 * d29;
+							this.velocityZ += this.field_2278 * d29;
 						} else {
-							this.xVelocity *= 0.9F;
-							this.yVelocity *= 0.0;
-							this.zVelocity *= 0.9F;
+							this.velocityX *= 0.9F;
+							this.velocityY *= 0.0;
+							this.velocityZ *= 0.9F;
 						}
 					}
 
 					// TODO: PATCH STARTS HERE
 					if (mod_FCBetterThanWolves.fcDisableMinecartChanges) {
-						this.xVelocity *= 0.96F;
-						this.yVelocity *= 0.0;
-						this.zVelocity *= 0.96F;
+						this.velocityX *= 0.96F;
+						this.velocityY *= 0.0;
+						this.velocityZ *= 0.96F;
 					} else {
-						this.xVelocity *= 0.985;
-						this.yVelocity *= 0.0;
-						this.zVelocity *= 0.985;
+						this.velocityX *= 0.985;
+						this.velocityY *= 0.0;
+						this.velocityZ *= 0.985;
 					}
 					// PATCH ENDS HERE
 				}
@@ -276,86 +276,86 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 				Vec3d vec3d1 = this.method_1813(this.x, this.y, this.z);
 				if (vec3d1 != null && vec3d != null) {
 					double d28 = (vec3d.y - vec3d1.y) * 0.05;
-					double d14 = Math.sqrt(this.xVelocity * this.xVelocity + this.zVelocity * this.zVelocity);
+					double d14 = Math.sqrt(this.velocityX * this.velocityX + this.velocityZ * this.velocityZ);
 					if (d14 > 0.0) {
-						this.xVelocity = this.xVelocity / d14 * (d14 + d28);
-						this.zVelocity = this.zVelocity / d14 * (d14 + d28);
+						this.velocityX = this.velocityX / d14 * (d14 + d28);
+						this.velocityZ = this.velocityZ / d14 * (d14 + d28);
 					}
 
-					this.setPosition(this.x, vec3d1.y, this.z);
+					this.method_1340(this.x, vec3d1.y, this.z);
 				}
 
 				int k1 = MathHelper.floor(this.x);
 				int l1 = MathHelper.floor(this.z);
 				if (k1 != i || l1 != k) {
-					double d15 = Math.sqrt(this.xVelocity * this.xVelocity + this.zVelocity * this.zVelocity);
-					this.xVelocity = d15 * (double)(k1 - i);
-					this.zVelocity = d15 * (double)(l1 - k);
+					double d15 = Math.sqrt(this.velocityX * this.velocityX + this.velocityZ * this.velocityZ);
+					this.velocityX = d15 * (double)(k1 - i);
+					this.velocityZ = d15 * (double)(l1 - k);
 				}
 
-				if (this.type == 2) {
-					double d30 = (double)MathHelper.sqrt(this.pushX * this.pushX + this.pushZ * this.pushZ);
-					if (d30 > 0.01 && this.xVelocity * this.xVelocity + this.zVelocity * this.zVelocity > 0.001) {
-						this.pushX /= d30;
-						this.pushZ /= d30;
-						if (this.pushX * this.xVelocity + this.pushZ * this.zVelocity < 0.0) {
-							this.pushX = 0.0;
-							this.pushZ = 0.0;
+				if (this.field_2275 == 2) {
+					double d30 = (double)MathHelper.sqrt(this.field_2277 * this.field_2277 + this.field_2278 * this.field_2278);
+					if (d30 > 0.01 && this.velocityX * this.velocityX + this.velocityZ * this.velocityZ > 0.001) {
+						this.field_2277 /= d30;
+						this.field_2278 /= d30;
+						if (this.field_2277 * this.velocityX + this.field_2278 * this.velocityZ < 0.0) {
+							this.field_2277 = 0.0;
+							this.field_2278 = 0.0;
 						} else {
-							this.pushX = this.xVelocity;
-							this.pushZ = this.zVelocity;
+							this.field_2277 = this.velocityX;
+							this.field_2278 = this.velocityZ;
 						}
 					}
 				}
 
 				if (flag1) {
-					double d31 = Math.sqrt(this.xVelocity * this.xVelocity + this.zVelocity * this.zVelocity);
+					double d31 = Math.sqrt(this.velocityX * this.velocityX + this.velocityZ * this.velocityZ);
 					if (d31 > 0.01) {
 						double d32 = 0.06;
-						this.xVelocity += this.xVelocity / d31 * d32;
-						this.zVelocity += this.zVelocity / d31 * d32;
+						this.velocityX += this.velocityX / d31 * d32;
+						this.velocityZ += this.velocityZ / d31 * d32;
 					} else if (i1 == 1) {
-						if (this.world.canSuffocate(i - 1, j, k)) {
-							this.xVelocity = 0.02;
-						} else if (this.world.canSuffocate(i + 1, j, k)) {
-							this.xVelocity = -0.02;
+						if (this.world.method_1780(i - 1, j, k)) {
+							this.velocityX = 0.02;
+						} else if (this.world.method_1780(i + 1, j, k)) {
+							this.velocityX = -0.02;
 						}
 					} else if (i1 == 0) {
-						if (this.world.canSuffocate(i, j, k - 1)) {
-							this.zVelocity = 0.02;
-						} else if (this.world.canSuffocate(i, j, k + 1)) {
-							this.zVelocity = -0.02;
+						if (this.world.method_1780(i, j, k - 1)) {
+							this.velocityZ = 0.02;
+						} else if (this.world.method_1780(i, j, k + 1)) {
+							this.velocityZ = -0.02;
 						}
 					}
 				}
 			} else {
-				if (this.xVelocity < -d2) {
-					this.xVelocity = -d2;
+				if (this.velocityX < -d2) {
+					this.velocityX = -d2;
 				}
 
-				if (this.xVelocity > d2) {
-					this.xVelocity = d2;
+				if (this.velocityX > d2) {
+					this.velocityX = d2;
 				}
 
-				if (this.zVelocity < -d2) {
-					this.zVelocity = -d2;
+				if (this.velocityZ < -d2) {
+					this.velocityZ = -d2;
 				}
 
-				if (this.zVelocity > d2) {
-					this.zVelocity = d2;
+				if (this.velocityZ > d2) {
+					this.velocityZ = d2;
 				}
 
-				if (this.onGround) {
-					this.xVelocity *= 0.5;
-					this.yVelocity *= 0.5;
-					this.zVelocity *= 0.5;
+				if (this.field_1623) {
+					this.velocityX *= 0.5;
+					this.velocityY *= 0.5;
+					this.velocityZ *= 0.5;
 				}
 
-				this.move(this.xVelocity, this.yVelocity, this.zVelocity);
-				if (!this.onGround) {
-					this.xVelocity *= 0.95F;
-					this.yVelocity *= 0.95F;
-					this.zVelocity *= 0.95F;
+				this.move(this.velocityX, this.velocityY, this.velocityZ);
+				if (!this.field_1623) {
+					this.velocityX *= 0.95F;
+					this.velocityY *= 0.95F;
+					this.velocityZ *= 0.95F;
 				}
 			}
 
@@ -384,25 +384,25 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 				this.field_2280 = !this.field_2280;
 			}
 
-			this.setRotation(this.yaw, this.pitch);
+			this.method_1342(this.yaw, this.pitch);
 			List list = this.world.getEntities(this, this.boundingBox.expand(0.2F, 0.0, 0.2F));
 			if (list != null && list.size() > 0) {
 				for(int j1 = 0; j1 < list.size(); ++j1) {
 					Entity entity = (Entity)list.get(j1);
-					if (entity != this.passenger && entity.method_1380() && entity instanceof ChestMinecartEntity) {
+					if (entity != this.field_1594 && entity.method_1380() && entity instanceof MinecartEntity) {
 						entity.method_1353(this);
 					}
 				}
 			}
 
-			if (this.passenger != null && this.passenger.removed) {
-				this.passenger = null;
+			if (this.field_1594 != null && this.field_1594.dead) {
+				this.field_1594 = null;
 			}
 
-			if (flag && this.rand.nextInt(4) == 0) {
-				--this.fuel;
-				if (this.fuel < 0) {
-					this.pushX = this.pushZ = 0.0;
+			if (flag && this.random.nextInt(4) == 0) {
+				--this.field_2276;
+				if (this.field_2276 < 0) {
+					this.field_2277 = this.field_2278 = 0.0;
 				}
 
 				this.world.addParticle("largesmoke", this.x, this.y + 0.8, this.z, 0.0, 0.0, 0.0);

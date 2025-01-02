@@ -12,9 +12,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import net.minecraft.block.Block;
 import net.minecraft.block.DetectorRailBlock;
 import net.minecraft.block.RailBlock;
-import net.minecraft.entity.ChestMinecartEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.mod_FCBetterThanWolves;
 import net.minecraft.world.World;
 
@@ -29,11 +29,11 @@ public class DetectorRailBlockMixin extends RailBlock {
 		return -1;
 	}
 
-	@ModifyVariable(method = "method_1144", ordinal = 5, at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getEntities(Ljava/lang/Class;Lnet/minecraft/util/math/AxixAlignedBoundingBox;)Ljava/util/List;"))
+	@ModifyVariable(method = "method_1144", ordinal = 5, at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;method_175(Ljava/lang/Class;Lnet/minecraft/util/math/Box;)Ljava/util/List;"))
 	private int btw$method_1144(int value, @Local List list, @Local World world, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local(ordinal = 2) int k) {
 		for(int listIndex = 0; listIndex < list.size(); ++listIndex) {
-			ChestMinecartEntity minecartEntity = (ChestMinecartEntity)list.get(listIndex);
-			if (ShouldPlateActivateBasedOnMinecart(world, i, j, k, minecartEntity.type, minecartEntity.passenger)) {
+			MinecartEntity minecartEntity = (MinecartEntity)list.get(listIndex);
+			if (ShouldPlateActivateBasedOnMinecart(world, i, j, k, minecartEntity.field_2275, minecartEntity.field_1594)) {
 				value = 1;
 				break;
 			}

@@ -20,7 +20,7 @@ public class SeedsItemMixin {
 	@ModifyExpressionValue(method = "useOnBlock", at = @At(value = "FIELD", target = "Lnet/minecraft/block/Block;id:I", ordinal = 0))
 	private int btw$useOnBlock(int value, @Local World world, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j,
 							   @Local(ordinal = 2) int k, @Local(ordinal = 4) int i1) {
-		if (FCUtilsMisc.CanPlantGrowOnBlock(world, i, j, k, Block.BY_ID[this.cropBlockId])) {
+		if (FCUtilsMisc.CanPlantGrowOnBlock(world, i, j, k, Block.BLOCKS[this.cropBlockId])) {
 			return i1;
 		}
 

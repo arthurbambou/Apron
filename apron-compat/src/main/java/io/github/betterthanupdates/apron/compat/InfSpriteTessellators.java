@@ -1,16 +1,11 @@
 package io.github.betterthanupdates.apron.compat;
 
-import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 
@@ -18,7 +13,6 @@ import net.mine_diver.infsprites.render.TextureManager;
 import net.mine_diver.infsprites.util.Util;
 import net.mine_diver.infsprites.util.compatibility.ForgePatcher;
 import org.lwjgl.opengl.GL11;
-import overrideapi.utils.Reflection;
 
 import net.minecraft.client.render.Tessellator;
 
@@ -72,9 +66,9 @@ public class InfSpriteTessellators {
 		} else {
 			Tessellator tessellator = (Tessellator)get(terrainId).get();
 			if (ACTIVE_WORLD_TESSELLATORS.add(terrainId)) {
-				tessellator.start();
+				tessellator.startQuads();
 				Tessellator vanillaTessellator = (Tessellator)VANILLA_TESSELLATOR.get();
-				tessellator.setOffset(
+				tessellator.translate(
 						X_OFFSET_GETTER.applyAsDouble(vanillaTessellator),
 						Y_OFFSET_GETTER.applyAsDouble(vanillaTessellator),
 						Z_OFFSET_GETTER.applyAsDouble(vanillaTessellator)
@@ -88,7 +82,7 @@ public class InfSpriteTessellators {
 	public static void drawActiveWorldTessellators() {
 		ACTIVE_WORLD_TESSELLATORS.forEach(terrainId -> {
 			GL11.glBindTexture(3553, TextureManager.getTerrain(terrainId));
-			((Tessellator)tessellators[terrainId].get()).tessellate();
+			((Tessellator)tessellators[terrainId].get()).draw();
 		});
 		ACTIVE_WORLD_TESSELLATORS.clear();
 		GL11.glBindTexture(3553, TextureManager.getTerrain(0));

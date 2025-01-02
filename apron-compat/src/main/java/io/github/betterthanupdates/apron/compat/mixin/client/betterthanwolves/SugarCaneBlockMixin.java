@@ -26,7 +26,7 @@ public class SugarCaneBlockMixin {
 
 	@ModifyReturnValue(method = "canPlaceAt", at = @At(value = "RETURN", ordinal = 5))
 	private boolean btw$canPlaceAt(boolean original, @Local World arg, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local(ordinal = 2) int k, @Local(ordinal = 3) int l) {
-		Block blockBelow = Block.BY_ID[l];
+		Block blockBelow = Block.BLOCKS[l];
 		if (blockBelow instanceof FCISoil && ((FCISoil)blockBelow).IsBlockConsideredNeighbouringWater(arg, i, j - 1, k)) {
 			return true;
 		} else {

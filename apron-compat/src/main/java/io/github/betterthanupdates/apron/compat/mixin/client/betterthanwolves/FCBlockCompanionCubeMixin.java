@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(FCBlockCompanionCube.class)
 public interface FCBlockCompanionCubeMixin {
 	@Invoker("SpawnHearts")
-	public static void SpawnHearts(World world, int i, int j, int k) {
+	static void SpawnHearts(World world, int i, int j, int k) {
 		throw new AssertionError();
 	}
 }

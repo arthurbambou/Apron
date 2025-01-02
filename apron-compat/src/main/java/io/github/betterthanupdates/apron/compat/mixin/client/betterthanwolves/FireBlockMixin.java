@@ -8,7 +8,7 @@ import net.minecraft.FCBlockBBQ;
 import net.minecraft.block.Block;
 import net.minecraft.block.FireBlock;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.block.BlockRenderer;
+import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.mod_FCBetterThanWolves;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -28,7 +28,7 @@ public class FireBlockMixin implements BTWFireBlock {
 		return mod_FCBetterThanWolves.iCustomFireRenderID;
 	}
 
-	@Inject(method = "onScheduledTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/FireBlock;canPlaceAt(Lnet/minecraft/world/World;III)Z", shift = At.Shift.BY, by = 3), cancellable = true)
+	@Inject(method = "onTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/FireBlock;canPlaceAt(Lnet/minecraft/world/World;III)Z", shift = At.Shift.BY, by = 3), cancellable = true)
 	private void addBTWFireCheck(World arg, int i, int j, int k, Random random, CallbackInfo callbackInfo, @Local(ordinal = 3) LocalIntRef var6) {
 		if(arg.getBlockId(i, j - 1, k) == mod_FCBetterThanWolves.fcBBQ.id) {
 			if(!((FCBlockBBQ)mod_FCBetterThanWolves.fcBBQ).IsBBQLit(arg, i, j - 1, k)) {
@@ -49,7 +49,7 @@ public class FireBlockMixin implements BTWFireBlock {
 		}
 	}
 
-	@Inject(method = "fireTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getBlockId(III)I", ordinal = 1))
+	@Inject(method = "method_1823", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getBlockId(III)I", ordinal = 1))
 	private void addBTWMethod(World arg, int i, int j, int k, int l, Random random, int m, CallbackInfo callbackInfo) {
 		this.OnBlockDestroyedByFire(arg, i, j, k);
 	}
@@ -59,25 +59,25 @@ public class FireBlockMixin implements BTWFireBlock {
 		return original || arg.getBlockId(i, j - 1, k) == mod_FCBetterThanWolves.fcStokedFire.id;
 	}
 
-	@ModifyExpressionValue(method = "onAdjacentBlockUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canSuffocate(III)Z"))
+	@ModifyExpressionValue(method = "neighborUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z"))
 	private boolean addBTWStonkedFireCheck_1(boolean original, @Local World arg, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local(ordinal = 2) int k) {
 		return original && arg.getBlockId(i, j - 1, k) != mod_FCBetterThanWolves.fcStokedFire.id;
 	}
 
-	@ModifyExpressionValue(method = "onBlockPlaced", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canSuffocate(III)Z"))
+	@ModifyExpressionValue(method = "onPlaced", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z"))
 	private boolean addBTWStonkedFireCheck_2(boolean original, @Local World arg, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local(ordinal = 2) int k) {
 		return original && arg.getBlockId(i, j - 1, k) != mod_FCBetterThanWolves.fcStokedFire.id;
 	}
 
 	@Override
-	public boolean RenderFire(BlockRenderer renderBlocks, BlockView iBlockAccess, int i, int j, int k, Block block) {
+	public boolean RenderFire(BlockRenderManager renderBlocks, BlockView iBlockAccess, int i, int j, int k, Block block) {
 		Tessellator tessellator = Tessellator.INSTANCE;
-		int l = block.getTextureForSide(0);
+		int l = block.getTexture(0);
 		if (renderBlocks.textureOverride >= 0) {
 			l = renderBlocks.textureOverride;
 		}
 
-		float f = block.getBrightness(iBlockAccess, i, j, k);
+		float f = block.getLuminance(iBlockAccess, i, j, k);
 		tessellator.color(f, f, f);
 		int i1 = (l & 15) << 4;
 		int j1 = l & 240;
@@ -86,7 +86,7 @@ public class FireBlockMixin implements BTWFireBlock {
 		double d2 = (double)((float)j1 / 256.0F);
 		double d3 = (double)(((float)j1 + 15.99F) / 256.0F);
 		float f1 = 1.4F;
-		if (!iBlockAccess.canSuffocate(i, j - 1, k)
+		if (!iBlockAccess.method_1780(i, j - 1, k)
 				&& !Block.FIRE.method_1824(iBlockAccess, i, j - 1, k)
 				&& iBlockAccess.getBlockId(i, j - 1, k) != mod_FCBetterThanWolves.fcStokedFire.id) {
 			float f2 = 0.2F;
