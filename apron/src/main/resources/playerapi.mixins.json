@@ -2,7 +2,7 @@
   "required": true,
   "package": "io.github.betterthanupdates.playerapi.mixin.client",
   "client": [
-    "AbstractClientPlayerEntityMixin"
+    "entity.player.ClientPlayerEntityMixin"
   ],
   "plugin": "io.github.betterthanupdates.apron.ApronMixinPlugin",
   "parent": "apron.parent.mixins.json"

@@ -2,17 +2,17 @@
   "required": true,
   "package": "io.github.betterthanupdates.reforged.mixin",
   "mixins": [
-    "BlockMixin",
-    "FurnaceBlockEntityMixin",
-    "ItemMixin",
-    "ShearsItemMixin",
-    "SheepEntityMixin",
-    "SmeltingRecipeRegistryMixin"
+    "block.BlockMixin",
+    "block.entity.FurnaceBlockEntityMixin",
+    "item.ItemMixin",
+    "item.ShearsItemMixin",
+    "entity.passive.SheepEntityMixin",
+    "recipe.SmeltingRecipeManagerMixin"
   ],
   "client": [
     "client.nostation.GameRendererMixin",
-    "client.MultiplayerClientInteractionManagerMixin",
-    "client.SinglePlayerInteractionManagerMixin"
+    "client.MultiplayerInteractionManagerMixin",
+    "client.SingleplayerInteractionManagerMixin"
   ],
   "plugin": "io.github.betterthanupdates.apron.ApronMixinPlugin",
   "parent": "apron.parent.mixins.json"

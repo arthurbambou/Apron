@@ -2,25 +2,25 @@
   "required": true,
   "package": "io.github.betterthanupdates.modloader.mixin",
   "mixins": [
-    "DispenserBlockMixin",
-    "FurnaceBlockEntityMixin",
-    "FurnaceOutputSlotMixin",
-    "nostation.VanillaFurnaceBlockEntityMixin"
+    "block.DispenserBlockMixin",
+    "block.entity.FurnaceBlockEntityMixin",
+    "screen.slot.FurnaceOutputSlotMixin",
+    "block.entity.nostation.FurnaceBlockEntityMixin"
   ],
   "client": [
-    "client.ClientPlayPacketHandlerMixin",
-    "client.DisconnectingScreenMixin",
-    "client.DisconnectPacketMixin",
-    "client.EntityRenderDispatcherMixin",
+    "client.network.ClientNetworkHandlerMixin",
+    "client.gui.screen.DisconnectedScreenMixin",
+    "client.network.packet.play.DisconnectPacketMixin",
+    "client.render.entity.EntityRenderDispatcherMixin",
     "client.GameStartupErrorPanelMixin",
-    "client.ItemEntityMixin",
+    "client.entity.ItemEntityMixin",
     "client.ServerChunkCacheMixin"
   ],
   "server": [
     "server.CommandManagerMixin",
     "server.MinecraftServerMixin",
     "server.ServerEntityTrackerMixin",
-    "server.ServerLoginPacketHandlerMixin",
+    "server.network.ServerLoginNetworkHandlerMixin",
     "server.ServerWorldSourceMixin",
     "server.TrackedEntityMixin"
   ],

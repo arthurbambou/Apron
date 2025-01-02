@@ -35,10 +35,10 @@ import net.minecraft.entity.player.ClientPlayerEntity;
 import net.minecraft.mod_Aether;
 
 import io.github.betterthanupdates.apron.ReflectionUtils;
-import io.github.betterthanupdates.apron.mixin.client.ButtonWidgetAccessor;
-import io.github.betterthanupdates.apron.mixin.EntityAccessor;
-import io.github.betterthanupdates.apron.mixin.client.SoundHelperAccessor;
-import io.github.betterthanupdates.apron.mixin.WorldAccessor;
+import io.github.betterthanupdates.apron.mixin.client.gui.widget.ButtonWidgetAccessor;
+import io.github.betterthanupdates.apron.mixin.entity.EntityAccessor;
+import io.github.betterthanupdates.apron.mixin.client.sound.SoundManagerAccessor;
+import io.github.betterthanupdates.apron.mixin.world.WorldAccessor;
 
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin extends Screen {
@@ -98,8 +98,8 @@ public abstract class TitleScreenMixin extends Screen {
 		if (musicId == -1 && !loadingWorld) {
 			this.minecraft.soundManager.method_2009("aether.music.menu", 1.0F, 1.0F);
 
-			musicId = ((SoundHelperAccessor) this.minecraft.soundManager).getField_2671();
-			((SoundHelperAccessor) this.minecraft.soundManager).setField_2675(999999999);
+			musicId = ((SoundManagerAccessor) this.minecraft.soundManager).getField_2671();
+			((SoundManagerAccessor) this.minecraft.soundManager).setField_2675(999999999);
 		}
 
 		if (loadingWorld) {
@@ -241,9 +241,9 @@ public abstract class TitleScreenMixin extends Screen {
 			this.minecraft.setScreen(null);
 			mmactive = false;
 
-			SoundSystem sound = SoundHelperAccessor.getSoundSystem();
+			SoundSystem sound = SoundManagerAccessor.getSoundSystem();
 			sound.stop("sound_" + musicId);
-			((SoundHelperAccessor) this.minecraft.soundManager).setField_2675(6000);
+			((SoundManagerAccessor) this.minecraft.soundManager).setField_2675(6000);
 
 			musicId = -1;
 		}

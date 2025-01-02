@@ -94,7 +94,7 @@ import net.minecraft.world.biome.Biome;
 import io.github.betterthanupdates.Legacy;
 import io.github.betterthanupdates.apron.Apron;
 import io.github.betterthanupdates.apron.api.ApronApi;
-import io.github.betterthanupdates.stapi.StAPIMinecraftClient;
+import io.github.betterthanupdates.stapi.StAPIMinecraft;
 
 @SuppressWarnings("unused")
 @Legacy
@@ -390,7 +390,7 @@ public class ModLoader {
 	public static int addOverride(String fileToOverride, String fileToAdd) {
 		try {
 			if (FabricLoader.getInstance().isModLoaded("stationapi")) {
-				return ((StAPIMinecraftClient) getMinecraftInstance())
+				return ((StAPIMinecraft) getMinecraftInstance())
 						.apron$stapi$registerTextureOverride(fileToOverride, fileToAdd);
 			} else {
 				int i = getUniqueSpriteIndex(fileToOverride);

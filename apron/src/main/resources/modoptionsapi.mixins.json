@@ -2,10 +2,10 @@
   "required": true,
   "package": "io.github.betterthanupdates.modoptionsapi.mixin.client",
   "client": [
-    "PauseMenuMixin",
-    "OptionsScreenMixin",
-    "ConnectingScreenMixin",
-    "SelectWorldScreenMixin"
+    "gui.screen.GameMenuScreenMixin",
+    "gui.screen.option.OptionsScreenMixin",
+    "gui.screen.ConnectScreenMixin",
+    "gui.screen.world.SelectWorldScreenMixin"
   ],
   "plugin": "io.github.betterthanupdates.apron.ApronMixinPlugin",
   "parent": "apron.parent.mixins.json"

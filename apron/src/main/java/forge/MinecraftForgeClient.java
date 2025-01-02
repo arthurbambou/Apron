@@ -16,7 +16,7 @@ import net.minecraft.item.Item;
 import io.github.betterthanupdates.Legacy;
 import io.github.betterthanupdates.apron.api.ApronApi;
 import io.github.betterthanupdates.apron.impl.client.ApronClientImpl;
-import io.github.betterthanupdates.stapi.StAPIMinecraftClient;
+import io.github.betterthanupdates.stapi.StAPIMinecraft;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
@@ -45,7 +45,7 @@ public class MinecraftForgeClient {
 
 	public static void preloadTexture(String texture) {
 		if (FabricLoader.getInstance().isModLoaded("stationapi")) {
-			((StAPIMinecraftClient) ApronApi.getInstance().getGame()).apron$stapi$preloadTexture(texture);
+			((StAPIMinecraft) ApronApi.getInstance().getGame()).apron$stapi$preloadTexture(texture);
 		} else {
 			((ApronClientImpl) ApronApi.getInstance()).getTextureManager().getTextureId(texture);
 		}

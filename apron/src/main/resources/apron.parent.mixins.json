@@ -5,8 +5,5 @@
   "injectors": {
     "defaultRequire": 1,
     "maxShiftBy": 5
-  },
-  "client": [
-    "client.MinecraftClientMixin"
-  ]
+  }
 }

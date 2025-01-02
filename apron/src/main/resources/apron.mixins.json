@@ -2,18 +2,19 @@
   "required": true,
   "package": "io.github.betterthanupdates.apron.mixin",
   "mixins": [
-    "BlockMixin",
-    "ItemEntityMixin",
-    "ItemMixin",
-    "ItemStackMixin",
-    "EntityAccessor",
-    "WorldAccessor"
+    "block.BlockMixin",
+    "entity.ItemEntityMixin",
+    "item.ItemMixin",
+    "item.ItemStackMixin",
+    "entity.EntityAccessor",
+    "world.WorldAccessor"
   ],
   "client": [
-    "client.InGameHudMixin",
-    "client.SoundHelperAccessor",
-    "client.ButtonWidgetAccessor",
-    "client.TitleScreenMixin"
+    "client.gui.hud.InGameHudMixin",
+    "client.sound.SoundManagerAccessor",
+    "client.gui.widget.ButtonWidgetAccessor",
+    "client.gui.screen.TitleScreenMixin",
+    "client.MinecraftMixin"
   ],
   "plugin": "io.github.betterthanupdates.apron.ApronMixinPlugin",
   "parent": "apron.parent.mixins.json"
