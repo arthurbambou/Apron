@@ -1,23 +1,25 @@
 package io.github.betterthanupdates.shockahpi.mixin.client;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import shockahpi.SAPI;
-
-import net.minecraft.client.ClientInteractionManager;
+import net.minecraft.MultiplayerInteractionManager;
+import net.minecraft.client.InteractionManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.MultiplayerClientInteractionManager;
 
-@Mixin(MultiplayerClientInteractionManager.class)
-public class MultiplayerClientInteractionManagerMixin extends ClientInteractionManager {
+@Mixin(MultiplayerInteractionManager.class)
+public class MultiplayerClientInteractionManagerMixin extends InteractionManager {
 	public MultiplayerClientInteractionManagerMixin(Minecraft minecraft) {
 		super(minecraft);
 	}
 
-	@Inject(method = "getBlockReachDistance", at = @At("RETURN"), cancellable = true)
-	public void shockahpi$getBlockReachDistance(CallbackInfoReturnable<Float> cir) {
-		if (cir.getReturnValue() == 4.0F) cir.setReturnValue(SAPI.reachGet());
+	@ModifyReturnValue(method = "method_1715", at = @At("RETURN"))
+	public float shockahpi$getBlockReachDistance(float reach) {
+		if (reach == 4.0F) return SAPI.reachGet();
+
+		return reach;
 	}
 }

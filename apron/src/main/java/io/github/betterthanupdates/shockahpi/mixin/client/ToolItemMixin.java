@@ -8,7 +8,7 @@ import fr.catcore.cursedmixinextensions.annotations.ShadowSuperConstructor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.AxeItem;
@@ -31,16 +31,16 @@ import java.util.Iterator;
 @ChangeSuperClass(Tool.class)
 public abstract class ToolItemMixin extends Item {
 	@Shadow
-	public float field_2713;
+	public float miningSpeed;
 
 	@Shadow
-	public int field_2714;
+	public int damage;
 
 	@Shadow
 	protected ToolMaterial toolMaterial;
 
 	@Shadow
-	private Block[] effectiveBlocksBase;
+	private Block[] effectiveOnBlocks;
 
 	public ToolItemMixin(int i) {
 		super(i);
@@ -51,9 +51,9 @@ public abstract class ToolItemMixin extends Item {
 
 	@ReplaceConstructor
 	public void ctr(int itemID, int damage, ToolMaterial material, Block[] blocks) {
-		this.Tool$ctr(false, null, itemID, material.getDurability(), (float)(damage + material.getAttackDamage()), getToolPower(material), material.getMiningSpeed());
-		this.field_2713 = Float.NaN;
-		this.field_2714 = Integer.MIN_VALUE;
+		this.Tool$ctr(false, null, itemID, material.getDurability(), (float)(damage + material.getAttackDamage()), getToolPower(material), material.getMiningSpeedMultiplier());
+		this.miningSpeed = Float.NaN;
+		this.damage = Integer.MIN_VALUE;
 
 		this.toolMaterial = material;
 		((Tool)(Object)this).toolBase = this.getToolBase();
@@ -101,7 +101,7 @@ public abstract class ToolItemMixin extends Item {
 					return false;
 				}
 
-				if (block.material == Material.STONE || block.material == Material.ICE) {
+				if (block.material == Material.STONE || block.material == Material.field_997) {
 					return true;
 				}
 
@@ -113,7 +113,7 @@ public abstract class ToolItemMixin extends Item {
 					return false;
 				}
 
-				if (block.material == Material.WOOD || block.material == Material.LEAVES || block.material == Material.PLANT || block.material == Material.CACTUS || block.material == Material.PUMPKIN) {
+				if (block.material == Material.WOOD || block.material == Material.LEAVES || block.material == Material.field_988 || block.material == Material.field_1000 || block.material == Material.PUMPKIN) {
 					return true;
 				}
 			} else if (((Object)this) instanceof ShovelItem) {
@@ -121,7 +121,7 @@ public abstract class ToolItemMixin extends Item {
 					return false;
 				}
 
-				if (block.material == Material.ORGANIC || block.material == Material.DIRT || block.material == Material.SAND || block.material == Material.SNOW || block.material == Material.SNOW_BLOCK || block.material == Material.CLAY) {
+				if (block.material == Material.SOLID_ORGANIC || block.material == Material.SOIL || block.material == Material.SAND || block.material == Material.field_998 || block.material == Material.field_999 || block.material == Material.CLAY) {
 					return true;
 				}
 			}
@@ -160,9 +160,9 @@ public abstract class ToolItemMixin extends Item {
 	 * @reason check tool speed
 	 */
 	@Overwrite
-	public float getStrengthOnBlock(ItemStack stack, Block block) {
-		if (this.effectiveBlocksBase != null) {
-			for (Block value : this.effectiveBlocksBase) {
+	public float getMiningSpeedMultiplier(ItemStack stack, Block block) {
+		if (this.effectiveOnBlocks != null) {
+			for (Block value : this.effectiveOnBlocks) {
 				if (value == block) {
 					return this.getToolSpeed();
 				}
@@ -170,7 +170,7 @@ public abstract class ToolItemMixin extends Item {
 
 			return 1.0F;
 		} else {
-			return super.getStrengthOnBlock(stack, block);
+			return super.getMiningSpeedMultiplier(stack, block);
 		}
 	}
 
@@ -181,14 +181,14 @@ public abstract class ToolItemMixin extends Item {
 	@Overwrite
 	public int getAttackDamage(Entity entity) {
 		int i = super.getAttackDamage(entity);
-		return this.field_2714 != Integer.MIN_VALUE && (double)i == Math.floor((double)((Tool)(Object)this).baseDamage) ? this.field_2714 : i;
+		return this.damage != Integer.MIN_VALUE && (double)i == Math.floor((double)((Tool)(Object)this).baseDamage) ? this.damage : i;
 	}
 
 	@ShadowSuper("getToolSpeed")
 	public abstract float Tool$getToolSpeed();
 
 	protected float getToolSpeed() {
-		return Float.isNaN(this.field_2713) ? this.Tool$getToolSpeed() : this.field_2713;
+		return Float.isNaN(this.miningSpeed) ? this.Tool$getToolSpeed() : this.miningSpeed;
 	}
 
 	/**
@@ -215,7 +215,7 @@ public abstract class ToolItemMixin extends Item {
 	 */
 	@Environment(EnvType.CLIENT)
 	@Overwrite
-	public boolean isRendered3d() {
-		return super.isRendered3d();
+	public boolean isHandheld() {
+		return super.isHandheld();
 	}
 }

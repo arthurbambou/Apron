@@ -9,7 +9,7 @@ import shockahpi.DimensionBase;
 
 @Mixin(Dimension.class)
 public class DimensionMixin {
-	@Inject(method = "getByID", cancellable = true, at = @At("HEAD"))
+	@Inject(method = "method_1767", cancellable = true, at = @At("HEAD"))
 	private static void getShockAhPIDimensions(int i, CallbackInfoReturnable<Dimension> cir) {
 		DimensionBase dimensionbase = DimensionBase.getDimByNumber(i);
 

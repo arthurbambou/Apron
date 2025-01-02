@@ -14,16 +14,14 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import shockahpi.SAPI;
-
+import net.minecraft.achievement.Achievement;
+import net.minecraft.achievement.Achievements;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.menu.AchievementsScreen;
+import net.minecraft.client.gui.screen.achievement.AchievementsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widgets.OptionButtonWidget;
+import net.minecraft.client.gui.widget.OptionButtonWidget;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.stat.achievement.Achievement;
-import net.minecraft.stat.achievement.Achievements;
-
 import io.github.betterthanupdates.shockahpi.client.gui.screen.ShockAhPIAchievementsScreen;
 
 @Mixin(AchievementsScreen.class)
@@ -32,7 +30,7 @@ public class AchievementsScreenMixin extends Screen implements ShockAhPIAchievem
 	@Unique
 	private boolean draw = true;
 
-	@Inject(method = "initVanillaScreen", at = @At("RETURN"))
+	@Inject(method = "init", at = @At("RETURN"))
 	private void sapi$init(CallbackInfo ci) {
 		this.buttons.add(new OptionButtonWidget(11, this.width / 2 - 113, this.height / 2 + 74, 20, 20, "<"));
 		this.buttons.add(new OptionButtonWidget(12, this.width / 2 - 93, this.height / 2 + 74, 20, 20, ">"));
@@ -47,22 +45,22 @@ public class AchievementsScreenMixin extends Screen implements ShockAhPIAchievem
 		}
 	}
 
-	@Inject(method = "drawHeader", at = @At("RETURN"))
+	@Inject(method = "method_1999", at = @At("RETURN"))
 	private void sapi$drawHeader(CallbackInfo ci) {
-		this.textRenderer.drawText(SAPI.acGetCurrentPageTitle(), this.width / 2 - 69, this.height / 2 + 80, 0);
+		this.textRenderer.draw(SAPI.acGetCurrentPageTitle(), this.width / 2 - 69, this.height / 2 + 80, 0);
 	}
 
-	@Redirect(method = "method_1998", at = @At(value = "FIELD", target = "Lnet/minecraft/block/Block;texture:I"))
+	@Redirect(method = "method_1998", at = @At(value = "FIELD", target = "Lnet/minecraft/block/Block;textureId:I"))
 	public int method_1998$redirectTexture(Block instance, @Local Random random, @Local(index = 12) int k3, @Local(index = 24) int i9, @Local(index = 13) int i4, @Local(index = 22) int l8) {
 		return SAPI.acGetCurrentPage().bgGetSprite(random, k3 + i9, i4 + l8);
 	}
 
-	@WrapWithCondition(method = "method_1998", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/menu/AchievementsScreen;blit(IIIIII)V", ordinal = 0))
+	@WrapWithCondition(method = "method_1998", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/achievement/AchievementsScreen;drawTexture(IIIIII)V", ordinal = 0))
 	public boolean method_1998(AchievementsScreen instance, int i, int j, int k, int l, int m, int n, @Local(index = 25) int var25) {
 		return var25 != -1;
 	}
 
-	@Inject(method = "method_1998", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/menu/AchievementsScreen;drawLineHorizontal(IIII)V"))
+	@Inject(method = "method_1998", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/achievement/AchievementsScreen;drawHorizontalLine(IIII)V"))
 	public void method_1998(CallbackInfo ci, @Local Achievement achievement) {
 		this.draw = this.isVisibleLine(achievement);
 	}
@@ -101,12 +99,12 @@ public class AchievementsScreenMixin extends Screen implements ShockAhPIAchievem
 		GL11.glBlendFunc(770, 771);
 		GL11.glColor4f(f2, f3, f4, f1);
 		if (this.draw) {
-			localns.start();
-			localns.addVertex((double)paramInt1, (double)paramInt4, 0.0);
-			localns.addVertex((double)paramInt3, (double)paramInt4, 0.0);
-			localns.addVertex((double)paramInt3, (double)paramInt2, 0.0);
-			localns.addVertex((double)paramInt1, (double)paramInt2, 0.0);
-			localns.tessellate();
+			localns.startQuads();
+			localns.vertex((double)paramInt1, (double)paramInt4, 0.0);
+			localns.vertex((double)paramInt3, (double)paramInt4, 0.0);
+			localns.vertex((double)paramInt3, (double)paramInt2, 0.0);
+			localns.vertex((double)paramInt1, (double)paramInt2, 0.0);
+			localns.draw();
 		}
 
 		GL11.glEnable(3553);
@@ -123,7 +121,7 @@ public class AchievementsScreenMixin extends Screen implements ShockAhPIAchievem
 				return true;
 			} else {
 				if (deep >= 1) {
-					ArrayList<Object> list = new ArrayList(Achievements.achievements);
+					ArrayList<Object> list = new ArrayList(Achievements.ACHIEVEMENTS);
 
 					int i;
 					Achievement tmpAc;
@@ -158,7 +156,7 @@ public class AchievementsScreenMixin extends Screen implements ShockAhPIAchievem
 
 	@Override
 	public boolean checkHidden(Achievement achievement) {
-		if (this.client.statFileWriter.isAchievementUnlocked(achievement)) {
+		if (this.minecraft.field_2773.method_1988(achievement)) {
 			return false;
 		} else if (SAPI.acIsHidden(achievement)) {
 			return true;

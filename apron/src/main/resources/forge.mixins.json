@@ -33,11 +33,12 @@
     "client.PlayerRendererMixin",
     "client.TessellatorMixin",
     "client.TextureManagerMixin",
-    "client.nostation.VanillaTessellatorMixin",
+    "client.WorldRendererMixin",
     "client.nostation.HeldItemRendererMixin",
     "client.nostation.ItemRendererMixin",
     "client.nostation.MultiplayerClientInteractionManagerMixin",
-    "client.nostation.SinglePlayerInteractionManagerMixin"
+    "client.nostation.SinglePlayerInteractionManagerMixin",
+    "client.nostation.VanillaTessellatorMixin"
   ],
   "server": [
     "server.class_417Mixin",

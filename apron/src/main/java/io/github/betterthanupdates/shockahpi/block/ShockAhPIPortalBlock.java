@@ -2,7 +2,7 @@ package io.github.betterthanupdates.shockahpi.block;
 
 /**
  * @author ShockAh
- * Methods implemented in {@link net.minecraft.block.PortalBlock PortalBlock} by ShockAhPI
+ * Methods implemented in {@link net.minecraft.block.NetherPortalBlock PortalBlock} by ShockAhPI
  */
 public interface ShockAhPIPortalBlock {
 	/**
