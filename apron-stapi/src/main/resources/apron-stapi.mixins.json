@@ -15,6 +15,7 @@
     "ItemStackMixin",
     "NetherPortalBlockMixin",
     "SchemaAccessor",
+    "ToolEffectivenessImplMixin",
     "TranslationStorageAccessor",
     "ami.AMIItemRegistryMixin",
     "ami.ItemStackElementMixin",

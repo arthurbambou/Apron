@@ -21,7 +21,6 @@
     "item.ItemMixin",
     "util.hit.HitResultMixin",
     "world.WorldMixin",
-    "world.chunk.ChunkMixin",
     "world.explosion.ExplosionMixin"
   ],
   "client": [

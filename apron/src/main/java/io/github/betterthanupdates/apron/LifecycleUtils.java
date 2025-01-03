@@ -26,4 +26,5 @@ public class LifecycleUtils {
 
 	public static final Map<String, List<DimensionBase>> SHOCKAHPI_DIMENSIONS = new HashMap<>();
 
+	public static final List<String> MOD_LIST = new ArrayList<>();
 }

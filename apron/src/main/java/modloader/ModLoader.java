@@ -809,6 +809,7 @@ public class ModLoader {
 
 			for (BaseMod mod : MOD_LIST) {
 				CURRENT_MOD = mod.getClassName();
+				LifecycleUtils.MOD_LIST.add(CURRENT_MOD);
 				mod.ModsLoaded();
 
 				if (!props.containsKey(mod.getClassName())) {
