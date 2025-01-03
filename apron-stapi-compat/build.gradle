@@ -56,4 +56,5 @@ dependencies {
 	modCompileOnly(files("mods/client/buildcraft-client-B-energy-2.1.1.jar"))
 	modCompileOnly(files("mods/client/buildcraft-client-B-factory-2.1.1.jar"))
 	modCompileOnly(files("mods/client/buildcraft-client-B-transport-2.1.1.jar"))
+	modCompileOnly(files("mods/client/portalgun-1.7.3v5.jar"))
 }

@@ -11,7 +11,8 @@
   ],
   "plugin": "io.github.betterthanupdates.apron.compat.MixinCompatPlugin",
   "client": [
-    "client.buildcraft.transport.RenderPipeMixin"
+    "client.buildcraft.transport.RenderPipeMixin",
+    "client.portalgun.mod_PortalGunMixin"
   ],
   "refmap": "apron-stapi-compat-refmap.json"
 }
