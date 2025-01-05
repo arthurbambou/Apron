@@ -67,6 +67,7 @@ allprojects {
 				includeGroup 'maven.modrinth'
 			}
 		}
+		maven { url = "https://maven.bawnorton.com/releases" }
 		maven {
 			name 'JitPack'
 			url 'https://jitpack.io'
@@ -110,6 +111,7 @@ allprojects {
 //		implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
 		implementation("com.github.thecatcore.CursedMixinExtensions:fabric:1.0.0")
 		implementation("com.github.thecatcore:WFVAIO:1.1.0")
+		implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-fabric:0.2.0"))
 	}
 
 	processResources {

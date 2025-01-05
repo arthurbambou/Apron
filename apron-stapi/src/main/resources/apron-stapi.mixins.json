@@ -22,7 +22,6 @@
     "ami.StackHelperMixin",
     "client.ArsenicItemRendererMixin",
     "client.AtlasLoaderMixin",
-    "client.LivingEntityMixin",
     "datafixer.McRegionItemStackDamagerSchemaMixin",
     "datafixer.McRegionSchemaB1_7_3Mixin",
     "datafixer.StationFlatteningDamagerSchemaB1_7_3Mixin",
@@ -35,9 +34,12 @@
   ],
   "plugin": "io.github.betterthanupdates.apron.stapi.MixinCompatPlugin",
   "client": [
+    "client.BlockOverlayMixin",
     "client.BlockRendererMixin",
     "client.DiggingParticleEntityMixin",
     "client.DimensionMixin",
+    "client.ItemParticleMixin",
+    "client.ItemStackMixin",
     "client.MinecraftMixin"
   ]
 }
