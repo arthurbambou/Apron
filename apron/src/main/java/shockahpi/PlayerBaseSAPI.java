@@ -22,64 +22,64 @@ public class PlayerBaseSAPI extends PlayerBase {
 		if (FabricLoader.getInstance().isModLoaded("station-dimensions-v0")) return false;
 
 		Minecraft mc = this.player.minecraft;
-		if (!mc.field_2773.method_1988(Achievements.OPEN_INVENTORY)) {
-			mc.field_2819.method_1966(Achievements.OPEN_INVENTORY);
+		if (!mc.stats.hasAchievement(Achievements.OPEN_INVENTORY)) {
+			mc.toast.setTutorial(Achievements.OPEN_INVENTORY);
 		}
 
-		this.player.field_505 = this.player.field_504;
+		this.player.lastScreenDistortion = this.player.screenDistortion;
 		if (this.portal != 0) {
 			DimensionBase dimensionbase = DimensionBase.getDimByNumber(this.portal);
 			ClientPlayerEntity var10000;
-			if (dimensionbase != null && this.player.field_512) {
-				if (!this.player.world.isRemote && this.player.field_1595 != null) {
-					this.player.method_1376((Entity) null);
+			if (dimensionbase != null && this.player.inTeleportationState) {
+				if (!this.player.world.isRemote && this.player.vehicle != null) {
+					this.player.setVehicle((Entity) null);
 				}
 
 				if (mc.currentScreen != null) {
 					mc.setScreen((Screen) null);
 				}
 
-				if (this.player.field_504 == 0.0F) {
-					mc.soundManager.method_2009(dimensionbase.soundTrigger, 1.0F, this.player.random.nextFloat() * 0.4F + 0.8F);
+				if (this.player.screenDistortion == 0.0F) {
+					mc.soundManager.playSound(dimensionbase.soundTrigger, 1.0F, this.player.random.nextFloat() * 0.4F + 0.8F);
 				}
 
 				var10000 = this.player;
-				var10000.field_504 += 0.0125F;
-				if (this.player.field_504 >= 1.0F) {
-					this.player.field_504 = 1.0F;
+				var10000.screenDistortion += 0.0125F;
+				if (this.player.screenDistortion >= 1.0F) {
+					this.player.screenDistortion = 1.0F;
 					if (!this.player.world.isRemote) {
-						this.player.field_511 = 10;
-						mc.soundManager.method_2009(dimensionbase.soundTravel, 1.0F, this.player.random.nextFloat() * 0.4F + 0.8F);
+						this.player.portalCooldown = 10;
+						mc.soundManager.playSound(dimensionbase.soundTravel, 1.0F, this.player.random.nextFloat() * 0.4F + 0.8F);
 						DimensionBase.usePortal(this.portal);
 					}
 				}
 
-				this.player.field_512 = false;
+				this.player.inTeleportationState = false;
 			} else {
-				if (this.player.field_504 > 0.0F) {
+				if (this.player.screenDistortion > 0.0F) {
 					var10000 = this.player;
-					var10000.field_504 -= 0.05F;
+					var10000.screenDistortion -= 0.05F;
 				}
 
-				if (this.player.field_504 < 0.0F) {
-					this.player.field_504 = 0.0F;
+				if (this.player.screenDistortion < 0.0F) {
+					this.player.screenDistortion = 0.0F;
 				}
 			}
 		}
 
-		if (this.player.field_511 > 0) {
-			--this.player.field_511;
+		if (this.player.portalCooldown > 0) {
+			--this.player.portalCooldown;
 		}
 
-		this.player.field_161.method_1942(this.player);
-		if (this.player.field_161.field_2536 && this.player.field_1640 < 0.2F) {
-			this.player.field_1640 = 0.2F;
+		this.player.input.update(this.player);
+		if (this.player.input.sneaking && this.player.cameraOffset < 0.2F) {
+			this.player.cameraOffset = 0.2F;
 		}
 
-		this.player.pushOutOfBlock(this.player.x - (double)this.player.spacingXZ * 0.35, this.player.boundingBox.minY + 0.5, this.player.z + (double)this.player.spacingXZ * 0.35);
-		this.player.pushOutOfBlock(this.player.x - (double)this.player.spacingXZ * 0.35, this.player.boundingBox.minY + 0.5, this.player.z - (double)this.player.spacingXZ * 0.35);
-		this.player.pushOutOfBlock(this.player.x + (double)this.player.spacingXZ * 0.35, this.player.boundingBox.minY + 0.5, this.player.z - (double)this.player.spacingXZ * 0.35);
-		this.player.pushOutOfBlock(this.player.x + (double)this.player.spacingXZ * 0.35, this.player.boundingBox.minY + 0.5, this.player.z + (double)this.player.spacingXZ * 0.35);
+		this.player.pushOutOfBlock(this.player.x - (double)this.player.width * 0.35, this.player.boundingBox.minY + 0.5, this.player.z + (double)this.player.width * 0.35);
+		this.player.pushOutOfBlock(this.player.x - (double)this.player.width * 0.35, this.player.boundingBox.minY + 0.5, this.player.z - (double)this.player.width * 0.35);
+		this.player.pushOutOfBlock(this.player.x + (double)this.player.width * 0.35, this.player.boundingBox.minY + 0.5, this.player.z - (double)this.player.width * 0.35);
+		this.player.pushOutOfBlock(this.player.x + (double)this.player.width * 0.35, this.player.boundingBox.minY + 0.5, this.player.z + (double)this.player.width * 0.35);
 		((PlayerAPIClientPlayerEntity) this.player).superOnLivingUpdate();
 		return true;
 	}

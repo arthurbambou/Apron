@@ -155,7 +155,7 @@ public class ModLoaderPacket extends Packet {
 			if (playerMap.containsKey(netHandler)) {
 				player = playerMap.get(netHandler);
 			} else if (netHandler instanceof ServerPlayNetworkHandler) {
-				player = ((ServerPlayNetworkHandler) netHandler).field_920;
+				player = ((ServerPlayNetworkHandler) netHandler).player;
 			}
 
 			ModLoaderMp.HandleAllPackets(this, player);

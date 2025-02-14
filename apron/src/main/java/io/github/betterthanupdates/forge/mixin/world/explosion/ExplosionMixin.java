@@ -5,16 +5,16 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import forge.ISpecialResistance;
-import net.minecraft.class_60;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
+import net.minecraft.world.explosion.Explosion;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(class_60.class)
+@Mixin(Explosion.class)
 public class ExplosionMixin {
 	@Shadow
 	private World field_1399;

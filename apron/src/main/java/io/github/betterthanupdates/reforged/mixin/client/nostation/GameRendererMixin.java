@@ -1,6 +1,5 @@
 package io.github.betterthanupdates.reforged.mixin.client.nostation;
 
-import net.minecraft.class_555;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -8,8 +7,9 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import reforged.Reforged;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.render.GameRenderer;
 
-@Mixin(class_555.class)
+@Mixin(GameRenderer.class)
 public class GameRendererMixin {
 	@Shadow
 	private Minecraft field_2349;

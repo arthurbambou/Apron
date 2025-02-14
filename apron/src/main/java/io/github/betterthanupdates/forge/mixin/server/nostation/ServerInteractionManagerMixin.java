@@ -3,18 +3,18 @@ package io.github.betterthanupdates.forge.mixin.server.nostation;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.betterthanupdates.forge.block.ForgeBlock;
 import net.minecraft.block.Block;
-import net.minecraft.class_70;
-import net.minecraft.class_73;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerInteractionManager;
+import net.minecraft.world.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(class_70.class)
+@Mixin(ServerPlayerInteractionManager.class)
 public class ServerInteractionManagerMixin {
 	@Shadow
-	private class_73 field_2310;
+	private ServerWorld field_2310;
 
 	@Shadow
 	private int field_2318;

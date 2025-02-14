@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
 import net.minecraft.block.RedstoneWireBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 

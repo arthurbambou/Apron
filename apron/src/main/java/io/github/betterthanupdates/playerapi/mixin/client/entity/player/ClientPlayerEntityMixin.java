@@ -6,7 +6,6 @@ import java.util.Random;
 
 import fr.catcore.cursedmixinextensions.annotations.ShadowSuper;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.class_141;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -18,15 +17,16 @@ import playerapi.PlayerAPI;
 import playerapi.PlayerBase;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
 import net.minecraft.block.entity.DispenserBlockEntity;
 import net.minecraft.block.entity.FurnaceBlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.Session;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.SleepAttemptResult;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -57,9 +57,9 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 	}
 
 	@Override
-	public void method_938(Entity entity) {
+	public void onKilledBy(Entity entity) {
 		if (!PlayerAPI.onDeath((ClientPlayerEntity) (Object) this, entity)) {
-			super.method_938(entity);
+			super.onKilledBy(entity);
 		}
 	}
 
@@ -70,7 +70,7 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 
 	@Override
 	public void superUpdatePlayerActionState() {
-		super.method_910();
+		super.tickLiving();
 	}
 
 	@Inject(method = "method_937", at = @At("HEAD"), cancellable = true)
@@ -80,7 +80,7 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 
 	@Override
 	public void superOnLivingUpdate() {
-		super.method_937();
+		super.tickMovement();
 	}
 
 	@Override
@@ -89,9 +89,9 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 	}
 
 	@Override
-	public void method_1324(float f, float f1, float f2) {
+	public void moveNonSolid(float f, float f1, float f2) {
 		if (!PlayerAPI.moveFlying((ClientPlayerEntity) (Object) this, f, f1, f2)) {
-			super.method_1324(f, f1, f2);
+			super.moveNonSolid(f, f1, f2);
 		}
 	}
 
@@ -158,13 +158,13 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 	}
 
 	@Override
-	public double method_1347(double d, double d1, double d2) {
-		return PlayerAPI.getDistanceSq((ClientPlayerEntity) (Object) this, d, d1, d2, super.method_1347(d, d1, d2));
+	public double getSquaredDistance(double d, double d1, double d2) {
+		return PlayerAPI.getDistanceSq((ClientPlayerEntity) (Object) this, d, d1, d2, super.getSquaredDistance(d, d1, d2));
 	}
 
 	@Override
-	public boolean method_1334() {
-		return PlayerAPI.isInWater((ClientPlayerEntity) (Object) this, this.field_1612);
+	public boolean isSubmergedInWater() {
+		return PlayerAPI.isInWater((ClientPlayerEntity) (Object) this, this.submergedInWater);
 	}
 
 	@Inject(method = "method_1373", at = @At("RETURN"), cancellable = true)
@@ -173,14 +173,14 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 	}
 
 	@Override
-	public float method_511(Block block) {
-		float f = this.inventory.method_674(block);
+	public float getBlockBreakingSpeed(Block block) {
+		float f = this.inventory.getStrengthOnBlock(block);
 
 		if (this.isInFluid(Material.WATER)) {
 			f /= 5.0F;
 		}
 
-		if (!this.field_1623) {
+		if (!this.onGround) {
 			f /= 5.0F;
 		}
 
@@ -188,9 +188,9 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 	}
 
 	@Override
-	public void method_939(int i) {
+	public void heal(int i) {
 		if (!PlayerAPI.heal((ClientPlayerEntity) (Object) this, i)) {
-			super.method_939(i);
+			super.heal(i);
 		}
 	}
 
@@ -205,8 +205,8 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 	}
 
 	@Override
-	public class_141 superSleepInBedAt(int i, int j, int k) {
-		return super.method_495(i, j, k);
+	public SleepAttemptResult superSleepInBedAt(int i, int j, int k) {
+		return super.trySleep(i, j, k);
 	}
 
 	@Override
@@ -221,12 +221,12 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 
 	@Override
 	public void setMoveForward(float f) {
-		this.field_1029 = f;
+		this.forwardSpeed = f;
 	}
 
 	@Override
 	public void setMoveStrafing(float f) {
-		this.field_1060 = f;
+		this.sidewaysSpeed = f;
 	}
 
 	@Override
@@ -235,8 +235,8 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 	}
 
 	@Override
-	public float method_1394(float f) {
-		return PlayerAPI.getEntityBrightness((ClientPlayerEntity) (Object) this, f, super.method_1394(f));
+	public float getBrightnessAtEyes(float f) {
+		return PlayerAPI.getEntityBrightness((ClientPlayerEntity) (Object) this, f, super.getBrightnessAtEyes(f));
 	}
 
 	@Override
@@ -252,7 +252,7 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 
 	@Override
 	public void superMoveFlying(float f, float f1, float f2) {
-		super.method_1324(f, f1, f2);
+		super.moveNonSolid(f, f1, f2);
 	}
 
 	@Inject(method = "move", at = @At("HEAD"))
@@ -273,20 +273,20 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 	}
 
 	@Override
-	public class_141 method_495(int i, int j, int k) {
+	public SleepAttemptResult trySleep(int i, int j, int k) {
 		PlayerAPI.beforeSleepInBedAt((ClientPlayerEntity) (Object) this, i, j, k);
-		class_141 sleepStatus = PlayerAPI.sleepInBedAt((ClientPlayerEntity) (Object) this, i, j, k);
-		return sleepStatus == null ? super.method_495(i, j, k) : sleepStatus;
+		SleepAttemptResult sleepStatus = PlayerAPI.sleepInBedAt((ClientPlayerEntity) (Object) this, i, j, k);
+		return sleepStatus == null ? super.trySleep(i, j, k) : sleepStatus;
 	}
 
 	@Override
 	public void doFall(float fallDist) {
-		super.method_1389(fallDist);
+		super.onLanding(fallDist);
 	}
 
 	@Override
 	public float getFallDistance() {
-		return this.field_1636;
+		return this.fallDistance;
 	}
 
 	@Override
@@ -301,7 +301,7 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 
 	@Override
 	public void doJump() {
-		this.method_944();
+		this.jump();
 	}
 
 	@Override
@@ -311,30 +311,30 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 
 	@Override
 	public void setFallDistance(float f) {
-		this.field_1636 = f;
+		this.fallDistance = f;
 	}
 
 	@Override
 	public void setYSize(float f) {
-		this.field_1640 = f;
+		this.cameraOffset = f;
 	}
 
 	@Override
-	public void method_945(float f, float f1) {
+	public void travel(float f, float f1) {
 		if (!PlayerAPI.moveEntityWithHeading((ClientPlayerEntity) (Object) this, f, f1)) {
-			super.method_945(f, f1);
+			super.travel(f, f1);
 		}
 	}
 
 	@Override
-	public boolean method_932() {
-		return PlayerAPI.isOnLadder((ClientPlayerEntity) (Object) this, super.method_932());
+	public boolean isOnLadder() {
+		return PlayerAPI.isOnLadder((ClientPlayerEntity) (Object) this, super.isOnLadder());
 	}
 
 	@Override
 	public void setActionState(float newMoveStrafing, float newMoveForward, boolean newIsJumping) {
-		this.field_1060 = newMoveStrafing;
-		this.field_1029 = newMoveForward;
+		this.sidewaysSpeed = newMoveStrafing;
+		this.forwardSpeed = newMoveForward;
 		this.jumping = newIsJumping;
 	}
 
@@ -364,7 +364,7 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 
 	@Override
 	public float superGetEntityBrightness(float f) {
-		return super.method_1394(f);
+		return super.getBrightnessAtEyes(f);
 	}
 
 	@Inject(method = "sendChatMessage", at = @At("RETURN"))
@@ -373,60 +373,60 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 	}
 
 	@Override
-	protected String method_912() {
+	protected String getHurtSound() {
 		String result = PlayerAPI.getHurtSound((ClientPlayerEntity) (Object) this);
-		return result != null ? result : super.method_912();
+		return result != null ? result : super.getHurtSound();
 	}
 
 	@Override
 	public String superGetHurtSound() {
-		return super.method_912();
+		return super.getHurtSound();
 	}
 
 	@Override
 	public float superGetCurrentPlayerStrVsBlock(Block block) {
-		return super.method_511(block);
+		return super.getBlockBreakingSpeed(block);
 	}
 
 	@Override
-	public boolean method_514(Block block) {
+	public boolean canHarvest(Block block) {
 		Boolean result = PlayerAPI.canHarvestBlock((ClientPlayerEntity) (Object) this, block);
-		return result != null ? result : super.method_514(block);
+		return result != null ? result : super.canHarvest(block);
 	}
 
 	@Override
 	public boolean superCanHarvestBlock(Block block) {
-		return super.method_514(block);
+		return super.canHarvest(block);
 	}
 
 	@Override
-	protected void method_1389(float f) {
+	protected void onLanding(float f) {
 		if (!PlayerAPI.fall((ClientPlayerEntity) (Object) this, f)) {
-			super.method_1389(f);
+			super.onLanding(f);
 		}
 	}
 
 	@Override
 	public void superFall(float f) {
-		super.method_1389(f);
+		super.onLanding(f);
 	}
 
 	@Override
-	protected void method_944() {
+	protected void jump() {
 		if (!PlayerAPI.jump((ClientPlayerEntity) (Object) this)) {
-			super.method_944();
+			super.jump();
 		}
 	}
 
 	@Override
 	public void superJump() {
-		super.method_944();
+		super.jump();
 	}
 
 	@Override
-	protected void method_946(int i) {
+	protected void applyDamage(int i) {
 		if (!PlayerAPI.damageEntity((ClientPlayerEntity) (Object) this, i)) {
-			super.method_946(i);
+			super.applyDamage(i);
 		}
 	}
 
@@ -438,19 +438,19 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 		if (FabricLoader.getInstance().isModLoaded("station-player-api-v0")) {
 			this.superSuperDamageEntity(i);
 		} else {
-			super.method_946(i);
+			super.applyDamage(i);
 		}
 	}
 
 	@Override
-	public double method_1352(Entity entity) {
+	public double getSquaredDistance(Entity entity) {
 		Double result = PlayerAPI.getDistanceSqToEntity((ClientPlayerEntity) (Object) this, entity);
-		return result != null ? result : super.method_1352(entity);
+		return result != null ? result : super.getSquaredDistance(entity);
 	}
 
 	@Override
 	public double superGetDistanceSqToEntity(Entity entity) {
-		return super.method_1352(entity);
+		return super.getSquaredDistance(entity);
 	}
 
 	@Override
@@ -466,25 +466,25 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity implements Pl
 	}
 
 	@Override
-	public boolean isSubmergedInWater() {
+	public boolean checkWaterCollisions() {
 		Boolean result = PlayerAPI.handleWaterMovement((ClientPlayerEntity) (Object) this);
-		return result != null ? result : super.isSubmergedInWater();
+		return result != null ? result : super.checkWaterCollisions();
 	}
 
 	@Override
 	public boolean superHandleWaterMovement() {
-		return super.isSubmergedInWater();
+		return super.checkWaterCollisions();
 	}
 
 	@Override
-	public boolean method_1335() {
+	public boolean isTouchingLava() {
 		Boolean result = PlayerAPI.handleLavaMovement((ClientPlayerEntity) (Object) this);
-		return result != null ? result : super.method_1335();
+		return result != null ? result : super.isTouchingLava();
 	}
 
 	@Override
 	public boolean superHandleLavaMovement() {
-		return super.method_1335();
+		return super.isTouchingLava();
 	}
 
 	@Override

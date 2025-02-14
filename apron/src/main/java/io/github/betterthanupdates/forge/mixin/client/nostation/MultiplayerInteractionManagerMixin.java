@@ -6,10 +6,10 @@ import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import net.minecraft.MultiplayerInteractionManager;
 import net.minecraft.block.Block;
 import net.minecraft.client.InteractionManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.MultiplayerInteractionManager;
 import net.minecraft.entity.player.PlayerEntity;
 
 import io.github.betterthanupdates.forge.block.ForgeBlock;

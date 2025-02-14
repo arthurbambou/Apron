@@ -17,6 +17,6 @@ public class SheepEntityMixin extends AnimalEntity {
 
 	@Inject(method = "method_1323", cancellable = true, at = @At("RETURN"))
 	private void reforged$interact(PlayerEntity entityplayer, CallbackInfoReturnable<Boolean> cir) {
-		cir.setReturnValue(super.method_1323(entityplayer));
+		cir.setReturnValue(super.interact(entityplayer));
 	}
 }

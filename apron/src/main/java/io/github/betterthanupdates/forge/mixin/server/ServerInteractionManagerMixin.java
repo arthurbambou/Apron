@@ -5,16 +5,16 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import forge.ForgeHooks;
 import forge.IUseItemFirst;
-import net.minecraft.class_70;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(class_70.class)
+@Mixin(ServerPlayerInteractionManager.class)
 public class ServerInteractionManagerMixin {
 
 	@Inject(method = "method_1831", at = @At(value = "RETURN", ordinal = 0))

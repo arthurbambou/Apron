@@ -44,14 +44,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import net.fabricmc.loader.api.FabricLoader;
 import net.legacyfabric.fabric.api.logger.v1.Logger;
-import net.minecraft.class_238;
-import net.minecraft.class_288;
-import net.minecraft.class_303;
-import net.minecraft.class_336;
-import net.minecraft.class_359;
-import net.minecraft.class_447;
-import net.minecraft.class_51;
-import net.minecraft.class_538;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,12 +59,15 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
+import net.minecraft.client.render.texture.DynamicTexture;
 import net.minecraft.client.resource.language.TranslationStorage;
+import net.minecraft.client.resource.pack.TexturePacks;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.Session;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityRegistry;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -87,10 +82,14 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stat.ItemOrBlockStat;
 import net.minecraft.stat.Stats;
+import net.minecraft.util.crash.CrashReport;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-
+import net.minecraft.world.biome.EntitySpawnGroup;
+import net.minecraft.world.chunk.ChunkSource;
+import net.minecraft.world.gen.chunk.NetherChunkGenerator;
+import net.minecraft.world.gen.chunk.OverworldChunkGenerator;
 import io.github.betterthanupdates.Legacy;
 import io.github.betterthanupdates.apron.Apron;
 import io.github.betterthanupdates.apron.api.ApronApi;
@@ -103,7 +102,7 @@ public class ModLoader {
 	static final ApronApi APRON = ApronApi.getInstance();
 
 	@Environment(EnvType.CLIENT)
-	private static List<class_336> ANIM_LIST;
+	private static List<DynamicTexture> ANIM_LIST;
 	@Environment(EnvType.CLIENT)
 	private static Map<Integer, BaseMod> BLOCK_MODELS;
 	@Environment(EnvType.CLIENT)
@@ -235,11 +234,11 @@ public class ModLoader {
 	 * @param textureBinder animation instance to register
 	 */
 	@Environment(EnvType.CLIENT)
-	public static void addAnimation(class_336 textureBinder) {
+	public static void addAnimation(DynamicTexture textureBinder) {
 		LOGGER.debug("Adding animation " + textureBinder.toString());
 
-		for (class_336 oldAnim : ANIM_LIST) {
-			if (oldAnim.field_1416 == textureBinder.field_1416 && oldAnim.field_1412 == textureBinder.field_1412) {
+		for (DynamicTexture oldAnim : ANIM_LIST) {
+			if (oldAnim.atlas == textureBinder.atlas && oldAnim.sprite == textureBinder.sprite) {
 				ANIM_LIST.remove(textureBinder);
 				break;
 			}
@@ -471,7 +470,7 @@ public class ModLoader {
 	 * @param weightedProb chance of spawning for every try
 	 * @param spawnGroup   group to spawn the entity in
 	 */
-	public static void AddSpawn(Class<? extends LivingEntity> entityClass, int weightedProb, class_238 spawnGroup) {
+	public static void AddSpawn(Class<? extends LivingEntity> entityClass, int weightedProb, SpawnGroup spawnGroup) {
 		AddSpawn(entityClass, weightedProb, spawnGroup, (Biome[]) null);
 	}
 
@@ -484,7 +483,7 @@ public class ModLoader {
 	 * @param biomes       biomes to spawn the entity in
 	 */
 	@SuppressWarnings("unchecked")
-	public static void AddSpawn(Class<? extends LivingEntity> entityClass, int weightedProb, class_238 spawnGroup, Biome... biomes) {
+	public static void AddSpawn(Class<? extends LivingEntity> entityClass, int weightedProb, SpawnGroup spawnGroup, Biome... biomes) {
 		if (entityClass == null) {
 			throw new IllegalArgumentException("entityClass cannot be null");
 		} else if (spawnGroup == null) {
@@ -500,21 +499,21 @@ public class ModLoader {
 					continue;
 				}
 
-				List<class_288> list = biome.method_789(spawnGroup);
+				List<EntitySpawnGroup> list = biome.getSpawnableEntities(spawnGroup);
 
 				if (list != null) {
 					boolean exists = false;
 
-					for (class_288 entry : list) {
-						if (entry.field_1142 == entityClass) {
-							entry.field_1143 = weightedProb;
+					for (EntitySpawnGroup entry : list) {
+						if (entry.clazz == entityClass) {
+							entry.amount = weightedProb;
 							exists = true;
 							break;
 						}
 					}
 
 					if (!exists) {
-						list.add(new class_288(entityClass, weightedProb));
+						list.add(new EntitySpawnGroup(entityClass, weightedProb));
 					}
 				}
 			}
@@ -528,7 +527,7 @@ public class ModLoader {
 	 * @param chance     Higher number means more likely to spawn
 	 * @param spawnGroup The spawn group to add entity to (Monster, Creature, or Water)
 	 */
-	public static void AddSpawn(String entityName, int chance, class_238 spawnGroup) {
+	public static void AddSpawn(String entityName, int chance, SpawnGroup spawnGroup) {
 		AddSpawn(entityName, chance, spawnGroup, (Biome[]) null);
 	}
 
@@ -541,7 +540,7 @@ public class ModLoader {
 	 * @param biomes       Array of biomes to add entity spawning to
 	 */
 	@SuppressWarnings("unchecked")
-	public static void AddSpawn(String entityName, int weightedProb, class_238 spawnGroup, Biome... biomes) {
+	public static void AddSpawn(String entityName, int weightedProb, SpawnGroup spawnGroup, Biome... biomes) {
 		Class<? extends Entity> entityClass = (Class<? extends Entity>) EntityRegistry.idToClass.get(entityName);
 
 		if (entityClass != null && LivingEntity.class.isAssignableFrom(entityClass)) {
@@ -851,7 +850,7 @@ public class ModLoader {
 	private static void initGameRenderer() {
 		try {
 			Minecraft client = getMinecraftInstance();
-			if (client != null) client.field_2818 = new EntityRendererProxy(client);
+			if (client != null) client.gameRenderer = new EntityRendererProxy(client);
 		} catch (SecurityException | IllegalArgumentException e) {
 			MOD_LOGGER.throwing("ModLoader", "init", e);
 			ThrowException(e);
@@ -979,11 +978,11 @@ public class ModLoader {
 	@Environment(EnvType.CLIENT)
 	public static BufferedImage loadImage(TextureManager textureManager, String path)
 			throws FileNotFoundException, Exception {
-		class_303 packManager = textureManager.field_1256;
-		InputStream input = packManager.field_1175.method_976(path);
+		TexturePacks packManager = textureManager.texturePacks;
+		InputStream input = packManager.selected.getResource(path);
 
 		if (input == null && !path.startsWith("/")) {
-			input = packManager.field_1175.method_976("/" + path);
+			input = packManager.selected.getResource("/" + path);
 		}
 
 		if (input == null) {
@@ -1081,8 +1080,8 @@ public class ModLoader {
 
 		long l = 0L;
 
-		if (server.field_2841 != null && server.field_2841[0] != null) {
-			l = server.field_2841[0].getTime();
+		if (server.worlds != null && server.worlds[0] != null) {
+			l = server.worlds[0].getTime();
 
 			for (Entry<BaseMod, Boolean> entry : inGameHooks.entrySet()) {
 				if (clock != l || !entry.getValue()) {
@@ -1121,7 +1120,7 @@ public class ModLoader {
 	 * @param chunkZ Z coordinate of chunk
 	 * @param world  World to generate blocks in
 	 */
-	public static void PopulateChunk(class_51 source, int chunkX, int chunkZ, World world) {
+	public static void PopulateChunk(ChunkSource source, int chunkX, int chunkZ, World world) {
 		init();
 
 		if (APRON.isClient()) {
@@ -1139,10 +1138,10 @@ public class ModLoader {
 			}
 		} else {
 			for (BaseMod mod : MOD_LIST) {
-				if (source instanceof class_538) {
-					mod.GenerateSurface(world, world.field_214, chunkX, chunkZ);
-				} else if (source instanceof class_359) {
-					mod.GenerateNether(world, world.field_214, chunkX, chunkZ);
+				if (source instanceof OverworldChunkGenerator) {
+					mod.GenerateSurface(world, world.random, chunkX, chunkZ);
+				} else if (source instanceof NetherChunkGenerator) {
+					mod.GenerateNether(world, world.random, chunkX, chunkZ);
 				}
 			}
 		}
@@ -1306,8 +1305,8 @@ public class ModLoader {
 			mod.RegisterAnimation(client);
 		}
 
-		for (class_336 anim : ANIM_LIST) {
-			manager.method_1087(anim);
+		for (DynamicTexture anim : ANIM_LIST) {
+			manager.addDynamicTexture(anim);
 		}
 
 		for (Entry<Integer, Map<String, Integer>> overlay : overrides.entrySet()) {
@@ -1318,8 +1317,8 @@ public class ModLoader {
 
 				try {
 					BufferedImage im = loadImage(manager, overlayPath);
-					class_336 anim = new ModTextureStatic(index, dst, im);
-					manager.method_1087(anim);
+					DynamicTexture anim = new ModTextureStatic(index, dst, im);
+					manager.addDynamicTexture(anim);
 				} catch (Exception e) {
 					MOD_LOGGER.throwing("ModLoader", "RegisterAllTextureOverrides", e);
 					ThrowException(e);
@@ -1348,7 +1347,7 @@ public class ModLoader {
 	public static void RegisterBlock(@NotNull Block block, Class<? extends BlockItem> itemClass) {
 		try {
 			if (APRON.isClient()) {
-				List<Block> list = (List<Block>) Session.field_871;
+				List<Block> list = (List<Block>) Session.CREATIVE_INVENTORY;
 				list.add(block);
 			}
 
@@ -1425,7 +1424,7 @@ public class ModLoader {
 		if (APRON.isClient()) {
 			RegisterTileEntity(blockEntityClass, id, null);
 		} else {
-			BlockEntity.method_1067(blockEntityClass, id);
+			BlockEntity.create(blockEntityClass, id);
 			LifecycleUtils.MOD_BLOCK_ENTITIES.add(id);
 		}
 	}
@@ -1441,11 +1440,11 @@ public class ModLoader {
 	@SuppressWarnings("unchecked")
 	public static void RegisterTileEntity(Class<? extends BlockEntity> blockEntityClass, String id, BlockEntityRenderer renderer) {
 		try {
-			BlockEntity.method_1067(blockEntityClass, id);
+			BlockEntity.create(blockEntityClass, id);
 
 			if (renderer != null) {
 				BlockEntityRenderDispatcher ref = BlockEntityRenderDispatcher.INSTANCE;
-				Map<Class<? extends BlockEntity>, BlockEntityRenderer> renderers = (Map<Class<? extends BlockEntity>, BlockEntityRenderer>) ref.field_1564;
+				Map<Class<? extends BlockEntity>, BlockEntityRenderer> renderers = (Map<Class<? extends BlockEntity>, BlockEntityRenderer>) ref.renderers;
 				renderers.put(blockEntityClass, renderer);
 				renderer.setDispatcher(ref);
 			}
@@ -1462,7 +1461,7 @@ public class ModLoader {
 	 * @param entityClass Class of entity to spawn
 	 * @param spawnGroup  The spawn group to remove entity from. (Monster, Creature, or Water)
 	 */
-	public static void RemoveSpawn(Class<? extends LivingEntity> entityClass, class_238 spawnGroup) {
+	public static void RemoveSpawn(Class<? extends LivingEntity> entityClass, SpawnGroup spawnGroup) {
 		RemoveSpawn(entityClass, spawnGroup, (Biome[]) null);
 	}
 
@@ -1474,7 +1473,7 @@ public class ModLoader {
 	 * @param biomes      Array of biomes to remove entity spawning from
 	 */
 	@SuppressWarnings("unchecked")
-	public static void RemoveSpawn(Class<? extends LivingEntity> entityClass, class_238 spawnGroup, Biome... biomes) {
+	public static void RemoveSpawn(Class<? extends LivingEntity> entityClass, SpawnGroup spawnGroup, Biome... biomes) {
 		if (entityClass == null) {
 			throw new IllegalArgumentException("entityClass cannot be null");
 		} else if (spawnGroup == null) {
@@ -1485,10 +1484,10 @@ public class ModLoader {
 			}
 
 			for (Biome biome : biomes) {
-				List<class_288> list = (List<class_288>) biome.method_789(spawnGroup);
+				List<EntitySpawnGroup> list = (List<EntitySpawnGroup>) biome.getSpawnableEntities(spawnGroup);
 
 				if (list != null) {
-					list.removeIf(entry -> entry.field_1142 == entityClass);
+					list.removeIf(entry -> entry.clazz == entityClass);
 				}
 			}
 		}
@@ -1500,7 +1499,7 @@ public class ModLoader {
 	 * @param entityName Name of entity to remove
 	 * @param spawnGroup The spawn group to remove the entity from (Monster, Creature, or Water)
 	 */
-	public static void RemoveSpawn(String entityName, class_238 spawnGroup) {
+	public static void RemoveSpawn(String entityName, SpawnGroup spawnGroup) {
 		RemoveSpawn(entityName, spawnGroup, (Biome[]) null);
 	}
 
@@ -1512,7 +1511,7 @@ public class ModLoader {
 	 * @param biomes     Array of biomes to remove entity spawning from
 	 */
 	@SuppressWarnings("unchecked")
-	public static void RemoveSpawn(String entityName, class_238 spawnGroup, Biome... biomes) {
+	public static void RemoveSpawn(String entityName, SpawnGroup spawnGroup, Biome... biomes) {
 		Class<? extends Entity> entityClass = (Class<? extends Entity>) EntityRegistry.idToClass.get(entityName);
 
 		if (entityClass != null && LivingEntity.class.isAssignableFrom(entityClass)) {
@@ -1805,7 +1804,7 @@ public class ModLoader {
 			Minecraft client = getMinecraftInstance();
 
 			if (client != null) {
-				client.method_2102(new class_447(message, e));
+				client.handleCrash(new CrashReport(message, e));
 			} else {
 				throw new RuntimeException(message, e);
 			}
@@ -1834,12 +1833,12 @@ public class ModLoader {
 
 		if (player instanceof ServerPlayerEntity) {
 			ServerPlayerEntity entityplayermp = (ServerPlayerEntity) player;
-			entityplayermp.method_314();
-			int j = entityplayermp.field_260;
-			entityplayermp.field_255.method_835(new OpenScreenS2CPacket(j, i, inventory.getName(), inventory.size()));
-			entityplayermp.container = container;
-			entityplayermp.container.syncId = j;
-			entityplayermp.container.addListener(entityplayermp);
+			entityplayermp.incrementScreenHandlerSyncId();
+			int j = entityplayermp.screenHandlerSyncId;
+			entityplayermp.networkHandler.sendPacket(new OpenScreenS2CPacket(j, i, inventory.getName(), inventory.size()));
+			entityplayermp.currentScreenHandler = container;
+			entityplayermp.currentScreenHandler.syncId = j;
+			entityplayermp.currentScreenHandler.addListener(entityplayermp);
 		}
 	}
 }

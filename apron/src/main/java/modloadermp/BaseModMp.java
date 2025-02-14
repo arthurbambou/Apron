@@ -3,11 +3,10 @@ package modloadermp;
 import modloader.BaseMod;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import net.minecraft.class_39;
-import net.minecraft.class_426;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.command.CommandOutput;
+import net.minecraft.server.command.ServerCommandHandler;
 import io.github.betterthanupdates.Legacy;
 import io.github.betterthanupdates.apron.Apron;
 
@@ -55,11 +54,11 @@ public abstract class BaseModMp extends BaseMod {
 	}
 
 	@Environment(EnvType.SERVER)
-	public void GetCommandInfo(class_39 icommandlistener) {
+	public void GetCommandInfo(CommandOutput icommandlistener) {
 	}
 
 	@Environment(EnvType.SERVER)
-	public boolean HandleCommand(String s, String s1, class_39 icommandlistener, class_426 consolecommandhandler) {
+	public boolean HandleCommand(String s, String s1, CommandOutput icommandlistener, ServerCommandHandler consolecommandhandler) {
 		return false;
 	}
 

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -48,7 +48,7 @@ public abstract class BlockMixin implements ForgeBlock {
 	@Environment(EnvType.CLIENT)
 	@Inject(method = "getLuminance", at = @At("RETURN"), cancellable = true)
 	private void getBrightness(BlockView blockView, int x, int y, int z, CallbackInfoReturnable<Float> cir) {
-		cir.setReturnValue(blockView.method_1784(x, y, z, this.getLightValue(blockView, x, y, z)));
+		cir.setReturnValue(blockView.getNaturalBrightness(x, y, z, this.getLightValue(blockView, x, y, z)));
 	}
 
 	/**
@@ -72,7 +72,7 @@ public abstract class BlockMixin implements ForgeBlock {
 
 	@Override
 	public boolean isBlockNormalCube(World world, int x, int y, int z) {
-		return this.material.method_897() && this.isFullCube();
+		return this.material.suffocates() && this.isFullCube();
 	}
 
 	@Override

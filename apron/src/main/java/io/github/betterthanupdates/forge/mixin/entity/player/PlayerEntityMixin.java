@@ -5,7 +5,6 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import forge.ArmorProperties;
 import forge.ForgeHooks;
 import forge.ISpecialArmor;
-import net.minecraft.class_141;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,10 +13,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.SleepAttemptResult;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -30,7 +30,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ForgePla
 	public PlayerInventory inventory;
 
 	@Shadow
-	public abstract boolean method_943();
+	public abstract boolean isSleeping();
 
 	private PlayerEntityMixin(World world) {
 		super(world);
@@ -57,7 +57,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ForgePla
 			strength /= 5.0F;
 		}
 
-		if (!this.field_1623) {
+		if (!this.onGround) {
 			strength /= 5.0F;
 		}
 
@@ -83,7 +83,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ForgePla
 		}
 
 		if (!doRegularComputation) {
-			super.method_946(i);
+			super.applyDamage(i);
 			ci.cancel();
 		}
 	}
@@ -111,8 +111,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ForgePla
 	 * @reason implement Forge hooks
 	 */
 	@Inject(method = "method_495", at = @At("HEAD"), cancellable = true)
-	private void forge$trySleep(int i, int j, int k, CallbackInfoReturnable<class_141> cir) {
-		class_141 customSleep = ForgeHooks.sleepInBedAt((PlayerEntity) (Object) this, i, j, k);
+	private void forge$trySleep(int i, int j, int k, CallbackInfoReturnable<SleepAttemptResult> cir) {
+		SleepAttemptResult customSleep = ForgeHooks.sleepInBedAt((PlayerEntity) (Object) this, i, j, k);
 
 		if (customSleep != null) {
 			cir.setReturnValue(customSleep);

@@ -7,7 +7,6 @@ import modloadermp.ModLoaderMp;
 import modloadermp.NetClientHandlerEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.class_454;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,13 +18,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.network.NetworkHandler;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.world.ClientWorld;
 import net.minecraft.world.World;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ClientNetworkHandler.class)
 public abstract class ClientNetworkHandlerMixin extends NetworkHandler {
 	@Shadow
-	private class_454 field_1973;
+	private ClientWorld field_1973;
 
 	@Shadow
 	protected abstract Entity method_1645(int i);

@@ -10,7 +10,7 @@ import modloader.BaseMod;
 import modloader.ModLoader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.class_622;
+import net.minecraft.client.CrashReportPanel;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Environment(EnvType.CLIENT)
-@Mixin(class_622.class)
+@Mixin(CrashReportPanel.class)
 public abstract class GameStartupErrorPanelMixin extends Panel {
 	private static StringWriter stringWriter = new StringWriter();
 

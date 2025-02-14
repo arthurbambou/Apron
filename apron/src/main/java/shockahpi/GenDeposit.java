@@ -26,7 +26,7 @@ public class GenDeposit {
 		this.blockID = blockID;
 		this.set1stOn = Arrays.asList(set1stOn);
 		this.setOn = Arrays.asList(setOn);
-		this.rand = world.field_214;
+		this.rand = world.random;
 	}
 
 	public void gen(int pX, int pY, int pZ, int maxAmount, int maxTries) {

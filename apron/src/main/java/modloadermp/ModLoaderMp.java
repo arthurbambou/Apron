@@ -16,10 +16,6 @@ import modloader.ModLoader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.class_39;
-import net.minecraft.class_426;
-import net.minecraft.class_454;
-import net.minecraft.class_488;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.Minecraft;
@@ -32,6 +28,10 @@ import net.minecraft.network.packet.play.ChatMessagePacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.CommandOutput;
+import net.minecraft.server.command.ServerCommandHandler;
+import net.minecraft.server.entity.EntityTracker;
+import net.minecraft.world.ClientWorld;
 import net.minecraft.world.World;
 
 import io.github.betterthanupdates.Legacy;
@@ -104,10 +104,10 @@ public class ModLoaderMp {
 				try {
 					Entity entity = netclienthandlerentity.entityClass.getConstructor(World.class).newInstance(APRON.getWorld());
 					((ISpawnable) entity).spawn(packet);
-					class_454 world = (class_454) APRON.getWorld();
+					ClientWorld world = (ClientWorld) APRON.getWorld();
 
 					if (world != null) {
-						world.method_1495(entity.id, entity);
+						world.forceEntity(entity.id, entity);
 					}
 				} catch (Exception e) {
 					ModLoader.getLogger().throwing("ModLoader", "handleCustomSpawn", e);
@@ -179,7 +179,7 @@ public class ModLoaderMp {
 			if (player != null) {
 				ModLoader.OpenGUI(player, guiScreen);
 
-				ScreenHandler container = player.container;
+				ScreenHandler container = player.currentScreenHandler;
 				if (container != null) container.syncId = packet.syncId;
 			}
 		}
@@ -239,7 +239,7 @@ public class ModLoaderMp {
 
 				if (server == null) return;
 
-				File file = server.method_2160("banned-mods.txt");
+				File file = server.getFile("banned-mods.txt");
 
 				if (!file.exists()) {
 					file.createNewFile();
@@ -414,12 +414,12 @@ public class ModLoaderMp {
 	}
 
 	@Environment(EnvType.SERVER)
-	public static void HandleEntityTrackers(class_488 entitytracker, Entity entity) {
+	public static void HandleEntityTrackers(EntityTracker entitytracker, Entity entity) {
 		init();
 
 		for (Map.Entry<Class<? extends Entity>, AbstractMap.SimpleEntry<Integer, Integer>> entry : entityTrackerMap.entrySet()) {
 			if (entry.getKey().isInstance(entity)) {
-				entitytracker.method_1667(entity, entry.getValue().getKey(), entry.getValue().getValue(), true);
+				entitytracker.startTracking(entity, entry.getValue().getKey(), entry.getValue().getValue(), true);
 				return;
 			}
 		}
@@ -451,7 +451,7 @@ public class ModLoaderMp {
 		MinecraftServer server = (MinecraftServer) APRON.getGame();
 
 		if (server != null && packet != null) {
-			server.field_2842.method_559(packet);
+			server.playerManager.sendToAll(packet);
 		}
 	}
 
@@ -480,7 +480,7 @@ public class ModLoaderMp {
 
 	@Environment(EnvType.SERVER)
 	private static void sendPacketTo(ServerPlayerEntity player, ModLoaderPacket packet) {
-		player.field_255.method_835(packet);
+		player.networkHandler.sendPacket(packet);
 	}
 
 	@Environment(EnvType.SERVER)
@@ -570,7 +570,7 @@ public class ModLoaderMp {
 				}
 			}
 
-			entityplayermp.field_255.method_833("The following mods are banned on this server:" + stringbuilder3);
+			entityplayermp.networkHandler.disconnect("The following mods are banned on this server:" + stringbuilder3);
 		} else if (arraylist1.size() != 0) {
 			StringBuilder stringbuilder2 = new StringBuilder();
 
@@ -581,7 +581,7 @@ public class ModLoaderMp {
 				}
 			}
 
-			entityplayermp.field_255.method_833("You are missing the following mods:" + stringbuilder2);
+			entityplayermp.networkHandler.disconnect("You are missing the following mods:" + stringbuilder2);
 		}
 	}
 
@@ -609,7 +609,7 @@ public class ModLoaderMp {
 	}
 
 	@Environment(EnvType.SERVER)
-	public static void getCommandInfo(class_39 icommandlistener) {
+	public static void getCommandInfo(CommandOutput icommandlistener) {
 		for (int i = 0; i < ModLoader.getLoadedMods().size(); ++i) {
 			BaseMod basemod = ModLoader.getLoadedMods().get(i);
 
@@ -621,7 +621,7 @@ public class ModLoaderMp {
 	}
 
 	@Environment(EnvType.SERVER)
-	public static boolean handleCommand(String s, String s1, class_39 icommandlistener, class_426 consolecommandhandler) {
+	public static boolean handleCommand(String s, String s1, CommandOutput icommandlistener, ServerCommandHandler consolecommandhandler) {
 		boolean flag = false;
 
 		for (int i = 0; i < ModLoader.getLoadedMods().size(); ++i) {
@@ -650,8 +650,8 @@ public class ModLoaderMp {
 		MinecraftServer server = (MinecraftServer) APRON.getGame();
 
 		if (server != null) {
-			server.field_2842.method_559(new ChatMessagePacket(encodedMessage));
-			MinecraftServer.field_2837.info(encodedMessage);
+			server.playerManager.sendToAll(new ChatMessagePacket(encodedMessage));
+			MinecraftServer.LOGGER.info(encodedMessage);
 		}
 	}
 
@@ -667,13 +667,13 @@ public class ModLoaderMp {
 
 		if (server == null) return;
 
-		for (Object object : server.field_2842.field_578) {
+		for (Object object : server.playerManager.players) {
 			if (object instanceof ServerPlayerEntity) {
 				ServerPlayerEntity player = (ServerPlayerEntity) object;
 
-				if (server.field_2842.method_584(player.name)) {
-					player.field_255.method_835(new ChatMessagePacket(encodedMessage));
-					MinecraftServer.field_2837.info(encodedMessage);
+				if (server.playerManager.isOperator(player.name)) {
+					player.networkHandler.sendPacket(new ChatMessagePacket(encodedMessage));
+					MinecraftServer.LOGGER.info(encodedMessage);
 				}
 			}
 		}

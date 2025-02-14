@@ -8,7 +8,7 @@ import fr.catcore.cursedmixinextensions.annotations.ShadowSuperConstructor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.AxeItem;
@@ -101,7 +101,7 @@ public abstract class ToolItemMixin extends Item {
 					return false;
 				}
 
-				if (block.material == Material.STONE || block.material == Material.field_997) {
+				if (block.material == Material.STONE || block.material == Material.ICE) {
 					return true;
 				}
 
@@ -113,7 +113,7 @@ public abstract class ToolItemMixin extends Item {
 					return false;
 				}
 
-				if (block.material == Material.WOOD || block.material == Material.LEAVES || block.material == Material.field_988 || block.material == Material.field_1000 || block.material == Material.PUMPKIN) {
+				if (block.material == Material.WOOD || block.material == Material.LEAVES || block.material == Material.PLANT || block.material == Material.CACTUS || block.material == Material.PUMPKIN) {
 					return true;
 				}
 			} else if (((Object)this) instanceof ShovelItem) {
@@ -121,7 +121,7 @@ public abstract class ToolItemMixin extends Item {
 					return false;
 				}
 
-				if (block.material == Material.SOLID_ORGANIC || block.material == Material.SOIL || block.material == Material.SAND || block.material == Material.field_998 || block.material == Material.field_999 || block.material == Material.CLAY) {
+				if (block.material == Material.SOLID_ORGANIC || block.material == Material.SOIL || block.material == Material.SAND || block.material == Material.SNOW_LAYER || block.material == Material.SNOW_BLOCK || block.material == Material.CLAY) {
 					return true;
 				}
 			}

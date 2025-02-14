@@ -3,13 +3,13 @@ package io.github.betterthanupdates.forge.mixin.server;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.betterthanupdates.forge.block.ForgeBlock;
 import net.minecraft.block.Block;
-import net.minecraft.class_417;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.light.LightUpdate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(class_417.class)
+@Mixin(LightUpdate.class)
 public class class_417Mixin {
 	@ModifyVariable(
 			method = {"method_1402"},

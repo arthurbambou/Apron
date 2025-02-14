@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import shockahpi.Loc;
 import shockahpi.SAPI;
-import net.minecraft.SingleplayerInteractionManager;
 import net.minecraft.client.InteractionManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.SingleplayerInteractionManager;
 
 @Mixin(SingleplayerInteractionManager.class)
 public abstract class SingleplayerInteractionManagerMixin extends InteractionManager {

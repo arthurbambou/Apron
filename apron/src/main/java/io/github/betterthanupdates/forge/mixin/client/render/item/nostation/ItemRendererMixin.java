@@ -106,7 +106,7 @@ public abstract class ItemRendererMixin extends EntityRenderer {
 					GL11.glTranslatef(f5, f7, f9);
 				}
 
-				ForgeHooksClient.renderCustomItem(customRenderer, this.field_1708, stack.itemId, stack.getDamage(), itemEntity.method_1394(f1));
+				ForgeHooksClient.renderCustomItem(customRenderer, this.field_1708, stack.itemId, stack.getDamage(), itemEntity.getBrightnessAtEyes(f1));
 				GL11.glPopMatrix();
 			}
 
@@ -162,7 +162,7 @@ public abstract class ItemRendererMixin extends EntityRenderer {
 			GL11.glScalef(1.0F, 1.0F, -1.0F);
 			GL11.glRotatef(210.0F, 1.0F, 0.0F, 0.0F);
 			GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
-			int l1 = item.method_440(j);
+			int l1 = item.getColorMultiplier(j);
 			float f2 = (float) (l1 >> 16 & 0xFF) / 255.0F;
 			float f4 = (float) (l1 >> 8 & 0xFF) / 255.0F;
 			float f5 = (float) (l1 & 0xFF) / 255.0F;

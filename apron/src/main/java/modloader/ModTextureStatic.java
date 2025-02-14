@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.class_336;
+import net.minecraft.client.render.texture.DynamicTexture;
 import org.lwjgl.opengl.GL11;
 
 import io.github.betterthanupdates.Legacy;
@@ -15,7 +15,7 @@ import io.github.betterthanupdates.apron.impl.client.ApronClientImpl;
 @SuppressWarnings("unused")
 @Legacy
 @Environment(EnvType.CLIENT)
-public class ModTextureStatic extends class_336 {
+public class ModTextureStatic extends DynamicTexture {
 	private boolean oldAnaglyph;
 	private final int[] pixels;
 
@@ -25,15 +25,15 @@ public class ModTextureStatic extends class_336 {
 
 	public ModTextureStatic(int slot, int size, int dst, BufferedImage source) {
 		super(slot);
-		this.field_1415 = size;
-		this.field_1416 = dst;
-		this.method_1206(((ApronClientImpl) ApronApi.getInstance()).getTextureManager());
+		this.replicate = size;
+		this.atlas = dst;
+		this.bind(((ApronClientImpl) ApronApi.getInstance()).getTextureManager());
 		int targetWidth = GL11.glGetTexLevelParameteri(3553, 0, 4096) / 16;
 		int targetHeight = GL11.glGetTexLevelParameteri(3553, 0, 4097) / 16;
 		int width = source.getWidth();
 		int height = source.getHeight();
 		this.pixels = new int[targetWidth * targetHeight];
-		this.field_1411 = new byte[targetWidth * targetHeight * 4];
+		this.pixels = new byte[targetWidth * targetHeight * 4];
 
 		if (width == height && width == targetWidth) {
 			source.getRGB(0, 0, width, height, this.pixels, 0, width);
@@ -56,25 +56,25 @@ public class ModTextureStatic extends class_336 {
 			int g = this.pixels[i] >> 8 & 0xFF;
 			int b = this.pixels[i] >> 0 & 0xFF;
 
-			if (this.field_1413) {
+			if (this.anaglyph) {
 				int grey = (r + g + b) / 3;
 				b = grey;
 				g = grey;
 				r = grey;
 			}
 
-			this.field_1411[i * 4 + 0] = (byte) r;
-			this.field_1411[i * 4 + 1] = (byte) g;
-			this.field_1411[i * 4 + 2] = (byte) b;
-			this.field_1411[i * 4 + 3] = (byte) a;
+			this.pixels[i * 4 + 0] = (byte) r;
+			this.pixels[i * 4 + 1] = (byte) g;
+			this.pixels[i * 4 + 2] = (byte) b;
+			this.pixels[i * 4 + 3] = (byte) a;
 		}
 
-		this.oldAnaglyph = this.field_1413;
+		this.oldAnaglyph = this.anaglyph;
 	}
 
 	@Override
-	public void method_1205() {
-		if (this.oldAnaglyph != this.field_1413) {
+	public void tick() {
+		if (this.oldAnaglyph != this.anaglyph) {
 			this.update();
 		}
 	}

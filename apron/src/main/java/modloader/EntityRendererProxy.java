@@ -2,15 +2,13 @@ package modloader;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import net.minecraft.class_555;
 import net.minecraft.client.Minecraft;
-
+import net.minecraft.client.render.GameRenderer;
 import io.github.betterthanupdates.Legacy;
 
 @Legacy
 @Environment(EnvType.CLIENT)
-public class EntityRendererProxy extends class_555 {
+public class EntityRendererProxy extends GameRenderer {
 	private final Minecraft game;
 
 	public EntityRendererProxy(Minecraft client) {
@@ -19,8 +17,8 @@ public class EntityRendererProxy extends class_555 {
 	}
 
 	@Override
-	public void method_1844(float delta) {
-		super.method_1844(delta);
+	public void onFrameUpdate(float delta) {
+		super.onFrameUpdate(delta);
 		ModLoader.OnTick(this.game);
 	}
 }

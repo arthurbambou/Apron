@@ -4,9 +4,9 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import shockahpi.SAPI;
-import net.minecraft.MultiplayerInteractionManager;
 import net.minecraft.client.InteractionManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.MultiplayerInteractionManager;
 
 @Mixin(MultiplayerInteractionManager.class)
 public class MultiplayerInteractionManagerMixin extends InteractionManager {

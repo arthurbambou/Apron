@@ -9,8 +9,6 @@ import java.util.Random;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.class_266;
-import net.minecraft.class_267;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -23,6 +21,8 @@ import paulscode.sound.codecs.CodecIBXM;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.sound.Sound;
+import net.minecraft.client.sound.SoundEntry;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.util.math.MathHelper;
 
@@ -40,18 +40,18 @@ public abstract class SoundManagerMixin {
 	@Shadow
 	private int field_2675;
 	@Shadow
-	private class_266 field_2668;
+	private SoundEntry field_2668;
 	@Shadow
-	private class_266 field_2669;
+	private SoundEntry field_2669;
 	@Shadow
-	private class_266 field_2670;
+	private SoundEntry field_2670;
 
 	@Shadow
 	private static SoundSystem soundSystem;
 
 	// AudioMod Fields
 	@Unique
-	private final class_266 cave = new class_266();
+	private final SoundEntry cave = new SoundEntry();
 	@Unique
 	private Minecraft client;
 	@Unique
@@ -75,7 +75,7 @@ public abstract class SoundManagerMixin {
 	/**
 	 * @author Risugami
 	 */
-	private static void loadModAudio(String folder, class_266 array) {
+	private static void loadModAudio(String folder, SoundEntry array) {
 		File base = new File(FabricLoader.getInstance().getGameDir().toFile(), folder);
 
 		walkFolder(base, base, array);
@@ -84,7 +84,7 @@ public abstract class SoundManagerMixin {
 	/**
 	 * @author Risugami
 	 */
-	private static void walkFolder(File root, File folder, class_266 sounds) {
+	private static void walkFolder(File root, File folder, SoundEntry sounds) {
 		if (folder.exists() || folder.mkdirs()) {
 			File[] files = folder.listFiles();
 
@@ -99,7 +99,7 @@ public abstract class SoundManagerMixin {
 							} else if (f.isRegularFile()) {
 								String path = file.getPath().substring(root.getPath().length() + 1)
 										.replace('\\', '/');
-								sounds.method_959(path, file);
+								sounds.loadStatic(path, file);
 							}
 						} catch (IOException ignored) {
 							// Simply don't load the file.
@@ -145,13 +145,13 @@ public abstract class SoundManagerMixin {
 	 * @reason AudioMod patches
 	 */
 	@WrapOperation(method = "method_2017", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_266;method_957()Lnet/minecraft/class_267;"))
-	public class_267 handleBackgroundMusic(class_266 instance, Operation<class_267> operation) {
+	public Sound handleBackgroundMusic(SoundEntry instance, Operation<Sound> operation) {
 		if (this.client != null
 				&& this.client.player != null
 				&& !this.client
 				.player
 				.world
-				.method_249(MathHelper.floor(this.client.player.x), MathHelper.floor(this.client.player.y), MathHelper.floor(this.client.player.z))) {
+				.hasSkyLight(MathHelper.floor(this.client.player.x), MathHelper.floor(this.client.player.y), MathHelper.floor(this.client.player.z))) {
 			return operation.call(this.cave);
 		} else {
 			return operation.call(this.field_2670);

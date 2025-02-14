@@ -4,8 +4,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import net.minecraft.class_243;
-import net.minecraft.class_81;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -13,15 +11,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import shockahpi.DimensionBase;
-
+import net.minecraft.world.chunk.storage.ChunkStorage;
 import net.minecraft.world.dimension.Dimension;
-import net.minecraft.world.dimension.DimensionData;
 import net.minecraft.world.dimension.NetherDimension;
+import net.minecraft.world.storage.AlphaWorldStorage;
+import net.minecraft.world.storage.WorldStorage;
 
-@Mixin(class_81.class)
-public abstract class DimensionFileMixin implements DimensionData {
+@Mixin(AlphaWorldStorage.class)
+public abstract class DimensionFileMixin implements WorldStorage {
 	@Inject(method = "method_1734", at = @At("HEAD"))
-	private void getChunkIOHead(Dimension par1, CallbackInfoReturnable<class_243> cir,
+	private void getChunkIOHead(Dimension par1, CallbackInfoReturnable<ChunkStorage> cir,
 								@Share("dimensionBase") LocalRef<DimensionBase> dimensionBase) {
 		dimensionBase.set(DimensionBase.getDimByProvider(par1.getClass()));
 	}

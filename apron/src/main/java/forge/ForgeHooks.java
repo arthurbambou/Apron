@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
-import net.minecraft.class_141;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.SleepAttemptResult;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -51,9 +51,9 @@ public class ForgeHooks {
 		}
 	}
 
-	public static class_141 sleepInBedAt(PlayerEntity player, int x, int y, int z) {
+	public static SleepAttemptResult sleepInBedAt(PlayerEntity player, int x, int y, int z) {
 		for (ISleepHandler handler : sleepHandlers) {
-			class_141 status = handler.sleepInBedAt(player, x, y, z);
+			SleepAttemptResult status = handler.sleepInBedAt(player, x, y, z);
 
 			if (status != null) {
 				return status;
@@ -64,7 +64,7 @@ public class ForgeHooks {
 	}
 
 	public static boolean canHarvestBlock(Block block, PlayerEntity player, int meta) {
-		if (block.material.method_898()) {
+		if (block.material.isHandHarvestable()) {
 			return true;
 		} else {
 			ItemStack itemstack = player.inventory.getSelectedItem();
@@ -126,7 +126,7 @@ public class ForgeHooks {
 			MinecraftForge.setToolClass(Item.GOLDEN_PICKAXE, "pickaxe", 0);
 			MinecraftForge.setToolClass(Item.DIAMOND_PICKAXE, "pickaxe", 3);
 			MinecraftForge.setToolClass(Item.WOODEN_AXE, "axe", 0);
-			MinecraftForge.setToolClass(Item.STONE_HATCHET, "axe", 1);
+			MinecraftForge.setToolClass(Item.STONE_AXE, "axe", 1);
 			MinecraftForge.setToolClass(Item.IRON_AXE, "axe", 2);
 			MinecraftForge.setToolClass(Item.GOLDEN_AXE, "axe", 0);
 			MinecraftForge.setToolClass(Item.DIAMOND_AXE, "axe", 3);

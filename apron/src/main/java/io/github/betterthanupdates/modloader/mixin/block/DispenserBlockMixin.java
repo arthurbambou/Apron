@@ -25,7 +25,7 @@ public abstract class DispenserBlockMixin {
 								@Local(ordinal = 0) World world, @Local(ordinal = 0) double posX, @Local(ordinal = 1) double posY,
 								@Local(ordinal = 2) double posZ, @Local(ordinal = 4) int j, @Local(ordinal = 5) int k, @Local(ordinal = 0) ItemStack itemStack) {
 		if (ModLoader.DispenseEntity(world, posX, posY, posZ, j, k, itemStack)) {
-			world.method_230(2000, x, y, z, j + 1 + (k + 1) * 3);
+			world.worldEvent(2000, x, y, z, j + 1 + (k + 1) * 3);
 			ci.cancel();
 		}
 	}

@@ -9,7 +9,6 @@ import modloadermp.ModLoaderMp;
 import modloadermp.ModLoaderPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.class_174;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,7 +20,7 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 
 @Environment(EnvType.SERVER)
-@Mixin(class_174.class)
+@Mixin(net.minecraft.server.entity.EntityTrackerEntry.class)
 public class TrackedEntityMixin {
 	@Shadow
 	public Entity field_597;

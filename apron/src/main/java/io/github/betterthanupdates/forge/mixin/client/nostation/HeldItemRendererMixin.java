@@ -5,7 +5,6 @@ import forge.ICustomItemRenderer;
 import forge.MinecraftForgeClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.class_556;
 import org.lwjgl.opengl.GL11;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,12 +16,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.block.BlockRenderManager;
+import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
-@Mixin(class_556.class)
+@Mixin(HeldItemRenderer.class)
 public class HeldItemRendererMixin {
 	@Shadow
 	private Minecraft field_2401;
@@ -66,7 +66,7 @@ public class HeldItemRendererMixin {
 		if (customRenderer != null) {
 			GL11.glBindTexture(3553, this.field_2401.textureManager.getTextureId("/terrain.png"));
 			ForgeHooksClient.overrideTexture(itemStack.getItem());
-			ForgeHooksClient.renderCustomItem(customRenderer, this.field_2405, itemStack.itemId, itemStack.getDamage(), entityliving.method_1394(1.0F));
+			ForgeHooksClient.renderCustomItem(customRenderer, this.field_2405, itemStack.itemId, itemStack.getDamage(), entityliving.getBrightnessAtEyes(1.0F));
 			GL11.glPopMatrix();
 			ci.cancel();
 		}

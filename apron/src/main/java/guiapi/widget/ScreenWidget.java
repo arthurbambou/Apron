@@ -6,9 +6,8 @@ import de.matthiasmann.twl.input.lwjgl.LWJGLInput;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
 import guiapi.ModSettings;
-
-import net.minecraft.class_564;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ScreenScaler;
 
 public class ScreenWidget extends Widget {
 	public static ScreenWidget instance;
@@ -18,7 +17,7 @@ public class ScreenWidget extends Widget {
 	public GUI gui = null;
 	public Minecraft minecraftInstance;
 	public LWJGLRenderer renderer = null;
-	public class_564 screenSize = null;
+	public ScreenScaler screenSize = null;
 	public ThemeManager theme = null;
 
 	public static ScreenWidget getInstance() {
@@ -38,7 +37,7 @@ public class ScreenWidget extends Widget {
 				instance.setTheme("");
 				instance.gui.applyTheme(instance.theme);
 				instance.minecraftInstance = ModSettings.getMcinst();
-				instance.screenSize = new class_564(
+				instance.screenSize = new ScreenScaler(
 						instance.minecraftInstance.options, instance.minecraftInstance.displayWidth, instance.minecraftInstance.displayHeight
 				);
 			} catch (Throwable var2) {
@@ -57,11 +56,11 @@ public class ScreenWidget extends Widget {
 
 	@Override
 	public void layout() {
-		this.screenSize = new class_564(this.minecraftInstance.options, this.minecraftInstance.displayWidth, this.minecraftInstance.displayHeight);
+		this.screenSize = new ScreenScaler(this.minecraftInstance.options, this.minecraftInstance.displayWidth, this.minecraftInstance.displayHeight);
 
 		if (this.currentWidget != null) {
-			screenwidth = this.screenSize.method_1857();
-			screenheight = this.screenSize.method_1858();
+			screenwidth = this.screenSize.getScaledWidth();
+			screenheight = this.screenSize.getScaledHeight();
 			this.currentWidget.setSize(screenwidth, screenheight);
 			this.currentWidget.setPosition(0, 0);
 		}

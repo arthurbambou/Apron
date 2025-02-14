@@ -9,7 +9,6 @@ import forge.BlockTextureParticles;
 import forge.ITextureProvider;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.class_75;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.block.Block;
 import net.minecraft.client.particle.BlockParticle;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.entity.Entity;
@@ -31,7 +31,7 @@ import net.minecraft.world.World;
 import io.github.betterthanupdates.forge.client.particle.ForgeParticleManager;
 
 @Environment(EnvType.CLIENT)
-@Mixin(class_75.class)
+@Mixin(ParticleManager.class)
 public abstract class ParticleManagerMixin implements ForgeParticleManager {
 	@Shadow
 	private TextureManager field_271;
@@ -94,7 +94,7 @@ public abstract class ParticleManagerMixin implements ForgeParticleManager {
 
 			for (int y = 0; y < entry.effects.size(); ++y) {
 				Particle entityfx = entry.effects.get(y);
-				entityfx.method_2002(tessellator, f, f1, f5, f2, f3, f4);
+				entityfx.render(tessellator, f, f1, f5, f2, f3, f4);
 			}
 
 			tessellator.draw();
@@ -119,7 +119,7 @@ public abstract class ParticleManagerMixin implements ForgeParticleManager {
 	 * @reason implement Forge hooks
 	 */
 	@Redirect(method = "method_322", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_75;method_325(Lnet/minecraft/client/particle/Particle;)V"))
-	private void forge$addBlockBreakParticles(class_75 instance, Particle particleEntity, @Local(ordinal = 0) Block block) {
+	private void forge$addBlockBreakParticles(ParticleManager instance, Particle particleEntity, @Local(ordinal = 0) Block block) {
 		((ForgeParticleManager) instance).addDigParticleEffect((BlockParticle) particleEntity, block);
 	}
 
@@ -128,7 +128,7 @@ public abstract class ParticleManagerMixin implements ForgeParticleManager {
 	 * @reason implement Forge hooks
 	 */
 	@Redirect(method = "method_321", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_75;method_325(Lnet/minecraft/client/particle/Particle;)V"))
-	private void forge$addBlockClickParticle(class_75 instance, Particle particleEntity, @Local(ordinal = 0) Block block) {
+	private void forge$addBlockClickParticle(ParticleManager instance, Particle particleEntity, @Local(ordinal = 0) Block block) {
 		((ForgeParticleManager) instance).addDigParticleEffect((BlockParticle) particleEntity, block);
 	}
 

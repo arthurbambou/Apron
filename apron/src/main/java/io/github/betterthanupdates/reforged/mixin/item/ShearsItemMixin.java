@@ -43,7 +43,7 @@ public class ShearsItemMixin extends Item implements ReforgedItem {
 
 				if (target.isShearable(itemstack, entity.world, (int) entity.x, (int) entity.y, (int) entity.z)) {
 					for (ItemStack stack : target.onSheared(itemstack, entity.world, (int) entity.x, (int) entity.y, (int) entity.z)) {
-						ItemEntity ent = entity.method_1327(stack, 1.0F);
+						ItemEntity ent = entity.dropItem(stack, 1.0F);
 						ent.velocityY += (double) (entity.random.nextFloat() * 0.05F);
 						ent.velocityX += (double) ((entity.random.nextFloat() - entity.random.nextFloat()) * 0.1F);
 						ent.velocityZ += (double) ((entity.random.nextFloat() - entity.random.nextFloat()) * 0.1F);
@@ -71,7 +71,7 @@ public class ShearsItemMixin extends Item implements ReforgedItem {
 						double d2 = (double) (player.random.nextFloat() * f) + (double) (1.0F - f) * 0.5;
 						ItemEntity entityitem = new ItemEntity(player.world, (double) x + d, (double) y + d1, (double) z + d2, stack);
 						entityitem.pickupDelay = 10;
-						player.world.method_210(entityitem);
+						player.world.spawnEntity(entityitem);
 					}
 
 					itemstack.damage(1, player);

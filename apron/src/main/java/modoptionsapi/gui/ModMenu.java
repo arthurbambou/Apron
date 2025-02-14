@@ -233,7 +233,7 @@ public class ModMenu extends Screen {
 
 				if (this.buttonPressed(guibutton, i, j, true)) {
 					this.altActionPerformed(guibutton);
-					this.minecraft.soundManager.method_2009("random.click", 1.0F, 1.0F);
+					this.minecraft.soundManager.playSound("random.click", 1.0F, 1.0F);
 					this.setCurrentButton(guibutton);
 				}
 			}
@@ -327,7 +327,7 @@ public class ModMenu extends Screen {
 		}
 
 		if (this.worldMode && screen == null) {
-			this.minecraft.method_2133();
+			this.minecraft.lockMouse();
 		}
 	}
 
@@ -349,7 +349,7 @@ public class ModMenu extends Screen {
 		}
 
 		if (this.curButton != null) {
-			this.minecraft.soundManager.method_2009("random.click", 1.0F, 1.0F);
+			this.minecraft.soundManager.playSound("random.click", 1.0F, 1.0F);
 			this.buttonClicked(this.curButton);
 		}
 	}

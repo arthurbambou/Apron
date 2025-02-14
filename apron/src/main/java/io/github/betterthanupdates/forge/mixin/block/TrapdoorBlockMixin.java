@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
 import net.minecraft.block.TrapdoorBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
 import io.github.betterthanupdates.forge.world.ForgeWorld;

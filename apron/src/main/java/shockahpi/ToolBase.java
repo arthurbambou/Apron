@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
+import net.minecraft.block.material.Material;
 import io.github.betterthanupdates.Legacy;
 
 @Legacy

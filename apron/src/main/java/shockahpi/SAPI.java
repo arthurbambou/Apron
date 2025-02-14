@@ -78,14 +78,14 @@ public class SAPI {
 		if (!world.isRemote) {
 			for (int i = 0; i < itemstack.count; ++i) {
 				float f = 0.7F;
-				double d = (double) (world.field_214.nextFloat() * f) + (double) (1.0F - f) * 0.5;
-				double d1 = (double) (world.field_214.nextFloat() * f) + (double) (1.0F - f) * 0.5;
-				double d2 = (double) (world.field_214.nextFloat() * f) + (double) (1.0F - f) * 0.5;
+				double d = (double) (world.random.nextFloat() * f) + (double) (1.0F - f) * 0.5;
+				double d1 = (double) (world.random.nextFloat() * f) + (double) (1.0F - f) * 0.5;
+				double d2 = (double) (world.random.nextFloat() * f) + (double) (1.0F - f) * 0.5;
 				ItemEntity entityitem = new ItemEntity(
 						world, (double) loc.x() + d, (double) loc.y() + d1, (double) loc.z() + d2, new ItemStack(itemstack.itemId, 1, itemstack.getDamage())
 				);
 				entityitem.pickupDelay = 10;
-				world.method_210(entityitem);
+				world.spawnEntity(entityitem);
 			}
 		}
 	}

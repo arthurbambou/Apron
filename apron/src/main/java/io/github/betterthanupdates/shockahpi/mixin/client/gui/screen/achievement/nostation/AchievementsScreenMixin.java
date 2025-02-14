@@ -17,8 +17,8 @@ import shockahpi.SAPI;
 import net.minecraft.achievement.Achievement;
 import net.minecraft.achievement.Achievements;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.screen.AchievementsScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.achievement.AchievementsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.OptionButtonWidget;
 import net.minecraft.client.render.Tessellator;
@@ -156,7 +156,7 @@ public class AchievementsScreenMixin extends Screen implements ShockAhPIAchievem
 
 	@Override
 	public boolean checkHidden(Achievement achievement) {
-		if (this.minecraft.field_2773.method_1988(achievement)) {
+		if (this.minecraft.stats.hasAchievement(achievement)) {
 			return false;
 		} else if (SAPI.acIsHidden(achievement)) {
 			return true;

@@ -26,7 +26,7 @@ public class GameMenuScreenMixin extends Screen {
 				String name = parts[0];
 				this.minecraft.setScreen(new ModMenu((GameMenuScreen) (Object) this, name, true));
 			} else {
-				String name = this.minecraft.world.method_262().getName();
+				String name = this.minecraft.world.getProperties().getName();
 				this.minecraft.setScreen(new ModMenu((GameMenuScreen) (Object) this, name, false));
 			}
 		}

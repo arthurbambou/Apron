@@ -1,13 +1,13 @@
 package playerapi;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Material;
 import net.minecraft.block.entity.DispenserBlockEntity;
 import net.minecraft.block.entity.FurnaceBlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
-import net.minecraft.class_141;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ClientPlayerEntity;
+import net.minecraft.entity.player.SleepAttemptResult;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -99,7 +99,7 @@ public abstract class PlayerBase {
 		return false;
 	}
 
-	public class_141 sleepInBedAt(int x, int y, int z, class_141 status) {
+	public SleepAttemptResult sleepInBedAt(int x, int y, int z, SleepAttemptResult status) {
 		return status;
 	}
 

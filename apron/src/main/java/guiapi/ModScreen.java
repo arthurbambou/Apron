@@ -4,10 +4,9 @@ import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.renderer.lwjgl.RenderScale;
 import guiapi.widget.ScreenWidget;
-
-import net.minecraft.class_564;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.ScreenScaler;
 
 public class ModScreen extends Screen {
 	public static ModScreen currentScreen;
@@ -31,7 +30,7 @@ public class ModScreen extends Screen {
 
 	public static void clicksound() {
 		Minecraft m = ModSettings.getMcinst();
-		m.soundManager.method_2009("random.click", 1.0F, 1.0F);
+		m.soundManager.playSound("random.click", 1.0F, 1.0F);
 	}
 
 	public static void show(ModScreen screen) {
@@ -47,14 +46,14 @@ public class ModScreen extends Screen {
 	public ModScreen(Screen screen) {
 		this.parentScreen = screen;
 		currentScreen = this;
-		this.field_155 = false;
+		this.passEvents = false;
 	}
 
 	public ModScreen(Screen screen, Widget widget) {
 		this.mainwidget = widget;
 		this.parentScreen = screen;
 		currentScreen = this;
-		this.field_155 = false;
+		this.passEvents = false;
 	}
 
 	@Override
@@ -68,12 +67,12 @@ public class ModScreen extends Screen {
 		}
 
 		LWJGLRenderer var4 = (LWJGLRenderer) ScreenWidget.getInstance().gui.getRenderer();
-		class_564 var5 = new class_564(
+		ScreenScaler var5 = new ScreenScaler(
 				ScreenWidget.getInstance().minecraftInstance.options,
 				ScreenWidget.getInstance().minecraftInstance.displayWidth,
 				ScreenWidget.getInstance().minecraftInstance.displayHeight
 		);
-		RenderScale.scale = var5.field_2391;
+		RenderScale.scale = var5.scaleFactor;
 		var4.syncViewportSize();
 		ScreenWidget.getInstance().gui.update();
 	}

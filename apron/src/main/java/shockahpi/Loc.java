@@ -228,7 +228,7 @@ public class Loc {
 	}
 
 	public Loc setBlock(World world, int blockID) {
-		world.method_200(this.x(), this.y(), this.z(), blockID);
+		world.setBlockWithoutNotifyingNeighbors(this.x(), this.y(), this.z(), blockID);
 		return this;
 	}
 
@@ -237,45 +237,45 @@ public class Loc {
 	}
 
 	public Loc setMeta(World world, int meta) {
-		world.method_223(this.x(), this.y(), this.z(), meta);
+		world.setBlockMetaWithoutNotifyingNeighbors(this.x(), this.y(), this.z(), meta);
 		return this;
 	}
 
 	public Loc setMetaNotify(World world, int meta) {
-		world.method_215(this.x(), this.y(), this.z(), meta);
+		world.setBlockMeta(this.x(), this.y(), this.z(), meta);
 		return this;
 	}
 
 	public Loc setBlockAndMeta(World world, int blockID, int meta) {
-		world.method_154(this.x(), this.y(), this.z(), blockID, meta);
+		world.setBlockWithoutNotifyingNeighbors(this.x(), this.y(), this.z(), blockID, meta);
 		return this;
 	}
 
 	public Loc setBlockAndMetaNotify(World world, int blockID, int meta) {
-		world.method_201(this.x(), this.y(), this.z(), blockID, meta);
+		world.setBlock(this.x(), this.y(), this.z(), blockID, meta);
 		return this;
 	}
 
 	public BlockEntity getTileEntity(BlockView blockAc) {
-		return blockAc.method_1777(this.x(), this.y(), this.z());
+		return blockAc.getBlockEntity(this.x(), this.y(), this.z());
 	}
 
 	public Loc setTileEntity(World world, BlockEntity tileEntity) {
-		world.method_157(this.x(), this.y(), this.z(), tileEntity);
+		world.setBlockEntity(this.x(), this.y(), this.z(), tileEntity);
 		return this;
 	}
 
 	public Loc removeTileEntity(World world) {
-		world.method_260(this.x(), this.y(), this.z());
+		world.removeBlockEntity(this.x(), this.y(), this.z());
 		return this;
 	}
 
 	public int getLight(World world) {
-		return world.method_252(this.x(), this.y(), this.z());
+		return world.getBrightness(this.x(), this.y(), this.z());
 	}
 
 	public Loc notify(World world) {
-		world.method_235(this.x(), this.y(), this.z(), this.getBlock(world));
+		world.blockUpdate(this.x(), this.y(), this.z(), this.getBlock(world));
 		return this;
 	}
 

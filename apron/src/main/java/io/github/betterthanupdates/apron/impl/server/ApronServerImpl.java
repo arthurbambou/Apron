@@ -26,7 +26,7 @@ public final class ApronServerImpl implements ApronApi {
 		MinecraftServer server = (MinecraftServer) getGame();
 
 		if (server != null) {
-			return server.method_2157(0);
+			return server.getWorld(0);
 		}
 
 		return null;
@@ -38,7 +38,7 @@ public final class ApronServerImpl implements ApronApi {
 		MinecraftServer server = (MinecraftServer) getGame();
 
 		if (server != null) {
-			return server.field_2842.field_578;
+			return server.playerManager.players;
 		}
 
 		return null;

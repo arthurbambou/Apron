@@ -5,19 +5,18 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import io.github.betterthanupdates.apron.LifecycleUtils;
-import net.minecraft.class_390;
-import net.minecraft.class_413;
-import net.minecraft.class_467;
-import net.minecraft.class_51;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.DeathScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.KeyboardInput;
 import net.minecraft.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkCache;
+import net.minecraft.world.chunk.ChunkSource;
+import net.minecraft.world.chunk.LegacyChunkCache;
 import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.dimension.PortalForcer;
 import net.minecraft.world.gen.feature.DeadBushPatchFeature;
 
 import io.github.betterthanupdates.Legacy;
@@ -28,7 +27,7 @@ public class DimensionBase {
 	public static LinkedList<Integer> order = new LinkedList<>();
 	public final int number;
 	public final Class<? extends Dimension> worldProvider;
-	public final Class<? extends class_467> teleporter;
+	public final Class<? extends PortalForcer> teleporter;
 	public String name = "Dimension";
 	public String soundTrigger = "portal.trigger";
 	public String soundTravel = "portal.travel";
@@ -67,7 +66,7 @@ public class DimensionBase {
 		return null;
 	}
 
-	public class_467 getTeleporter() {
+	public PortalForcer getTeleporter() {
 		try {
 			if (this.teleporter != null) {
 				return this.teleporter.newInstance();
@@ -80,7 +79,7 @@ public class DimensionBase {
 
 	public static void respawn(boolean paramBoolean, int paramInt) {
 		Minecraft localMinecraft = SAPI.getMinecraftInstance();
-		if (!localMinecraft.world.isRemote && !localMinecraft.world.dimension.method_1766()) {
+		if (!localMinecraft.world.isRemote && !localMinecraft.world.dimension.hasWorldSpawn()) {
 			usePortal(0, true);
 		}
 
@@ -88,11 +87,11 @@ public class DimensionBase {
 		Vec3i localbp2 = null;
 		boolean i = true;
 		if (localMinecraft.player != null && !paramBoolean) {
-			localbp1 = localMinecraft.player.method_505();
+			localbp1 = localMinecraft.player.getSpawnPos();
 			if (localbp1 != null) {
-				localbp2 = PlayerEntity.method_507(localMinecraft.world, localbp1);
+				localbp2 = PlayerEntity.findRespawnPosition(localMinecraft.world, localbp1);
 				if (localbp2 == null) {
-					localMinecraft.player.method_490("tile.bed.notValid");
+					localMinecraft.player.sendMessage("tile.bed.notValid");
 				}
 			}
 		}
@@ -102,37 +101,37 @@ public class DimensionBase {
 			i = false;
 		}
 
-		class_51 localcj = localMinecraft.world.method_259();
-		if (localcj instanceof class_390) {
-			class_390 localkt = (class_390)localcj;
-			localkt.method_1242(localbp2.x >> 4, localbp2.z >> 4);
+		ChunkSource localcj = localMinecraft.world.getChunkSource();
+		if (localcj instanceof LegacyChunkCache) {
+			LegacyChunkCache localkt = (LegacyChunkCache)localcj;
+			localkt.setSpawnPoint(localbp2.x >> 4, localbp2.z >> 4);
 		}
 
-		localMinecraft.world.method_283();
-		localMinecraft.world.method_295();
+		localMinecraft.world.updateSpawnPosition();
+		localMinecraft.world.updateEntityLists();
 		int j = 0;
 		if (localMinecraft.player != null) {
 			j = localMinecraft.player.id;
-			localMinecraft.world.method_231(localMinecraft.player);
+			localMinecraft.world.remove(localMinecraft.player);
 		}
 
-		localMinecraft.field_2807 = null;
-		localMinecraft.player = (ClientPlayerEntity)localMinecraft.interactionManager.method_1717(localMinecraft.world);
+		localMinecraft.camera = null;
+		localMinecraft.player = (ClientPlayerEntity)localMinecraft.interactionManager.createPlayer(localMinecraft.world);
 		localMinecraft.player.dimensionId = paramInt;
-		localMinecraft.field_2807 = localMinecraft.player;
-		localMinecraft.player.method_1315();
+		localMinecraft.camera = localMinecraft.player;
+		localMinecraft.player.teleportTop();
 		if (i) {
-			localMinecraft.player.method_506(localbp1);
-			localMinecraft.player.method_1341((double)((float)localbp2.x + 0.5F), (double)((float)localbp2.y + 0.1F), (double)((float)localbp2.z + 0.5F), 0.0F, 0.0F);
+			localMinecraft.player.setSpawnPos(localbp1);
+			localMinecraft.player.setPositionAndAnglesKeepPrevAngles((double)((float)localbp2.x + 0.5F), (double)((float)localbp2.y + 0.1F), (double)((float)localbp2.z + 0.5F), 0.0F, 0.0F);
 		}
 
-		localMinecraft.interactionManager.method_1711(localMinecraft.player);
-		localMinecraft.world.method_277(localMinecraft.player);
-		localMinecraft.player.field_161 = new class_413(localMinecraft.options);
+		localMinecraft.interactionManager.preparePlayer(localMinecraft.player);
+		localMinecraft.world.addPlayer(localMinecraft.player);
+		localMinecraft.player.input = new KeyboardInput(localMinecraft.options);
 		localMinecraft.player.id = j;
-		localMinecraft.player.method_494();
-		localMinecraft.interactionManager.method_1718(localMinecraft.player);
-		localMinecraft.method_2130("Respawning");
+		localMinecraft.player.spawn();
+		localMinecraft.interactionManager.preparePlayerRespawn(localMinecraft.player);
+		localMinecraft.prepareWorld("Respawning");
 
 		if (localMinecraft.currentScreen instanceof DeathScreen) {
 			localMinecraft.setScreen((Screen)null);
@@ -152,7 +151,7 @@ public class DimensionBase {
 			newDimension = 0;
 		}
 
-		game.world.method_231(game.player);
+		game.world.remove(game.player);
 		game.player.dead = false;
 		Loc loc = new Loc(game.player.x, game.player.z);
 		if (newDimension != 0) {
@@ -183,22 +182,22 @@ public class DimensionBase {
 		loc = dimOld.getDistanceScale(loc, true);
 		loc = dimNew.getDistanceScale(loc, false);
 		game.player.dimensionId = newDimension;
-		game.player.method_1341(loc.x, game.player.y, loc.z, game.player.yaw, game.player.pitch);
-		game.world.method_193(game.player, false);
+		game.player.setPositionAndAnglesKeepPrevAngles(loc.x, game.player.y, loc.z, game.player.yaw, game.player.pitch);
+		game.world.updateEntity(game.player, false);
 		World world = new World(game.world, dimNew.getWorldProvider());
-		game.method_2115(world, (newDimension == 0 ? "Leaving" : "Entering") + " the " + (newDimension == 0 ? dimOld.name : dimNew.name), game.player);
+		game.setWorld(world, (newDimension == 0 ? "Leaving" : "Entering") + " the " + (newDimension == 0 ? dimOld.name : dimNew.name), game.player);
 		game.player.world = game.world;
-		game.player.method_1341(loc.x, game.player.y, loc.z, game.player.yaw, game.player.pitch);
-		game.world.method_193(game.player, false);
-		class_467 teleporter = dimNew.getTeleporter();
+		game.player.setPositionAndAnglesKeepPrevAngles(loc.x, game.player.y, loc.z, game.player.yaw, game.player.pitch);
+		game.world.updateEntity(game.player, false);
+		PortalForcer teleporter = dimNew.getTeleporter();
 		if (teleporter == null) {
 			teleporter = dimOld.getTeleporter();
 		}
 
-		teleporter.method_1530(game.world, game.player);
+		teleporter.moveToPortal(game.world, game.player);
 	}
 
-	public DimensionBase(int number, Class<? extends Dimension> worldProvider, Class<? extends class_467> teleporter) {
+	public DimensionBase(int number, Class<? extends Dimension> worldProvider, Class<? extends PortalForcer> teleporter) {
 		this.number = number;
 		this.worldProvider = worldProvider;
 		this.teleporter = teleporter;

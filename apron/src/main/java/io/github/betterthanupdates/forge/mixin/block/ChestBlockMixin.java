@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.ChestBlock;
-import net.minecraft.block.Material;
+import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
 import io.github.betterthanupdates.forge.world.ForgeWorld;

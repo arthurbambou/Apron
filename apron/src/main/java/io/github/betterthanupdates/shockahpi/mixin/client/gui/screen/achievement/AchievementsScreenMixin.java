@@ -1,7 +1,7 @@
 package io.github.betterthanupdates.shockahpi.mixin.client.gui.screen.achievement;
 
 import java.lang.reflect.Array;
-import net.minecraft.client.gui.screen.achievement.AchievementsScreen;
+import net.minecraft.client.gui.screen.AchievementsScreen;
 import fr.catcore.cursedmixinextensions.annotations.Public;
 import org.spongepowered.asm.mixin.Mixin;
 

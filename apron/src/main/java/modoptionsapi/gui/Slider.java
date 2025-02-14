@@ -48,7 +48,7 @@ public class Slider extends ButtonWidget {
 		return option.transformValue(val, 0, 1);
 	}
 
-	protected void method_1188(Minecraft minecraft, int i, int j) {
+	protected void renderBackground(Minecraft minecraft, int i, int j) {
 		if (this.visible) {
 			if (this.dragging) {
 				float value = (float) (i - (this.x + 4)) / (float) (this.width - 8);

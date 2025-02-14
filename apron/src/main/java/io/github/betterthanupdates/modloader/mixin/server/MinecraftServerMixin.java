@@ -3,7 +3,6 @@ package io.github.betterthanupdates.modloader.mixin.server;
 import modloader.ModLoader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.class_39;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -11,10 +10,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.CommandOutput;
 
 @Environment(EnvType.SERVER)
 @Mixin(MinecraftServer.class)
-public abstract class MinecraftServerMixin implements Runnable, class_39 {
+public abstract class MinecraftServerMixin implements Runnable, CommandOutput {
 
 	@Inject(method = "method_2166", at = @At(value = "INVOKE", target = "Ljava/util/logging/Logger;info(Ljava/lang/String;)V", remap = false))
 	private void modloader$start(CallbackInfoReturnable<Boolean> cir) {
