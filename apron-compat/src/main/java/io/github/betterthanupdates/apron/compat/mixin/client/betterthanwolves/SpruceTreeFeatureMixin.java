@@ -36,7 +36,7 @@ public class SpruceTreeFeatureMixin {
 					for(int j3 = k - j2; j3 <= k + j2 && flag; ++j3) {
 						if (l1 >= 0 && l1 < 128) {
 							int k3 = world.getBlockId(l2, l1, j3);
-							if (!world.method_234(l2, l1, j3) && k3 != Block.LEAVES.id) {
+							if (!world.isAir(l2, l1, j3) && k3 != Block.LEAVES.id) {
 								flag = false;
 							}
 						} else {
@@ -52,7 +52,7 @@ public class SpruceTreeFeatureMixin {
 				int i2 = world.getBlockId(i, j - 1, k);
 				if ((i2 == Block.GRASS_BLOCK.id || i2 == Block.DIRT.id || FCUtilsMisc.CanPlantGrowOnBlock(world, i, j - 1, k, Block.SAPLING)) && j < 128 - l - 1) {
 					if (i2 == Block.GRASS_BLOCK.id) {
-						world.method_200(i, j - 1, k, Block.DIRT.id);
+						world.setBlockWithoutNotifyingNeighbors(i, j - 1, k, Block.DIRT.id);
 					}
 
 					int k2 = random.nextInt(2);
@@ -68,7 +68,7 @@ public class SpruceTreeFeatureMixin {
 							for(int k5 = k - k2; k5 <= k + k2; ++k5) {
 								int l5 = k5 - k;
 								if ((Math.abs(j5) != k2 || Math.abs(l5) != k2 || k2 <= 0) && !Block.BLOCKS_OPAQUE[world.getBlockId(l4, j4, k5)]) {
-									world.method_154(l4, j4, k5, Block.LEAVES.id, 1);
+									world.setBlockWithoutNotifyingNeighbors(l4, j4, k5, Block.LEAVES.id, 1);
 								}
 							}
 						}
@@ -88,8 +88,8 @@ public class SpruceTreeFeatureMixin {
 
 					for(int k4 = 0; k4 < l - i4; ++k4) {
 						int i5 = world.getBlockId(i, j + k4, k);
-						if (world.method_234(i, j + k4, k) || i5 == Block.LEAVES.id) {
-							world.method_154(i, j + k4, k, Block.LOG.id, 1);
+						if (world.isAir(i, j + k4, k) || i5 == Block.LEAVES.id) {
+							world.setBlockWithoutNotifyingNeighbors(i, j + k4, k, Block.LOG.id, 1);
 						}
 					}
 

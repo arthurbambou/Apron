@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 
 @Mixin(MushroomPlantBlock.class)
 public class MushroomBlockMixin {
-	@ModifyExpressionValue(method = "canGrow", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/MushroomPlantBlock;method_1683(I)Z"))
+	@ModifyExpressionValue(method = "canGrow", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/MushroomPlantBlock;canPlantOnTop(I)Z"))
 	private boolean btw$canGrow(boolean original, @Local World arg, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local(ordinal = 2) int k) {
 		return original || FCUtilsMisc.CanPlantGrowOnBlock(arg, i, j - 1, k, (Block)(Object) this);
 	}

@@ -34,16 +34,16 @@ public class HoeItemMixin {
 				iPercentageChanceOfHempSeedDrop = 16;
 			}
 
-			if (world.field_214.nextInt(100) < iPercentageChanceOfHempSeedDrop) {
+			if (world.random.nextInt(100) < iPercentageChanceOfHempSeedDrop) {
 				float f = 0.7F;
-				float f1 = world.field_214.nextFloat() * f + (1.0F - f) * 0.5F;
+				float f1 = world.random.nextFloat() * f + (1.0F - f) * 0.5F;
 				float f2 = 1.2F;
-				float f3 = world.field_214.nextFloat() * f + (1.0F - f) * 0.5F;
+				float f3 = world.random.nextFloat() * f + (1.0F - f) * 0.5F;
 				ItemEntity entityitem = new ItemEntity(
 						world, (double)((float)i + f1), (double)((float)j + f2), (double)((float)k + f3), new ItemStack(mod_FCBetterThanWolves.fcHempSeeds)
 				);
 				entityitem.pickupDelay = 10;
-				world.method_210(entityitem);
+				world.spawnEntity(entityitem);
 			}
 		}
 	}

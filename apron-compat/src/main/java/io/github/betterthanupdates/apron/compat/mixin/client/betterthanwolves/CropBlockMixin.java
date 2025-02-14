@@ -30,7 +30,7 @@ public class CropBlockMixin extends PlantBlock {
 	 * @reason difficult to convert
 	 */
 	@Overwrite
-	private float method_997(World world, int i, int j, int k) {
+	private float getAvailableMoisture(World world, int i, int j, int k) {
 		float f = 1.0F;
 		int l = world.getBlockId(i, j, k - 1);
 		int i1 = world.getBlockId(i, j, k + 1);

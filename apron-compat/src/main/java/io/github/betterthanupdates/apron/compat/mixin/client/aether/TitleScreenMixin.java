@@ -3,7 +3,6 @@ package io.github.betterthanupdates.apron.compat.mixin.client.aether;
 import java.util.List;
 
 import fr.catcore.cursedmixinextensions.annotations.Public;
-import net.minecraft.class_182;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,8 +21,7 @@ import net.minecraft.GuiAetherButton;
 import net.minecraft.GuiIngameAether;
 import net.minecraft.GuiMultiplayerAether;
 import net.minecraft.GuiSelectWorldAether;
-import net.minecraft.SingleplayerInteractionManager;
-import net.minecraft.class_591;
+import net.minecraft.client.SingleplayerInteractionManager;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.hud.toast.AchievementToast;
 import net.minecraft.client.gui.screen.Screen;
@@ -33,7 +31,8 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.resource.language.TranslationStorage;
 import net.minecraft.entity.player.ClientPlayerEntity;
 import net.minecraft.mod_Aether;
-
+import net.minecraft.world.storage.WorldSaveInfo;
+import net.minecraft.world.storage.WorldStorageSource;
 import io.github.betterthanupdates.apron.ReflectionUtils;
 import io.github.betterthanupdates.apron.mixin.client.gui.widget.ButtonWidgetAccessor;
 import io.github.betterthanupdates.apron.mixin.entity.EntityAccessor;
@@ -47,7 +46,7 @@ public abstract class TitleScreenMixin extends Screen {
 	private ButtonWidget multiplayerButton;
 
 	@Unique
-	private class_591 latestSave;
+	private WorldSaveInfo latestSave;
 	@Unique
 	private String hoverText;
 
@@ -82,21 +81,21 @@ public abstract class TitleScreenMixin extends Screen {
 
 	@Inject(method = "init", at = @At("TAIL"))
 	public void initVanillaScreen(CallbackInfo ci) {
-		final class_182 worldStorage = this.minecraft.method_2127();
-		final List<class_591> saves = worldStorage.method_1002();
+		final WorldStorageSource worldStorage = this.minecraft.getWorldStorageSource();
+		final List<WorldSaveInfo> saves = worldStorage.getAll();
 		if (!saves.isEmpty()) {
 			latestSave = saves.get(0);
 		}
 
 		mmactive = true;
-		this.minecraft.field_2819 = new GuiAchievementAether(this.minecraft);
+		this.minecraft.toast = new GuiAchievementAether(this.minecraft);
 
 		if (!ReflectionUtils.isModLoaded("mod_InfSprites")) {
 			this.setOverlay();
 		}
 
 		if (musicId == -1 && !loadingWorld) {
-			this.minecraft.soundManager.method_2009("aether.music.menu", 1.0F, 1.0F);
+			this.minecraft.soundManager.playSound("aether.music.menu", 1.0F, 1.0F);
 
 			musicId = ((SoundManagerAccessor) this.minecraft.soundManager).getField_2671();
 			((SoundManagerAccessor) this.minecraft.soundManager).setField_2675(999999999);
@@ -297,7 +296,7 @@ public abstract class TitleScreenMixin extends Screen {
 			this.minecraft.interactionManager = new SingleplayerInteractionManager(this.minecraft);
 			this.minecraft.options.hideHud = true;
 			this.minecraft.options.thirdPerson = true;
-			this.minecraft.method_2120(latestSave.method_1956(), latestSave.method_1958(), 0L);
+			this.minecraft.startGame(latestSave.getSaveName(), latestSave.getName(), 0L);
 			((WorldAccessor) this.minecraft.world).setField_212(999999999);
 		}
 	}

@@ -88,7 +88,7 @@ public class RenderPipeMixin {
 
 				for(int k = 0; k < byte0; ++k) {
 					GL11.glPushMatrix();
-					GL11.glRotatef(180.0F - EntityRenderDispatcher.field_2489.field_2497, 0.0F, 1.0F, 0.0F);
+					GL11.glRotatef(180.0F - EntityRenderDispatcher.INSTANCE.yaw, 0.0F, 1.0F, 0.0F);
 					tessellator.startQuads();
 					tessellator.normal(0.0F, 1.0F, 0.0F);
 					tessellator.vertex((double)(0.0F - f13), (double)(0.0F - f14), 0.0, (double)sprite.getMinU(), (double)sprite.getMaxV());

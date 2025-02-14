@@ -19,50 +19,50 @@ import net.minecraft.world.World;
 @Mixin(MinecartEntity.class)
 public abstract class ChestMinecartEntityMixin extends Entity {
 	@Shadow
-	public int field_2273;
+	public int damageWobbleTicks;
 
 	@Shadow
-	public int field_2272;
+	public int damageWobbleStrength;
 
 	@Shadow
-	private int field_2282;
+	private int clientInterpolationSteps;
 
 	@Shadow
-	private double field_2283;
+	private double clientX;
 
 	@Shadow
-	private double field_2284;
+	private double clientY;
 
 	@Shadow
-	private double field_2285;
+	private double clientZ;
 
 	@Shadow
-	private double field_2286;
+	private double clientPitch;
 
 	@Shadow
-	private double field_2287;
+	private double clientYaw;
 
 	@Shadow
-	public abstract Vec3d method_1813(double d, double e, double f);
+	public abstract Vec3d snapPositionToRail(double d, double e, double f);
 
 	@Shadow
 	@Final
-	private static int[][][] field_2281;
+	private static int[][][] ADJACENT_RAIL_POSITIONS_BY_SHAPE;
 
 	@Shadow
-	public int field_2275;
+	public int type;
 
 	@Shadow
-	public double field_2277;
+	public double pushX;
 
 	@Shadow
-	public double field_2278;
+	public double pushZ;
 
 	@Shadow
-	private boolean field_2280;
+	private boolean yawFlipped;
 
 	@Shadow
-	public int field_2276;
+	public int fuel;
 
 	public ChestMinecartEntityMixin(World arg) {
 		super(arg);
@@ -74,20 +74,20 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 	 */
 	@Overwrite
 	public void tick() {
-		if (this.field_2273 > 0) {
-			--this.field_2273;
+		if (this.damageWobbleTicks > 0) {
+			--this.damageWobbleTicks;
 		}
 
-		if (this.field_2272 > 0) {
-			--this.field_2272;
+		if (this.damageWobbleStrength > 0) {
+			--this.damageWobbleStrength;
 		}
 
-		if (this.world.isRemote && this.field_2282 > 0) {
-			if (this.field_2282 > 0) {
-				double d = this.x + (this.field_2283 - this.x) / (double)this.field_2282;
-				double d1 = this.y + (this.field_2284 - this.y) / (double)this.field_2282;
-				double d3 = this.z + (this.field_2285 - this.z) / (double)this.field_2282;
-				double d4 = this.field_2286 - (double)this.yaw;
+		if (this.world.isRemote && this.clientInterpolationSteps > 0) {
+			if (this.clientInterpolationSteps > 0) {
+				double d = this.x + (this.clientX - this.x) / (double)this.clientInterpolationSteps;
+				double d1 = this.y + (this.clientY - this.y) / (double)this.clientInterpolationSteps;
+				double d3 = this.z + (this.clientZ - this.z) / (double)this.clientInterpolationSteps;
+				double d4 = this.clientPitch - (double)this.yaw;
 
 				while(d4 < -180.0) {
 					d4 += 360.0;
@@ -97,14 +97,14 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 					d4 -= 360.0;
 				}
 
-				this.yaw = (float)((double)this.yaw + d4 / (double)this.field_2282);
-				this.pitch = (float)((double)this.pitch + (this.field_2287 - (double)this.pitch) / (double)this.field_2282);
-				--this.field_2282;
-				this.method_1340(d, d1, d3);
-				this.method_1342(this.yaw, this.pitch);
+				this.yaw = (float)((double)this.yaw + d4 / (double)this.clientInterpolationSteps);
+				this.pitch = (float)((double)this.pitch + (this.clientYaw - (double)this.pitch) / (double)this.clientInterpolationSteps);
+				--this.clientInterpolationSteps;
+				this.setPosition(d, d1, d3);
+				this.setRotation(this.yaw, this.pitch);
 			} else {
-				this.method_1340(this.x, this.y, this.z);
-				this.method_1342(this.yaw, this.pitch);
+				this.setPosition(this.x, this.y, this.z);
+				this.setRotation(this.yaw, this.pitch);
 			}
 		} else {
 			this.prevX = this.x;
@@ -114,7 +114,7 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 			int i = MathHelper.floor(this.x);
 			int j = MathHelper.floor(this.y);
 			int k = MathHelper.floor(this.z);
-			if (RailBlock.method_1109(this.world, i, j - 1, k)) {
+			if (RailBlock.isRail(this.world, i, j - 1, k)) {
 				--j;
 			}
 
@@ -122,8 +122,8 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 			boolean flag = false;
 			double d5 = 0.0078125;
 			int l = this.world.getBlockId(i, j, k);
-			if (RailBlock.method_1107(l)) {
-				Vec3d vec3d = this.method_1813(this.x, this.y, this.z);
+			if (RailBlock.isRail(l)) {
+				Vec3d vec3d = this.snapPositionToRail(this.x, this.y, this.z);
 				int i1 = this.world.getBlockMeta(i, j, k);
 				this.y = (double)j;
 				boolean flag1 = false;
@@ -133,7 +133,7 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 					flag2 = !flag1;
 				}
 
-				if (((RailBlock)Block.BLOCKS[l]).method_1108()) {
+				if (((RailBlock)Block.BLOCKS[l]).isAlwaysStraight()) {
 					i1 &= 7;
 				}
 
@@ -157,7 +157,7 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 					this.velocityZ -= d5;
 				}
 
-				int[][] ai = field_2281[i1];
+				int[][] ai = ADJACENT_RAIL_POSITIONS_BY_SHAPE[i1];
 				double d9 = (double)(ai[1][0] - ai[0][0]);
 				double d10 = (double)(ai[1][2] - ai[0][2]);
 				double d11 = Math.sqrt(d9 * d9 + d10 * d10);
@@ -205,10 +205,10 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 
 				this.x = d18 + d9 * d17;
 				this.z = d19 + d10 * d17;
-				this.method_1340(this.x, this.y + (double)this.eyeHeight, this.z);
+				this.setPosition(this.x, this.y + (double)this.standingEyeHeight, this.z);
 				double d23 = this.velocityX;
 				double d25 = this.velocityZ;
-				if (this.field_1594 != null) {
+				if (this.passenger != null) {
 					d23 *= 0.75;
 					d25 *= 0.75;
 				}
@@ -231,28 +231,28 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 
 				this.move(d23, 0.0, d25);
 				if (ai[0][1] != 0 && MathHelper.floor(this.x) - i == ai[0][0] && MathHelper.floor(this.z) - k == ai[0][2]) {
-					this.method_1340(this.x, this.y + (double)ai[0][1], this.z);
+					this.setPosition(this.x, this.y + (double)ai[0][1], this.z);
 				} else if (ai[1][1] != 0 && MathHelper.floor(this.x) - i == ai[1][0] && MathHelper.floor(this.z) - k == ai[1][2]) {
-					this.method_1340(this.x, this.y + (double)ai[1][1], this.z);
+					this.setPosition(this.x, this.y + (double)ai[1][1], this.z);
 				}
 
-				if (this.field_1594 != null) {
+				if (this.passenger != null) {
 					this.velocityX *= 0.997F;
 					this.velocityY *= 0.0;
 					this.velocityZ *= 0.997F;
 				} else {
-					if (this.field_2275 == 2) {
-						double d27 = (double)MathHelper.sqrt(this.field_2277 * this.field_2277 + this.field_2278 * this.field_2278);
+					if (this.type == 2) {
+						double d27 = (double)MathHelper.sqrt(this.pushX * this.pushX + this.pushZ * this.pushZ);
 						if (d27 > 0.01) {
 							flag = true;
-							this.field_2277 /= d27;
-							this.field_2278 /= d27;
+							this.pushX /= d27;
+							this.pushZ /= d27;
 							double d29 = 0.04;
 							this.velocityX *= 0.8F;
 							this.velocityY *= 0.0;
 							this.velocityZ *= 0.8F;
-							this.velocityX += this.field_2277 * d29;
-							this.velocityZ += this.field_2278 * d29;
+							this.velocityX += this.pushX * d29;
+							this.velocityZ += this.pushZ * d29;
 						} else {
 							this.velocityX *= 0.9F;
 							this.velocityY *= 0.0;
@@ -273,7 +273,7 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 					// PATCH ENDS HERE
 				}
 
-				Vec3d vec3d1 = this.method_1813(this.x, this.y, this.z);
+				Vec3d vec3d1 = this.snapPositionToRail(this.x, this.y, this.z);
 				if (vec3d1 != null && vec3d != null) {
 					double d28 = (vec3d.y - vec3d1.y) * 0.05;
 					double d14 = Math.sqrt(this.velocityX * this.velocityX + this.velocityZ * this.velocityZ);
@@ -282,7 +282,7 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 						this.velocityZ = this.velocityZ / d14 * (d14 + d28);
 					}
 
-					this.method_1340(this.x, vec3d1.y, this.z);
+					this.setPosition(this.x, vec3d1.y, this.z);
 				}
 
 				int k1 = MathHelper.floor(this.x);
@@ -293,17 +293,17 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 					this.velocityZ = d15 * (double)(l1 - k);
 				}
 
-				if (this.field_2275 == 2) {
-					double d30 = (double)MathHelper.sqrt(this.field_2277 * this.field_2277 + this.field_2278 * this.field_2278);
+				if (this.type == 2) {
+					double d30 = (double)MathHelper.sqrt(this.pushX * this.pushX + this.pushZ * this.pushZ);
 					if (d30 > 0.01 && this.velocityX * this.velocityX + this.velocityZ * this.velocityZ > 0.001) {
-						this.field_2277 /= d30;
-						this.field_2278 /= d30;
-						if (this.field_2277 * this.velocityX + this.field_2278 * this.velocityZ < 0.0) {
-							this.field_2277 = 0.0;
-							this.field_2278 = 0.0;
+						this.pushX /= d30;
+						this.pushZ /= d30;
+						if (this.pushX * this.velocityX + this.pushZ * this.velocityZ < 0.0) {
+							this.pushX = 0.0;
+							this.pushZ = 0.0;
 						} else {
-							this.field_2277 = this.velocityX;
-							this.field_2278 = this.velocityZ;
+							this.pushX = this.velocityX;
+							this.pushZ = this.velocityZ;
 						}
 					}
 				}
@@ -315,15 +315,15 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 						this.velocityX += this.velocityX / d31 * d32;
 						this.velocityZ += this.velocityZ / d31 * d32;
 					} else if (i1 == 1) {
-						if (this.world.method_1780(i - 1, j, k)) {
+						if (this.world.shouldSuffocate(i - 1, j, k)) {
 							this.velocityX = 0.02;
-						} else if (this.world.method_1780(i + 1, j, k)) {
+						} else if (this.world.shouldSuffocate(i + 1, j, k)) {
 							this.velocityX = -0.02;
 						}
 					} else if (i1 == 0) {
-						if (this.world.method_1780(i, j, k - 1)) {
+						if (this.world.shouldSuffocate(i, j, k - 1)) {
 							this.velocityZ = 0.02;
-						} else if (this.world.method_1780(i, j, k + 1)) {
+						} else if (this.world.shouldSuffocate(i, j, k + 1)) {
 							this.velocityZ = -0.02;
 						}
 					}
@@ -345,14 +345,14 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 					this.velocityZ = d2;
 				}
 
-				if (this.field_1623) {
+				if (this.onGround) {
 					this.velocityX *= 0.5;
 					this.velocityY *= 0.5;
 					this.velocityZ *= 0.5;
 				}
 
 				this.move(this.velocityX, this.velocityY, this.velocityZ);
-				if (!this.field_1623) {
+				if (!this.onGround) {
 					this.velocityX *= 0.95F;
 					this.velocityY *= 0.95F;
 					this.velocityZ *= 0.95F;
@@ -364,7 +364,7 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 			double d7 = this.prevZ - this.z;
 			if (d6 * d6 + d7 * d7 > 0.001) {
 				this.yaw = (float)(Math.atan2(d7, d6) * 180.0 / Math.PI);
-				if (this.field_2280) {
+				if (this.yawFlipped) {
 					this.yaw += 180.0F;
 				}
 			}
@@ -381,28 +381,28 @@ public abstract class ChestMinecartEntityMixin extends Entity {
 
 			if (d8 < -170.0 || d8 >= 170.0) {
 				this.yaw += 180.0F;
-				this.field_2280 = !this.field_2280;
+				this.yawFlipped = !this.yawFlipped;
 			}
 
-			this.method_1342(this.yaw, this.pitch);
+			this.setRotation(this.yaw, this.pitch);
 			List list = this.world.getEntities(this, this.boundingBox.expand(0.2F, 0.0, 0.2F));
 			if (list != null && list.size() > 0) {
 				for(int j1 = 0; j1 < list.size(); ++j1) {
 					Entity entity = (Entity)list.get(j1);
-					if (entity != this.field_1594 && entity.method_1380() && entity instanceof MinecartEntity) {
-						entity.method_1353(this);
+					if (entity != this.passenger && entity.isPushable() && entity instanceof MinecartEntity) {
+						entity.onCollision(this);
 					}
 				}
 			}
 
-			if (this.field_1594 != null && this.field_1594.dead) {
-				this.field_1594 = null;
+			if (this.passenger != null && this.passenger.dead) {
+				this.passenger = null;
 			}
 
 			if (flag && this.random.nextInt(4) == 0) {
-				--this.field_2276;
-				if (this.field_2276 < 0) {
-					this.field_2277 = this.field_2278 = 0.0;
+				--this.fuel;
+				if (this.fuel < 0) {
+					this.pushX = this.pushZ = 0.0;
 				}
 
 				this.world.addParticle("largesmoke", this.x, this.y + 0.8, this.z, 0.0, 0.0, 0.0);

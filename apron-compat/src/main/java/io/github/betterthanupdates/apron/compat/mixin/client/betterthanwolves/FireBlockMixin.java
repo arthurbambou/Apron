@@ -49,7 +49,7 @@ public class FireBlockMixin implements BTWFireBlock {
 		}
 	}
 
-	@Inject(method = "method_1823", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getBlockId(III)I", ordinal = 1))
+	@Inject(method = "trySpreadingFire", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getBlockId(III)I", ordinal = 1))
 	private void addBTWMethod(World arg, int i, int j, int k, int l, Random random, int m, CallbackInfo callbackInfo) {
 		this.OnBlockDestroyedByFire(arg, i, j, k);
 	}
@@ -59,12 +59,12 @@ public class FireBlockMixin implements BTWFireBlock {
 		return original || arg.getBlockId(i, j - 1, k) == mod_FCBetterThanWolves.fcStokedFire.id;
 	}
 
-	@ModifyExpressionValue(method = "neighborUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z"))
+	@ModifyExpressionValue(method = "neighborUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;shouldSuffocate(III)Z"))
 	private boolean addBTWStonkedFireCheck_1(boolean original, @Local World arg, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local(ordinal = 2) int k) {
 		return original && arg.getBlockId(i, j - 1, k) != mod_FCBetterThanWolves.fcStokedFire.id;
 	}
 
-	@ModifyExpressionValue(method = "onPlaced", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_1780(III)Z"))
+	@ModifyExpressionValue(method = "onPlaced", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;shouldSuffocate(III)Z"))
 	private boolean addBTWStonkedFireCheck_2(boolean original, @Local World arg, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local(ordinal = 2) int k) {
 		return original && arg.getBlockId(i, j - 1, k) != mod_FCBetterThanWolves.fcStokedFire.id;
 	}
@@ -86,8 +86,8 @@ public class FireBlockMixin implements BTWFireBlock {
 		double d2 = (double)((float)j1 / 256.0F);
 		double d3 = (double)(((float)j1 + 15.99F) / 256.0F);
 		float f1 = 1.4F;
-		if (!iBlockAccess.method_1780(i, j - 1, k)
-				&& !Block.FIRE.method_1824(iBlockAccess, i, j - 1, k)
+		if (!iBlockAccess.shouldSuffocate(i, j - 1, k)
+				&& !Block.FIRE.isFlammable(iBlockAccess, i, j - 1, k)
 				&& iBlockAccess.getBlockId(i, j - 1, k) != mod_FCBetterThanWolves.fcStokedFire.id) {
 			float f2 = 0.2F;
 			float f3 = 0.0625F;
@@ -104,7 +104,7 @@ public class FireBlockMixin implements BTWFireBlock {
 				d = d6;
 			}
 
-			if (Block.FIRE.method_1824(iBlockAccess, i - 1, j, k)) {
+			if (Block.FIRE.isFlammable(iBlockAccess, i - 1, j, k)) {
 				tessellator.vertex((double)((float)i + f2), (double)((float)j + f1 + f3), (double)(k + 1), d1, d2);
 				tessellator.vertex((double)(i + 0), (double)((float)(j + 0) + f3), (double)(k + 1), d1, d3);
 				tessellator.vertex((double)(i + 0), (double)((float)(j + 0) + f3), (double)(k + 0), d, d3);
@@ -115,7 +115,7 @@ public class FireBlockMixin implements BTWFireBlock {
 				tessellator.vertex((double)((float)i + f2), (double)((float)j + f1 + f3), (double)(k + 1), d1, d2);
 			}
 
-			if (Block.FIRE.method_1824(iBlockAccess, i + 1, j, k)) {
+			if (Block.FIRE.isFlammable(iBlockAccess, i + 1, j, k)) {
 				tessellator.vertex((double)((float)(i + 1) - f2), (double)((float)j + f1 + f3), (double)(k + 0), d, d2);
 				tessellator.vertex((double)(i + 1 - 0), (double)((float)(j + 0) + f3), (double)(k + 0), d, d3);
 				tessellator.vertex((double)(i + 1 - 0), (double)((float)(j + 0) + f3), (double)(k + 1), d1, d3);
@@ -126,7 +126,7 @@ public class FireBlockMixin implements BTWFireBlock {
 				tessellator.vertex((double)((float)(i + 1) - f2), (double)((float)j + f1 + f3), (double)(k + 0), d, d2);
 			}
 
-			if (Block.FIRE.method_1824(iBlockAccess, i, j, k - 1)) {
+			if (Block.FIRE.isFlammable(iBlockAccess, i, j, k - 1)) {
 				tessellator.vertex((double)(i + 0), (double)((float)j + f1 + f3), (double)((float)k + f2), d1, d2);
 				tessellator.vertex((double)(i + 0), (double)((float)(j + 0) + f3), (double)(k + 0), d1, d3);
 				tessellator.vertex((double)(i + 1), (double)((float)(j + 0) + f3), (double)(k + 0), d, d3);
@@ -137,7 +137,7 @@ public class FireBlockMixin implements BTWFireBlock {
 				tessellator.vertex((double)(i + 0), (double)((float)j + f1 + f3), (double)((float)k + f2), d1, d2);
 			}
 
-			if (Block.FIRE.method_1824(iBlockAccess, i, j, k + 1)) {
+			if (Block.FIRE.isFlammable(iBlockAccess, i, j, k + 1)) {
 				tessellator.vertex((double)(i + 1), (double)((float)j + f1 + f3), (double)((float)(k + 1) - f2), d, d2);
 				tessellator.vertex((double)(i + 1), (double)((float)(j + 0) + f3), (double)(k + 1 - 0), d, d3);
 				tessellator.vertex((double)(i + 0), (double)((float)(j + 0) + f3), (double)(k + 1 - 0), d1, d3);
@@ -148,7 +148,7 @@ public class FireBlockMixin implements BTWFireBlock {
 				tessellator.vertex((double)(i + 1), (double)((float)j + f1 + f3), (double)((float)(k + 1) - f2), d, d2);
 			}
 
-			if (Block.FIRE.method_1824(iBlockAccess, i, j + 1, k)) {
+			if (Block.FIRE.isFlammable(iBlockAccess, i, j + 1, k)) {
 				double d7 = (double)i + 0.5 + 0.5;
 				double d9 = (double)i + 0.5 - 0.5;
 				double d11 = (double)k + 0.5 + 0.5;

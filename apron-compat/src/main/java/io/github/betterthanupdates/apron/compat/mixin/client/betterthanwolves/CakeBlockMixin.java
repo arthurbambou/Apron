@@ -3,7 +3,7 @@ package io.github.betterthanupdates.apron.compat.mixin.client.betterthanwolves;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.Block;
 import net.minecraft.block.CakeBlock;
-import net.minecraft.block.Material;
+import net.minecraft.block.material.Material;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,10 +26,10 @@ public class CakeBlockMixin extends Block implements BTWCakeBlock {
 	@Override
 	public void onPlaced(World world, int i, int j, int k) {
 		super.onPlaced(world, i, j, k);
-		boolean bReceivingRedstone = world.method_263(i, j, k);
+		boolean bReceivingRedstone = world.canTransferPower(i, j, k);
 		if (bReceivingRedstone) {
 			this.SetRedstoneOn(world, i, j, k, true);
-			world.playSound((double)i + 0.5, (double)j + 0.5, (double)k + 0.5, "mob.ghast.scream", 1.0F, world.field_214.nextFloat() * 0.4F + 0.8F);
+			world.playSound((double)i + 0.5, (double)j + 0.5, (double)k + 0.5, "mob.ghast.scream", 1.0F, world.random.nextFloat() * 0.4F + 0.8F);
 		}
 	}
 
@@ -53,12 +53,12 @@ public class CakeBlockMixin extends Block implements BTWCakeBlock {
 		return value & 7;
 	}
 
-	@ModifyVariable(method = "method_1528", at = @At("HEAD"), ordinal = 0)
+	@ModifyVariable(method = "tryEat", at = @At("HEAD"), ordinal = 0)
 	private int btw$method_1528$1(int var6, @Local World arg, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local(ordinal = 2) int k) {
 		return this.GetEatState(arg, i, j, k) + 1;
 	}
 
-	@Redirect(method = "method_1528", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_215(IIII)V"))
+	@Redirect(method = "tryEat", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;setBlockMeta(IIII)V"))
 	private void btw$method_1528$2(World instance, int j, int k, int l, int i, @Local(ordinal = 3) int var6) {
 		this.SetEatState(instance, i, j, k, var6);
 	}
@@ -67,11 +67,11 @@ public class CakeBlockMixin extends Block implements BTWCakeBlock {
 	private void addBTWCheck(World world, int i, int j, int k, int l, CallbackInfo callbackInfo) {
 		if (this.canGrow(world, i, j, k)) {
 			boolean bOn = this.IsRedstoneOn(world, i, j, k);
-			boolean bReceivingRedstone = world.method_263(i, j, k);
+			boolean bReceivingRedstone = world.canTransferPower(i, j, k);
 			if (bOn != bReceivingRedstone) {
 				this.SetRedstoneOn(world, i, j, k, bReceivingRedstone);
 				if (bReceivingRedstone) {
-					world.playSound((double)i + 0.5, (double)j + 0.5, (double)k + 0.5, "mob.ghast.scream", 1.0F, world.field_214.nextFloat() * 0.4F + 0.8F);
+					world.playSound((double)i + 0.5, (double)j + 0.5, (double)k + 0.5, "mob.ghast.scream", 1.0F, world.random.nextFloat() * 0.4F + 0.8F);
 				}
 			}
 		}
@@ -89,7 +89,7 @@ public class CakeBlockMixin extends Block implements BTWCakeBlock {
 			iMetaData |= 8;
 		}
 
-		world.method_215(i, j, k, iMetaData);
+		world.setBlockMeta(i, j, k, iMetaData);
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class CakeBlockMixin extends Block implements BTWCakeBlock {
 	public void SetEatState(World world, int i, int j, int k, int state) {
 		int iMetaData = world.getBlockMeta(i, j, k) & 8;
 		iMetaData |= state;
-		world.method_215(i, j, k, iMetaData);
+		world.setBlockMeta(i, j, k, iMetaData);
 	}
 
 	@Override

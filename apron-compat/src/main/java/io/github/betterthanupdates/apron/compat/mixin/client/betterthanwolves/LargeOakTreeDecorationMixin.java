@@ -18,23 +18,23 @@ import net.minecraft.world.gen.feature.LargeOakTreeFeature;
 public class LargeOakTreeDecorationMixin {
 	@Shadow
 	@Final
-	static byte[] field_645;
+	static byte[] MINOR_AXES;
 
 	@Shadow
 	World world;
 
 	@Shadow
-	int[] field_648;
+	int[] origin;
 
 	/**
 	 * @author BTW
 	 * @reason difficult to convert
 	 */
 	@Overwrite
-	void method_615(int i, int j, int k, float f, byte byte0, int l) {
+	void placeCluster(int i, int j, int k, float f, byte byte0, int l) {
 		int i1 = (int)((double)f + 0.618);
-		byte byte1 = field_645[byte0];
-		byte byte2 = field_645[byte0 + 3];
+		byte byte1 = MINOR_AXES[byte0];
+		byte byte2 = MINOR_AXES[byte0 + 3];
 		int[] ai = new int[]{i, j, k};
 		int[] ai1 = new int[]{0, 0, 0};
 		int j1 = -i1;
@@ -51,10 +51,10 @@ public class LargeOakTreeDecorationMixin {
 				} else {
 					ai1[byte2] = ai[byte2] + l1;
 					int i2 = this.world.getBlockId(ai1[0], ai1[1], ai1[2]);
-					if (!this.world.method_234(ai1[0], ai1[1], ai1[2]) && i2 != 18) {
+					if (!this.world.isAir(ai1[0], ai1[1], ai1[2]) && i2 != 18) {
 						++l1;
 					} else {
-						this.world.method_200(ai1[0], ai1[1], ai1[2], l);
+						this.world.setBlockWithoutNotifyingNeighbors(ai1[0], ai1[1], ai1[2], l);
 						++l1;
 					}
 				}
@@ -67,7 +67,7 @@ public class LargeOakTreeDecorationMixin {
 	 * @reason difficult to convert
 	 */
 	@Overwrite
-	int method_616(int[] ai, int[] ai1) {
+	int tryBranch(int[] ai, int[] ai1) {
 		int[] ai2 = new int[]{0, 0, 0};
 		byte byte0 = 0;
 
@@ -82,8 +82,8 @@ public class LargeOakTreeDecorationMixin {
 		if (ai2[i] == 0) {
 			return -1;
 		} else {
-			byte byte1 = field_645[i];
-			byte byte2 = field_645[i + 3];
+			byte byte1 = MINOR_AXES[i];
+			byte byte2 = MINOR_AXES[i + 3];
 			byte byte3;
 			if (ai2[i] > 0) {
 				byte3 = 1;
@@ -102,7 +102,7 @@ public class LargeOakTreeDecorationMixin {
 				ai3[byte1] = MathHelper.floor((double)ai[byte1] + (double)j * d);
 				ai3[byte2] = MathHelper.floor((double)ai[byte2] + (double)j * d1);
 				int l = this.world.getBlockId(ai3[0], ai3[1], ai3[2]);
-				if (!this.world.method_234(ai3[0], ai3[1], ai3[2]) && l != 18) {
+				if (!this.world.isAir(ai3[0], ai3[1], ai3[2]) && l != 18) {
 					break;
 				}
 			}
@@ -111,9 +111,9 @@ public class LargeOakTreeDecorationMixin {
 		}
 	}
 
-	@ModifyConstant(method = "method_611", constant = @Constant(intValue = 3))
+	@ModifyConstant(method = "canPlace", constant = @Constant(intValue = 3))
 	private int btw$method_611(int three, @Local(ordinal = 0) int i) {
-		if (FCUtilsMisc.CanPlantGrowOnBlock(this.world, this.field_648[0], this.field_648[1] - 1, this.field_648[2], Block.SAPLING)) {
+		if (FCUtilsMisc.CanPlantGrowOnBlock(this.world, this.origin[0], this.origin[1] - 1, this.origin[2], Block.SAPLING)) {
 			return i;
 		}
 

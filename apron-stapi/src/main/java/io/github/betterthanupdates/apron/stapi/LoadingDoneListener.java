@@ -213,7 +213,7 @@ public class LoadingDoneListener implements Runnable {
 			}
 
 			if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-				ModLoader.getMinecraftInstance().textureManager.method_1096();
+				ModLoader.getMinecraftInstance().textureManager.reload();
 			}
 
 			if (FabricLoader.getInstance().isModLoaded("hmifabric")) {
