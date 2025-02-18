@@ -29,7 +29,7 @@
     "minecraft": "1.0.0-beta.7.3",
     "mod-remapping-api": ">=1.22.1",
     "legacy-fabric-logger-api-v1": "*",
-    "stationapi": ">=2.0.0-alpha.3",
+    "stationapi": ">=2.0.0-alpha.4",
     "java": ">=17"
   }
 }
