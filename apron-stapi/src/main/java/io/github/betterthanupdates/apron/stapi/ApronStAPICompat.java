@@ -12,7 +12,6 @@ import net.modificationstation.stationapi.api.mod.entrypoint.Entrypoint;
 import net.modificationstation.stationapi.api.mod.entrypoint.EventBusPolicy;
 import net.modificationstation.stationapi.api.util.Identifier;
 import net.modificationstation.stationapi.api.util.Namespace;
-import net.modificationstation.stationapi.api.util.Null;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
@@ -25,8 +24,7 @@ import static io.github.betterthanupdates.apron.LifecycleUtils.CURRENT_MOD;
 
 @Entrypoint(eventBus = @EventBusPolicy(registerStatic = false, registerInstance = false))
 public class ApronStAPICompat {
-	@Entrypoint.Logger
-	public static final Logger LOGGER = Null.get();
+	public static final Logger LOGGER = Namespace.resolve().getLogger();
 
 	public static boolean isModLoaderTime() {
 		return CURRENT_MOD != null;
